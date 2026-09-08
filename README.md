@@ -123,13 +123,18 @@ for 720p, and verify:
 ffprobe -v error -select_streams v:0 -show_entries stream=profile,level   -of default=nw=1 public/media/hero-lab.mp4     # expect High / 40
 ```
 
-**Reduced motion and data-saver get a play button, not silence.** If the visitor
-prefers reduced motion, or the browser reports save-data or a 2G connection,
-the video is not mounted — but a "Play background video" control is, so the
-footage is still reachable and its absence is visible. The earlier version
-silently showed only the poster, which meant a PC with Windows animation
-effects switched off (a performance setting as often as an accessibility one)
-appeared to have a broken hero with no way to recover. `HeroVideo` picks the source by viewport in JS (`<source media>` is
+**The video always autoplays, with no gating and no controls.** Two earlier
+versions withheld it under `prefers-reduced-motion` and on data-saver
+connections — the textbook behaviour — and then offered a play button instead.
+Both were rejected: on Windows the reduced-motion flag is set by switching off
+animation effects, a performance setting as often as an accessibility one, so
+ordinary machines showed a still image and looked broken. Autoplay-always is
+the client's explicit decision, taken with that trade-off on the table.
+
+It is muted with no audio track at all (`-an` at encode time), which is what
+makes autoplay permitted everywhere, and `playsinline` stops iOS forcing
+fullscreen. If a browser still rejects the play promise, playback is retried
+once on the visitor's first interaction. `HeroVideo` picks the source by viewport in JS (`<source media>` is
 unreliable), serves the poster alone when the visitor prefers reduced motion or
 the browser reports a data-saver connection, and cross-fades the video in on
 `canplay` so there is no first-frame flash.
