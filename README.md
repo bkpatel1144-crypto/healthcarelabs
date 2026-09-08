@@ -111,7 +111,25 @@ cut measures **30.35**. Seam: 7.34/255 first-frame vs last-frame, against 47.82
 for unrelated frames.
 
 `hero-lab-poster.jpg` is the loop's own first frame, so the video's fade-in has
-nothing to jump over. Re-extract it alongside any re-encode. `HeroVideo` picks the source by viewport in JS (`<source media>` is
+nothing to jump over. Re-extract it alongside any re-encode.
+
+**Pin the H.264 level.** Left to itself ffmpeg produced Level 5.0 for the 1080p
+encode, which decodes fine in software but sits above the ceiling many older
+hardware decoders accept for High profile — it played on the machine it was
+built on and nowhere else. Always pass `-level 4.0` for 1080p and `-level 3.1`
+for 720p, and verify:
+
+```bash
+ffprobe -v error -select_streams v:0 -show_entries stream=profile,level   -of default=nw=1 public/media/hero-lab.mp4     # expect High / 40
+```
+
+**Reduced motion and data-saver get a play button, not silence.** If the visitor
+prefers reduced motion, or the browser reports save-data or a 2G connection,
+the video is not mounted — but a "Play background video" control is, so the
+footage is still reachable and its absence is visible. The earlier version
+silently showed only the poster, which meant a PC with Windows animation
+effects switched off (a performance setting as often as an accessibility one)
+appeared to have a broken hero with no way to recover. `HeroVideo` picks the source by viewport in JS (`<source media>` is
 unreliable), serves the poster alone when the visitor prefers reduced motion or
 the browser reports a data-saver connection, and cross-fades the video in on
 `canplay` so there is no first-frame flash.
@@ -225,6 +243,15 @@ the top edge, contracting into a floating navy-glass capsule on scroll. A white
 bar cut a bright band across the hero; staying dark also means one text colour
 scheme throughout. `/admin` opens on a light background, so it starts in the
 capsule state.
+
+**No accreditation band on the homepage.** NABL is surfaced by the hero pill,
+the footer badge and the dedicated section on About. A fourth treatment as a
+band above the capability strip was redundant and read as filler.
+
+**The header switches to the drawer below `xl`, not `lg`.** Six nav links plus
+two icon buttons plus the CTA do not fit between 1024 and 1180 — the labels
+wrapped to a second line and pushed the bar to 60px. Verified single-line from
+1280 up, drawer below.
 
 **The hero fills the viewport at every size.** `.hero-viewport` in `index.css`
 sets `min-height: 100vh` with a `100svh` override behind `@supports`, so mobile

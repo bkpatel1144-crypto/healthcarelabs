@@ -1,8 +1,5 @@
-import { Link } from 'react-router-dom';
 import { FlaskConical, Home, ShieldCheck, Smartphone } from 'lucide-react';
 import { Container, Reveal } from '@/components/common/Primitives';
-import { AccreditationBadge } from '@/components/common/AccreditationBadge';
-import { SITE_CONFIG } from '@/config/site';
 
 /**
  * Capability strip. Every item describes something the lab actually does — no
@@ -39,27 +36,6 @@ export function TrustStrip() {
       className="relative border-b border-ink-line bg-white"
     >
       <Container>
-        {SITE_CONFIG.accreditations.length > 0 && (
-          <Reveal className="flex flex-col items-start gap-5 border-b border-ink-line py-7 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
-            <AccreditationBadge variant="light" />
-            <p className="max-w-xl text-[14px] leading-relaxed text-ink-muted">
-              Accredited by the National Accreditation Board for Testing and Calibration
-              Laboratories under certificate{' '}
-              <span className="font-mono font-semibold text-ink">
-                {SITE_CONFIG.accreditations[0].registrationNumber}
-              </span>
-              .{' '}
-              <Link
-                to="/about-us#accreditation"
-                className="font-semibold text-brand-600 underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
-              >
-                See the certificate and ceremony
-              </Link>
-              .
-            </p>
-          </Reveal>
-        )}
-
         <ul className="grid divide-ink-line sm:grid-cols-2 sm:divide-x lg:grid-cols-4">
           {CAPABILITIES.map(({ Icon, title, detail }, i) => (
             <Reveal

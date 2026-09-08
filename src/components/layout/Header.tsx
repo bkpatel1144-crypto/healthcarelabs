@@ -123,8 +123,13 @@ export function Header() {
               />
             </Link>
 
-            {/* ---- Desktop navigation ---- */}
-            <nav aria-label="Primary" className="hidden lg:block">
+            {/*
+              Desktop nav starts at xl, not lg. Six links plus two icon
+              buttons plus the CTA do not fit between 1024 and 1180 — the link
+              text wrapped to a second line and pushed the bar to 60px. Below
+              xl the drawer handles it, which is the better experience anyway.
+            */}
+            <nav aria-label="Primary" className="hidden xl:block">
               <ul className="flex items-center gap-1">
                 {NAV_LINKS.map((link) => (
                   <li key={link.href}>
@@ -133,7 +138,7 @@ export function Header() {
                       end={link.href === '/'}
                       className={({ isActive }) =>
                         cn(
-                          'relative block rounded-lg px-3.5 py-2 text-[14.5px] font-medium transition-colors duration-200',
+                          'relative block whitespace-nowrap rounded-lg px-3.5 py-2 text-[14.5px] font-medium transition-colors duration-200',
                           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300',
                           isActive ? 'text-white' : 'text-white/80 hover:text-white',
                         )
@@ -159,7 +164,7 @@ export function Header() {
             </nav>
 
             {/* ---- Desktop actions ---- */}
-            <div className="hidden items-center gap-2 lg:flex">
+            <div className="hidden items-center gap-2 xl:flex">
               <a
                 href={telHref()}
                 aria-label={`Call ${SITE_CONFIG.brandName} on ${SITE_CONFIG.phoneDisplay}`}
@@ -176,7 +181,11 @@ export function Header() {
               >
                 <MessageCircle className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
               </a>
-              <Button to="/contact-us#home-collection" size="md" className="ml-2 !rounded-full">
+              <Button
+                to="/contact-us#home-collection"
+                size="md"
+                className="ml-2 whitespace-nowrap !rounded-full"
+              >
                 Book a Health Check
                 <ButtonArrow />
               </Button>
@@ -190,7 +199,7 @@ export function Header() {
               aria-label="Open navigation menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-brand-400 hover:bg-white/5 hover:text-brand-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300 lg:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-brand-400 hover:bg-white/5 hover:text-brand-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300 xl:hidden"
             >
               <Menu className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
             </button>
@@ -202,7 +211,7 @@ export function Header() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-[60] lg:hidden"
+            className="fixed inset-0 z-[60] xl:hidden"
             initial={reduced ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduced ? undefined : { opacity: 0 }}
