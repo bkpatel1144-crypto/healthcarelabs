@@ -215,4 +215,5 @@ Three suite assertions fail on an ambiguous selector, not on app behaviour:
 fills the wrong one. The home-collection flow is verified separately on
 `/health-package`, where it is the only form.
 #   h e a l t h c a r e l a b s  
+ #   h e a l t h c a r e l a b s  
  
