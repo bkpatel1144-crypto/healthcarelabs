@@ -87,17 +87,31 @@ into `public/media/`:
 
 | File | Size | Notes |
 | --- | --- | --- |
-| `hero-lab.mp4` | 680 KB | 1080p, desktop |
-| `hero-lab-720.mp4` | 292 KB | 720p, phones and tablets |
+| `hero-lab.mp4` | 980 KB | 1080p, desktop |
+| `hero-lab-720.mp4` | 444 KB | 720p, phones and tablets |
 | `hero-lab-poster.jpg` | 95 KB | poster, and the only asset under reduced motion |
 
-The clip loops by **crossfading its own tail back onto its head** — 12.3 s with
-a 1.4 s dissolve, from 9.6 s of source slowed to 0.7×. Motion always runs
+The clip loops by **crossfading its own tail back onto its head** — 10.5 s from
+source 1 s–13 s with a 1.5 s dissolve, at full speed. Motion always runs
 forward: a ping-pong encode also loops seamlessly but plays the technician's
-hands backwards, which reads as broken. At 6.8 s the loop restarted often
-enough to feel repetitive, hence the longer, slower cut. Measured seam:
-10.97/255 RMSE first-frame vs last-frame, against 38.06 for unrelated frames —
-a soft dissolve rather than a cut. `HeroVideo` picks the source by viewport in JS (`<source media>` is
+hands backwards, which reads as broken.
+
+**The segment choice matters more than anything else here.** Sampling the source
+at 2 fps, cropped to the band actually visible between the copy column and the
+finder panel, gives this motion profile:
+
+| Source window | Motion (RMSE between samples) |
+| --- | --- |
+| 1–12 s | 15–69 — the pipetting sequence |
+| 13–19 s | 6.6–9.0 — holding still at the microscope |
+
+An earlier encode took 10–19.6 s, which is almost entirely the static half, and
+measured 7.90 — it played correctly but read as a still photograph. The current
+cut measures **30.35**. Seam: 7.34/255 first-frame vs last-frame, against 47.82
+for unrelated frames.
+
+`hero-lab-poster.jpg` is the loop's own first frame, so the video's fade-in has
+nothing to jump over. Re-extract it alongside any re-encode. `HeroVideo` picks the source by viewport in JS (`<source media>` is
 unreliable), serves the poster alone when the visitor prefers reduced motion or
 the browser reports a data-saver connection, and cross-fades the video in on
 `canplay` so there is no first-frame flash.
@@ -109,6 +123,21 @@ FC="[0:v]scale=1920:1080:flags=lanczos,fps=25,setsar=1,split[a][b];[b]reverse[r]
 ffmpeg -ss 11 -t 8 -i SOURCE.mov -filter_complex "$FC" -map "[v]" \
   -c:v libx264 -preset slow -crf 28 -pix_fmt yuv420p -profile:v high \
   -movflags +faststart -an public/media/hero-lab.mp4
+```
+
+Then re-cut the poster to match the loop's first frame (`-ss` = segment start +
+crossfade duration):
+
+```bash
+ffmpeg -ss 2.5 -i SOURCE.mov -frames:v 1 -vf "scale=1920:-1:flags=lanczos"   -q:v 5 public/media/hero-lab-poster.jpg
+```
+
+Before shipping a new cut, check it actually moves — a technically perfect loop
+of a static shot looks broken:
+
+```bash
+ffmpeg -i public/media/hero-lab.mp4 -vf "fps=2,crop=iw*0.28:ih:iw*0.36:0" /tmp/f%03d.jpg
+# then compare consecutive frames; below ~8 RMSE reads as a still image
 ```
 
 The overlay in `HeroVideo.tsx` is a five-layer stack, and the layer opacities are
