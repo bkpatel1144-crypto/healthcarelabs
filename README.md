@@ -87,14 +87,17 @@ into `public/media/`:
 
 | File | Size | Notes |
 | --- | --- | --- |
-| `hero-lab.mp4` | 423 KB | 1080p, desktop |
-| `hero-lab-720.mp4` | 167 KB | 720p, phones and tablets |
+| `hero-lab.mp4` | 680 KB | 1080p, desktop |
+| `hero-lab-720.mp4` | 292 KB | 720p, phones and tablets |
 | `hero-lab-poster.jpg` | 95 KB | poster, and the only asset under reduced motion |
 
-The clip loops by **crossfading its own tail back onto its head** (6.8 s, 1.2 s
-dissolve), so motion always runs forward. A ping-pong encode also loops
-seamlessly but plays the technician's hands backwards, which reads as broken.
-Measured seam: 2.75/255 RMSE first-frame vs last-frame — invisible. `HeroVideo` picks the source by viewport in JS (`<source media>` is
+The clip loops by **crossfading its own tail back onto its head** — 12.3 s with
+a 1.4 s dissolve, from 9.6 s of source slowed to 0.7×. Motion always runs
+forward: a ping-pong encode also loops seamlessly but plays the technician's
+hands backwards, which reads as broken. At 6.8 s the loop restarted often
+enough to feel repetitive, hence the longer, slower cut. Measured seam:
+10.97/255 RMSE first-frame vs last-frame, against 38.06 for unrelated frames —
+a soft dissolve rather than a cut. `HeroVideo` picks the source by viewport in JS (`<source media>` is
 unreliable), serves the poster alone when the visitor prefers reduced motion or
 the browser reports a data-saver connection, and cross-fades the video in on
 `canplay` so there is no first-frame flash.
@@ -194,6 +197,18 @@ bar cut a bright band across the hero; staying dark also means one text colour
 scheme throughout. `/admin` opens on a light background, so it starts in the
 capsule state.
 
+**The hero fills the viewport at every size.** `.hero-viewport` in `index.css`
+sets `min-height: 100vh` with a `100svh` override behind `@supports`, so mobile
+browser chrome does not make it jump; `min-height` rather than `height` lets it
+grow when content needs more room. On desktop the hero measures exactly the
+viewport (900px at 1440×900, 1080 at 1920×1080, 1440 at 2560×1440).
+
+Below `lg` the test finder moves out of the hero into its own band directly
+beneath it. Stacked under the copy it made the mobile hero ~1567px — roughly
+two screens. Split, both read as one screen each and nothing is lost. That band
+needs its own `overflow-hidden`: the finder's glow is an `-inset-10` absolute
+layer, and unclipped it widened the document by 8px at 768.
+
 **Header and hero run full-bleed.** A centred 1360 px shell left roughly 270 px
 of dead margin either side at 1920 px, which is what made the page read as a
 narrow template. Both now use `Container size="full"` with fluid padding
@@ -209,6 +224,10 @@ with a slim styled scrollbar (`.scroll-row` in `index.css`).
 summary and individual test in the live catalogue, ranks name matches above test
 matches, and routes straight to a result — rather than holding a decorative
 graphic.
+
+**The finder's input id comes from `useId`.** It renders twice — hero on
+desktop, its own band on mobile — so a hardcoded id appeared twice in the
+document, which silently broke `<label for>` association on the second copy.
 
 **localStorage never crashes the app.** `src/lib/storage.ts` falls back to an
 in-memory map on private-mode denial, quota errors or corrupt JSON, and

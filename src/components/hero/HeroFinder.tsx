@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useId, useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -53,6 +53,14 @@ export function HeroFinder() {
   const navigate = useNavigate();
   const reduced = usePrefersReducedMotion();
   const [query, setQuery] = useState('');
+  /*
+    The finder renders twice — once in the hero on desktop, once in its own
+    band below the hero on mobile — so a hardcoded id would appear twice in the
+    document. Duplicate ids are invalid and silently break `<label for>`
+    association, which would leave the search box unlabelled for screen
+    readers on whichever copy came second.
+  */
+  const inputId = useId();
 
   const trimmed = query.trim().toLowerCase();
 
@@ -112,7 +120,7 @@ export function HeroFinder() {
           </p>
 
           <form onSubmit={onSubmit} className="mt-5" role="search">
-            <label htmlFor="hero-finder" className="sr-only">
+            <label htmlFor={inputId} className="sr-only">
               Search health packages and tests
             </label>
             <div className="relative">
@@ -122,7 +130,7 @@ export function HeroFinder() {
                 aria-hidden="true"
               />
               <input
-                id="hero-finder"
+                id={inputId}
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}

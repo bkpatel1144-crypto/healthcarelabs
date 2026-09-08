@@ -68,6 +68,27 @@
 
 @layer components {
   /*
+    Full-viewport hero.
+
+    `min-height` rather than `height`, so a phone with a tall stack of hero
+    content grows past the fold instead of clipping it. `svh` is the small
+    viewport height — it excludes mobile browser chrome, so the hero does not
+    jump as the address bar hides. `vh` is the fallback for browsers without
+    it; declaration order matters, which is why this is hand-written CSS and
+    not two competing Tailwind min-h-* classes (their output order is not
+    guaranteed).
+  */
+  .hero-viewport {
+    min-height: 100vh;
+  }
+
+  @supports (min-height: 100svh) {
+    .hero-viewport {
+      min-height: 100svh;
+    }
+  }
+
+  /*
     Horizontally scrolling chip row. Used by the concern selector and the
     package filters — these lists are long enough that wrapping them costs
     five rows of vertical space on a phone, so they scroll on one line

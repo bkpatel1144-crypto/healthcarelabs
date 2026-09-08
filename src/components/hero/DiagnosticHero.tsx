@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/cn';
 import { Clock, Home, Phone, Star } from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { Container } from '@/components/common/Primitives';
@@ -44,13 +45,19 @@ export function DiagnosticHero() {
         };
 
   return (
+    <>
     <section
-      className="relative isolate overflow-hidden bg-navy-950"
+      className={cn(
+        'relative isolate flex items-center overflow-hidden bg-navy-950',
+        // Fills the screen at any size; the top padding clears the fixed header
+        // so the content centres in the space that is actually left.
+        'hero-viewport pt-[74px] lg:pt-[84px]',
+      )}
       aria-labelledby="hero-heading"
     >
       <HeroVideo />
 
-      <Container size="full" className="relative pb-8 pt-28 sm:pt-32 lg:pb-10 lg:pt-36">
+      <Container size="full" className="relative py-10 sm:py-12 lg:py-14">
         <div className="grid items-center gap-y-14 lg:grid-cols-12 lg:gap-x-16 xl:gap-x-24">
           {/* ---------- Copy ---------- */}
           <div className="lg:col-span-6 xl:col-span-6 2xl:col-span-5">
@@ -140,12 +147,37 @@ export function DiagnosticHero() {
             </motion.div>
           </div>
 
-          {/* ---------- Finder ---------- */}
-          <div className="lg:col-span-6 xl:col-span-5 xl:col-start-8 2xl:col-span-4 2xl:col-start-9">
+          {/*
+            Finder, desktop only. On a phone the copy alone already fills the
+            screen, so stacking a search panel under it made the hero roughly
+            twice the viewport. It moves to its own band directly below instead
+            — nothing is lost, and both read as full-screen.
+          */}
+          <div className="hidden lg:col-span-6 lg:block xl:col-span-5 xl:col-start-8 2xl:col-span-4 2xl:col-start-9">
             <HeroFinder />
           </div>
         </div>
       </Container>
     </section>
+
+    {/* ---------- Finder, below the hero on small screens ---------- */}
+    {/*
+      overflow-hidden matters here: the finder's own glow is an `-inset-10`
+      absolute layer, so without clipping its 40px overhang widened the
+      document by 8px at 768. The hero clips it; this band has to as well.
+    */}
+    <section
+      aria-label="Find your test"
+      className="relative overflow-hidden bg-navy-900 py-12 sm:py-14 lg:hidden"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-grid-dark [background-size:64px_64px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_0%,#000,transparent_78%)]"
+      />
+      <Container className="relative">
+        <HeroFinder />
+      </Container>
+    </section>
+    </>
   );
 }

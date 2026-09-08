@@ -78,10 +78,16 @@ export default function AdminSettings() {
               <Upload className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
               Import JSON
             </Button>
+            {/*
+              sr-only keeps this reachable by assistive tech rather than hiding
+              it outright, so it needs its own name — the visible trigger is a
+              separate button and does not label it.
+            */}
             <input
               ref={fileInput}
               type="file"
               accept="application/json,.json"
+              aria-label="Choose a JSON file to import"
               className="sr-only"
               onChange={(e) => {
                 const file = e.target.files?.[0];
