@@ -43,7 +43,7 @@ export default {
         editorial: '-0.035em',
       },
       maxWidth: {
-        shell: '1360px',
+        shell: '1560px',
       },
       boxShadow: {
         header: '0 1px 0 rgba(16,24,40,0.06), 0 12px 32px -18px rgba(16,24,40,0.28)',

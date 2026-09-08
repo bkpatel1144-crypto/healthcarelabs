@@ -48,6 +48,7 @@ const COLLECTIONS = [
     exportName: 'LAB_PHOTOS',
     order: [
       'reception',
+      'brand-signage',
       'biochemistry-department',
       'chemistry-analyser-operator',
       'hba1c-analyser',
@@ -60,6 +61,11 @@ const COLLECTIONS = [
         alt: 'Reception at the Healthcare Labs centre, with the immunology department behind it.',
         caption: 'Reception at the Utran centre',
         tag: 'Front desk',
+      },
+      'brand-signage': {
+        alt: 'The illuminated Healthcare Labs mark on the wall at the Utran centre.',
+        caption: 'The mark at the Utran centre',
+        tag: 'Centre',
       },
       'biochemistry-department': {
         alt: 'Technicians working across analysers in the biochemistry department at Healthcare Labs.',

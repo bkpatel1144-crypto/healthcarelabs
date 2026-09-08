@@ -59,22 +59,36 @@ export function LabFacility() {
               sizes="(min-width: 1024px) 88vw, 92vw"
               priority
               showTag
-              className="aspect-[16/10] sm:aspect-[21/9]"
+              className="aspect-[16/10] sm:aspect-[2/1] lg:aspect-[5/2]"
             />
 
+            {/*
+              Four columns with the last tile spanning two: with seven remaining
+              photos a three-column grid left one stranded alone on a third row,
+              which reads as a mistake rather than as a layout.
+            */}
             {rest.length > 0 && (
-              <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {rest.map((photo, i) => (
-                  <Reveal as="li" key={photo.id} delay={i % 3}>
-                    <PhotoTile
-                      photo={photo}
-                      onOpen={() => setLightbox(i + 1)}
-                      sizes="(min-width: 1024px) 29vw, (min-width: 640px) 46vw, 92vw"
-                      showTag
-                      className="aspect-[4/3]"
-                    />
-                  </Reveal>
-                ))}
+              <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {rest.map((photo, i) => {
+                  const wide = i === rest.length - 1 && rest.length % 4 !== 0;
+                  return (
+                    <Reveal as="li" key={photo.id} delay={i % 4} className={cn(wide && 'lg:col-span-2')}>
+                      <PhotoTile
+                        photo={photo}
+                        onOpen={() => setLightbox(i + 1)}
+                        sizes={
+                          wide
+                            ? '(min-width: 1024px) 46vw, (min-width: 640px) 46vw, 92vw'
+                            : '(min-width: 1024px) 23vw, (min-width: 640px) 46vw, 92vw'
+                        }
+                        showTag
+                        // A two-column tile needs a proportionally wider ratio,
+                        // or it stands twice as tall as the tiles beside it.
+                        className={cn('aspect-[4/3]', wide && 'lg:aspect-[8/3]')}
+                      />
+                    </Reveal>
+                  );
+                })}
               </ul>
             )}
           </div>

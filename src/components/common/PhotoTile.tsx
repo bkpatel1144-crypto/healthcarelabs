@@ -17,6 +17,7 @@ export function PhotoTile({
   className,
   priority = false,
   showTag = false,
+  showCaption = true,
 }: {
   photo: SitePhoto;
   onOpen: () => void;
@@ -24,6 +25,8 @@ export function PhotoTile({
   className?: string;
   priority?: boolean;
   showTag?: boolean;
+  /** Off where a <figcaption> already carries the caption below the tile. */
+  showCaption?: boolean;
 }) {
   return (
     <button
@@ -54,10 +57,12 @@ export function PhotoTile({
       </picture>
 
       {/* Scrim so the chip and the expand affordance stay legible on any photo. */}
-      <span
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-navy-950/80 via-navy-950/25 to-transparent"
-      />
+      {(showCaption || showTag) && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-navy-950/80 via-navy-950/25 to-transparent"
+        />
+      )}
 
       {showTag && photo.tag && (
         <span className="absolute left-3 top-3 rounded-md bg-navy-950/70 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-200 ring-1 ring-inset ring-white/15 backdrop-blur-sm">
@@ -65,7 +70,7 @@ export function PhotoTile({
         </span>
       )}
 
-      {photo.caption && (
+      {showCaption && photo.caption && (
         <span className="absolute inset-x-0 bottom-0 px-4 pb-3.5 text-left text-[13px] font-semibold leading-snug text-white">
           {photo.caption}
         </span>

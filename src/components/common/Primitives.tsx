@@ -6,16 +6,42 @@ import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 /* ------------------------------------------------------------------ Container */
 
+/**
+ * Page container.
+ *
+ * `full` is the default: edge to edge with only fluid padding. A centred
+ * 1360px column left ~270px of dead margin either side at 1920px and made the
+ * whole page read as a narrow template — and mixing the two meant sections
+ * below the hero were visibly indented relative to it.
+ *
+ * Going full-bleed is safe because every text block inside already constrains
+ * itself with its own `max-w-*`, so line length stays readable even at 2560px.
+ * `shell` remains for anything that genuinely wants a narrow measure.
+ */
 export function Container({
   children,
   className,
   as: As = 'div',
+  size = 'full',
 }: {
   children: ReactNode;
   className?: string;
   as?: 'div' | 'section' | 'header' | 'footer' | 'nav' | 'main';
+  size?: 'shell' | 'full';
 }) {
-  return <As className={cn('mx-auto w-full max-w-shell px-5 sm:px-8 lg:px-12', className)}>{children}</As>;
+  return (
+    <As
+      className={cn(
+        'mx-auto w-full',
+        size === 'full'
+          ? 'max-w-none px-5 sm:px-8 lg:px-[clamp(2.5rem,4.5vw,5.5rem)]'
+          : 'max-w-shell px-5 sm:px-8 lg:px-12',
+        className,
+      )}
+    >
+      {children}
+    </As>
+  );
 }
 
 /* --------------------------------------------------------------------- Eyebrow */

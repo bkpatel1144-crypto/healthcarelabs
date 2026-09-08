@@ -50,10 +50,10 @@ export function DiagnosticHero() {
     >
       <HeroVideo />
 
-      <Container className="relative pb-8 pt-28 sm:pt-32 lg:pb-10 lg:pt-36">
-        <div className="grid items-center gap-y-14 lg:grid-cols-12 lg:gap-x-14">
+      <Container size="full" className="relative pb-8 pt-28 sm:pt-32 lg:pb-10 lg:pt-36">
+        <div className="grid items-center gap-y-14 lg:grid-cols-12 lg:gap-x-16 xl:gap-x-24">
           {/* ---------- Copy ---------- */}
-          <div className="lg:col-span-6 xl:col-span-6">
+          <div className="lg:col-span-6 xl:col-span-6 2xl:col-span-5">
             <motion.div {...rise(0)} className="flex flex-wrap items-center gap-2.5">
               <p className="inline-flex items-center gap-2.5 rounded-full bg-white/[0.06] px-3.5 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-brand-300 ring-1 ring-inset ring-white/10">
                 <Star className="h-3.5 w-3.5 fill-brand-400 text-brand-400" strokeWidth={0} aria-hidden="true" />
@@ -141,7 +141,7 @@ export function DiagnosticHero() {
           </div>
 
           {/* ---------- Finder ---------- */}
-          <div className="lg:col-span-6 xl:col-span-5 xl:col-start-8">
+          <div className="lg:col-span-6 xl:col-span-5 xl:col-start-8 2xl:col-span-4 2xl:col-start-9">
             <HeroFinder />
           </div>
         </div>

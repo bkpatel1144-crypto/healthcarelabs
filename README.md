@@ -87,12 +87,14 @@ into `public/media/`:
 
 | File | Size | Notes |
 | --- | --- | --- |
-| `hero-lab.mp4` | 917 KB | 1080p, desktop |
-| `hero-lab-720.mp4` | 368 KB | 720p, phones and tablets |
+| `hero-lab.mp4` | 423 KB | 1080p, desktop |
+| `hero-lab-720.mp4` | 167 KB | 720p, phones and tablets |
 | `hero-lab-poster.jpg` | 95 KB | poster, and the only asset under reduced motion |
 
-The clip is a **forward + reversed ping-pong encode**, so it loops with no
-visible seam. `HeroVideo` picks the source by viewport in JS (`<source media>` is
+The clip loops by **crossfading its own tail back onto its head** (6.8 s, 1.2 s
+dissolve), so motion always runs forward. A ping-pong encode also loops
+seamlessly but plays the technician's hands backwards, which reads as broken.
+Measured seam: 2.75/255 RMSE first-frame vs last-frame — invisible. `HeroVideo` picks the source by viewport in JS (`<source media>` is
 unreliable), serves the poster alone when the visitor prefers reduced motion or
 the browser reports a data-saver connection, and cross-fades the video in on
 `canplay` so there is no first-frame flash.
@@ -132,6 +134,7 @@ the matching folder and run `npm run images`.
 | Filename | Slot / department chip |
 | --- | --- |
 | `reception.jpg` | Lead image — Front desk |
+| `brand-signage.jpg` | Centre |
 | `biochemistry-department.jpg` | Biochemistry |
 | `chemistry-analyser-operator.jpg` | Biochemistry |
 | `chemistry-analyser.jpg` | Biochemistry |
@@ -152,6 +155,11 @@ its own cache with no manual renaming.
 
 Originals in `assets-src/` are **not** deployed — only the generated files under
 `public/`.
+
+Eleven photographs are in place: eight of the facility (reception, the
+illuminated mark, the biochemistry floor, the AU480 with and without an
+operator, the Bio-Rad D-10, the hematology bench and the Access 2) and three
+from the NABL ceremony.
 
 Both sections degrade in both directions. `LabFacility` ("Inside the
 laboratory", on the homepage) always renders the departments and the named
@@ -185,6 +193,13 @@ the top edge, contracting into a floating navy-glass capsule on scroll. A white
 bar cut a bright band across the hero; staying dark also means one text colour
 scheme throughout. `/admin` opens on a light background, so it starts in the
 capsule state.
+
+**Header and hero run full-bleed.** A centred 1360 px shell left roughly 270 px
+of dead margin either side at 1920 px, which is what made the page read as a
+narrow template. Both now use `Container size="full"` with fluid padding
+(`clamp(2.5rem, 4.5vw, 5.5rem)`), and the rest of the site's shell widened to
+1560 px. Text blocks keep their own `max-w-*`, so line length stays readable on
+an ultrawide.
 
 **Long chip rows scroll, they do not wrap.** The 12 health concerns wrapped onto
 five rows on a phone (~290 px of vertical space); they now sit on one 57 px row

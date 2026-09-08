@@ -101,10 +101,10 @@ export function Header() {
         >
           <div
             className={cn(
-              'mx-auto flex max-w-shell items-center justify-between gap-6 transition-all duration-400 ease-premium',
+              'mx-auto flex w-full items-center justify-between gap-6 transition-all duration-400 ease-premium',
               floating
                 ? 'h-[62px] rounded-full bg-navy-900/75 px-4 shadow-[0_18px_44px_-16px_rgba(3,10,32,0.75)] ring-1 ring-inset ring-white/12 backdrop-blur-2xl backdrop-saturate-150 sm:px-5 lg:h-[68px] lg:px-6'
-                : 'h-[74px] px-5 sm:px-8 lg:h-[84px] lg:px-12',
+                : 'h-[74px] px-5 sm:px-8 lg:h-[84px] lg:px-[clamp(2.5rem,4.5vw,5.5rem)]',
             )}
           >
             <Link

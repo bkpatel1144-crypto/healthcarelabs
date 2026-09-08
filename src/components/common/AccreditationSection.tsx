@@ -118,6 +118,7 @@ export function AccreditationSection() {
                   onOpen={() => setLightbox(0)}
                   sizes="(min-width: 1024px) 56vw, 92vw"
                   priority
+                  showCaption={false}
                   className="aspect-[4/3] w-full sm:aspect-[16/10]"
                 />
                 <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13.5px]">
