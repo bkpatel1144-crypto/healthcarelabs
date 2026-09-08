@@ -1,0 +1,10 @@
+# Healthcare Labs — https://healthcare-labs.com
+
+User-agent: *
+Allow: /
+
+# The admin area is a client-side content manager, not public content.
+Disallow: /admin
+Disallow: /admin/
+
+Sitemap: https://healthcare-labs.com/sitemap.xml

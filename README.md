@@ -28,6 +28,8 @@ npm run lint       # typecheck only (tsc --noEmit)
 | Offers (derived from package pricing) | `src/data/offers.ts` |
 | Blog articles | `src/data/blogs.ts` |
 | Concern taxonomy used by the filters | `src/data/healthConcerns.ts` |
+| Departments and installed analysers | `src/data/labFacility.ts` |
+| Accreditation record and ceremony details | `src/data/accreditation.ts` |
 | Testimonials | `src/data/testimonials.ts` |
 | Colour, type scale, shadows | `tailwind.config.js` |
 
@@ -49,6 +51,18 @@ supplied by the lab:
   all read off the certificate and the ceremony backdrop.
 - **Vision / mission / quality statements**, quoted verbatim and labelled as the
   organisation's own words.
+- **Departments and installed analysers** — Beckman Coulter AU480 and Access 2,
+  Bio-Rad D-10, Mindray BC-5130, across Biochemistry, Hematology and Immunology
+  — all read off the equipment and signage in the facility photographs.
+
+`src/data/labFacility.ts` states instrument *capability* only. It deliberately
+does not claim which analyser runs which package: routing is the lab's decision
+and is not something a photograph can evidence.
+
+**One open question:** the facility signage reads "24 HOUR SERVICE", which
+contradicts the published hours (7 AM – 10 PM, and 7 AM – 2 PM on Sunday). The
+site publishes the hours and makes no 24-hour claim. Confirm which is correct
+before changing either.
 
 Deliberately **not** published, because it could not be evidenced: patient
 counts, accuracy percentages, turnaround guarantees, and attributed patient
@@ -100,29 +114,49 @@ contrast over the copy column is 18.4:1 for the headline and 12.4:1 for the lede
 
 ---
 
-## Accreditation photographs
+## Photographs
 
-The ceremony photographs are driven by a build-time image pipeline.
+Two photo collections are driven by one build-time pipeline. Drop originals into
+the matching folder and run `npm run images`.
 
-**To add or replace them:**
+### `assets-src/accreditation/` — the NABL ceremony
 
-1. Drop the full-size originals into `assets-src/accreditation/` using these
-   exact names (they select the caption and the layout slot):
-   - `certificate-handover.jpg` — the lead image, certificate being handed over
-   - `stage-wide.jpg` — wide shot of the stage
-   - `group-photo.jpg` — group photograph
-2. Run `npm run images`.
+| Filename | Slot |
+| --- | --- |
+| `certificate-handover.jpg` | Lead image — certificate being handed over |
+| `stage-wide.jpg` | Wide shot of the stage |
+| `group-photo.jpg` | Group photograph |
 
-That generates **AVIF + WebP + JPEG at 640/1024/1600 px** into
-`public/media/accreditation/`, and rewrites `src/data/accreditationPhotos.ts`
-with each photo's real intrinsic dimensions so the markup reserves exact space
-and never shifts layout while loading. Filenames are content-hashed, so
-replacing a photo busts its own cache with no manual renaming.
+### `assets-src/lab/` — the facility
+
+| Filename | Slot / department chip |
+| --- | --- |
+| `reception.jpg` | Lead image — Front desk |
+| `biochemistry-department.jpg` | Biochemistry |
+| `chemistry-analyser-operator.jpg` | Biochemistry |
+| `chemistry-analyser.jpg` | Biochemistry |
+| `hba1c-analyser.jpg` | Biochemistry |
+| `hematology-department.jpg` | Hematology |
+| `immunoassay-analyser.jpg` | Immunology |
+
+**Filenames select the caption and the department chip** — the tables live in
+`scripts/optimise-images.mjs`. Any other filename still works but falls back to
+a generic caption.
+
+`npm run images` generates **AVIF + WebP + JPEG at 640/1024/1600 px** into
+`public/media/<collection>/`, and rewrites that collection's manifest
+(`src/data/accreditationPhotos.ts`, `src/data/labPhotos.ts`) with each photo's
+real intrinsic dimensions so the markup reserves exact space and never shifts
+layout while loading. Filenames are content-hashed, so replacing a photo busts
+its own cache with no manual renaming.
 
 Originals in `assets-src/` are **not** deployed — only the generated files under
 `public/`.
 
-The `AccreditationSection` degrades in both directions: the certificate record
+Both sections degrade in both directions. `LabFacility` ("Inside the
+laboratory", on the homepage) always renders the departments and the named
+analysers from `src/data/labFacility.ts`; the photo grid appears above them once
+the manifest has entries. `AccreditationSection` behaves the same way: the certificate record
 always renders (those facts are known), and the photo column appears only once
 the manifest has entries. With no photos the record lays out as a four-up strip
 rather than leaving an empty half. Photos open in a keyboard-navigable lightbox
@@ -214,6 +248,8 @@ Three suite assertions fail on an ambiguous selector, not on app behaviour:
 `/contact-us` renders two forms that both have a `name` field, so the harness
 fills the wrong one. The home-collection flow is verified separately on
 `/health-package`, where it is the only form.
-#   h e a l t h c a r e l a b s  
- #   h e a l t h c a r e l a b s  
+#   h e a l t h c a r e l a b s 
+ 
+ #   h e a l t h c a r e l a b s 
+ 
  
