@@ -1,0 +1,6 @@
+OpenDyslexic is licensed under the SIL Open Font License, Version 1.1.
+https://opendyslexic.org/  |  https://scripts.sil.org/OFL
+
+Bundled here (rather than loaded from a CDN) so the accessibility panel's
+"Dyslexia Font" option works with no third-party request and no dependency on
+an external host staying up.

@@ -96,7 +96,7 @@ export function PackageFilters({
             options={SORTS.map((s) => ({ value: s.value, label: s.label }))}
             size="lg"
             ariaLabel="Sort packages"
-            className="flex-1 lg:w-56 lg:flex-none"
+            className="min-w-0 flex-1 lg:w-56 lg:flex-none"
           />
         </div>
       </div>
@@ -142,7 +142,7 @@ export function PackageFilters({
           Home collection available
         </label>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-[13px] font-semibold text-ink-soft">Budget</span>
           {PRICE_BANDS.map((b) => (
             <button

@@ -233,6 +233,56 @@ on the certificate number.
 
 ---
 
+## Accessibility panel
+
+A launcher tab on the left edge (`A11Y`) opens a panel with four controls.
+Preferences persist per browser under `healthcare_labs_a11y` and are applied as
+data-attributes and an inline `zoom` on `<html>`, so no component needs to know
+a preference exists — the styling lives in `index.css`.
+
+| Control | Implementation |
+| --- | --- |
+| Text size | `zoom` on `<html>`, 5 steps from 90% to 140% |
+| High contrast | `data-a11y-contrast` — solid grounds, full-strength text, real borders, underlined links, decorative layers hidden |
+| Dyslexia font | `data-a11y-dyslexic` — self-hosted OpenDyslexic |
+| Listen to page | Web Speech API over `<main>`, chrome stripped |
+
+**Text size uses `zoom`, not a root font-size.** This design sets type in px
+throughout (`text-[15px]` and friends), so a root font-size change would move
+nothing. `zoom` reflows properly, unlike a transform, which would break the
+fixed header and every sticky element.
+
+**OpenDyslexic is bundled, not loaded from a CDN** (`public/fonts/`, SIL OFL —
+licence included). Declaring `@font-face` costs nothing until something uses
+the family, so the ~230 KB only downloads for visitors who switch it on.
+
+**Read-aloud hides itself** where the Web Speech API is absent, and cancels on
+navigation — hearing the previous page read out after clicking a link is
+disorienting.
+
+### Two layout rules this feature forced
+
+Both are in `index.css` and both prevent a whole class of bug, not just this one:
+
+```css
+:where(h1, h2, h3, h4, h5, h6, p, li, dt, dd, figcaption, blockquote) {
+  overflow-wrap: break-word;
+}
+:where(.grid) > * { min-width: 0; }
+```
+
+At 140% zoom on a 390px phone the effective viewport is ~279 CSS px, and a
+heading word set in OpenDyslexic at 30px is wider than the screen. Grid and
+flex children default to `min-width: auto`, so they refuse to shrink below
+their longest word and widen the page instead of wrapping. Verified: zero
+horizontal overflow at the heaviest combination (140% + high contrast +
+OpenDyslexic) across 5 routes x 5 widths.
+
+A `vw`-based cap was tried first and does not work — `vw` resolves against the
+unzoomed viewport, so it never engages.
+
+---
+
 ## Notable implementation choices
 
 **No native `<select>` anywhere.** A native select's *open* menu is drawn by the

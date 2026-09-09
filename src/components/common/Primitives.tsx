@@ -97,6 +97,9 @@ export function SectionHeading({
   return (
     <div
       className={cn(
+        // min-w-0: as a grid or flex child this would otherwise refuse to
+        // shrink below its longest word, pushing the page wider at high zoom.
+        'min-w-0',
         align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl',
         className,
       )}

@@ -14,6 +14,7 @@ export const STORAGE_KEYS = {
   appointments: 'healthcare_labs_appointments',
   contacts: 'healthcare_labs_contacts',
   preferences: 'healthcare_labs_preferences',
+  accessibility: 'healthcare_labs_a11y',
   seedVersion: 'healthcare_labs_seed_version',
 } as const;
 

@@ -41,6 +41,29 @@
     text-wrap: balance;
   }
 
+  /*
+    Long words must break rather than widen the page. This only bites at very
+    small effective viewports — the accessibility panel's 140% text zoom on a
+    390px phone leaves ~279 CSS px, and at that size a heading word set in
+    OpenDyslexic at 30px is wider than the screen.
+  */
+  :where(h1, h2, h3, h4, h5, h6, p, li, dt, dd, figcaption, blockquote) {
+    overflow-wrap: break-word;
+  }
+
+  /*
+    Grid and flex children default to `min-width: auto`, which means they
+    refuse to shrink below their own min-content width — one long heading word
+    then widens the whole page rather than wrapping. Reset it for every grid
+    item so the break above can actually take effect.
+
+    Written with `:where()` so it carries zero specificity: any component that
+    genuinely wants min-content sizing overrides it with a plain class.
+  */
+  :where(.grid) > * {
+    min-width: 0;
+  }
+
   p {
     text-wrap: pretty;
   }
@@ -153,4 +176,133 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* =====================================================================
+   Accessibility panel modes
+
+   Driven by data-attributes the panel sets on <html>, so no component has
+   to know a preference exists.
+   ===================================================================== */
+
+/*
+  OpenDyslexic, self-hosted (SIL OFL — see public/fonts/LICENSE-OpenDyslexic.txt).
+  Declaring @font-face costs nothing until something actually uses the family,
+  so the 230 KB only downloads for visitors who switch the option on.
+*/
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('/fonts/opendyslexic-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('/fonts/opendyslexic-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+html[data-a11y-dyslexic],
+html[data-a11y-dyslexic] body {
+  font-family: 'OpenDyslexic', 'Plus Jakarta Sans', Inter, system-ui, sans-serif !important;
+}
+
+/*
+  OpenDyslexic is weighted at the bottom of each glyph and runs wider than the
+  brand face, so tight display tracking and heavy weights fight it. Loosen both
+  wherever the design had squeezed them.
+*/
+html[data-a11y-dyslexic] * {
+  letter-spacing: normal !important;
+  font-family: inherit !important;
+}
+
+html[data-a11y-dyslexic] h1,
+html[data-a11y-dyslexic] h2,
+html[data-a11y-dyslexic] h3 {
+  line-height: 1.25 !important;
+}
+
+/*
+  High contrast.
+
+  The design leans on low-opacity layers, translucent rings and mid-greys for
+  hierarchy. None of that survives a contrast requirement, so this mode trades
+  the atmosphere for legibility: solid grounds, full-strength text, visible
+  borders, and underlined links.
+*/
+html[data-a11y-contrast] body {
+  background: #ffffff;
+}
+
+html[data-a11y-contrast] .bg-navy-900,
+html[data-a11y-contrast] .bg-navy-950,
+html[data-a11y-contrast] section[class*='bg-navy'] {
+  background: #00142e !important;
+}
+
+/* Mid-greys go to full strength in both directions. */
+html[data-a11y-contrast] .text-ink-muted,
+html[data-a11y-contrast] .text-ink-soft {
+  color: #101828 !important;
+}
+
+html[data-a11y-contrast] .text-slate-300,
+html[data-a11y-contrast] .text-slate-400,
+html[data-a11y-contrast] .text-slate-500,
+html[data-a11y-contrast] .text-slate-600 {
+  color: #ffffff !important;
+}
+
+html[data-a11y-contrast] .text-brand-300,
+html[data-a11y-contrast] .text-brand-400 {
+  color: #7fdcff !important;
+}
+
+html[data-a11y-contrast] .text-brand-500,
+html[data-a11y-contrast] .text-brand-600 {
+  color: #0b5f86 !important;
+}
+
+/* Hairlines and translucent rings become real borders. */
+html[data-a11y-contrast] .border-ink-line {
+  border-color: #101828 !important;
+}
+
+html[data-a11y-contrast] [class*='ring-white'],
+html[data-a11y-contrast] [class*='border-white'] {
+  --tw-ring-color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+/* Links must be identifiable without relying on colour alone. */
+html[data-a11y-contrast] main a:not([class*='rounded-full']):not([class*='bg-']) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+html[data-a11y-contrast] :focus-visible {
+  outline: 3px solid #ffbf00 !important;
+  outline-offset: 3px !important;
+}
+
+/*
+  Decorative atmosphere is noise once contrast matters: the grid overlays, the
+  radial blooms and the video's colour grade all go.
+*/
+html[data-a11y-contrast] [class*='bg-grid-dark'],
+html[data-a11y-contrast] [class*='bg-grid-light'],
+html[data-a11y-contrast] [class*='mix-blend-color'],
+html[data-a11y-contrast] [class*='radial-gradient'] {
+  display: none !important;
+}
+
+/* Keep the hero copy readable once the grade is gone. */
+html[data-a11y-contrast] video,
+html[data-a11y-contrast] img[src*='hero-lab-poster'] {
+  filter: brightness(0.42) saturate(0.55);
 }

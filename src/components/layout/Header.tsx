@@ -101,7 +101,7 @@ export function Header() {
         >
           <div
             className={cn(
-              'mx-auto flex w-full items-center justify-between gap-6 transition-all duration-400 ease-premium',
+              'mx-auto flex w-full items-center justify-between gap-3 transition-all duration-400 ease-premium sm:gap-6',
               floating
                 ? 'h-[62px] rounded-full bg-navy-900/75 px-4 shadow-[0_18px_44px_-16px_rgba(3,10,32,0.75)] ring-1 ring-inset ring-white/12 backdrop-blur-2xl backdrop-saturate-150 sm:px-5 lg:h-[68px] lg:px-6'
                 : 'h-[74px] px-5 sm:px-8 lg:h-[84px] lg:px-[clamp(2.5rem,4.5vw,5.5rem)]',
@@ -109,7 +109,7 @@ export function Header() {
           >
             <Link
               to="/"
-              className="shrink-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
+              className="min-w-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
               aria-label={`${SITE_CONFIG.brandName} — home`}
             >
               {/* Light variant: the bar is dark in both the resting and floating states. */}
@@ -118,7 +118,18 @@ export function Header() {
                 alt={SITE_CONFIG.brandName}
                 width={1400}
                 height={223}
-                className="h-8 w-auto lg:h-9"
+                /*
+                  The logo is 1400x223, so at h-8 it wants ~200px. At the
+                  accessibility panel's 140% text zoom the effective viewport is
+                  only ~279 CSS px, and logo + trigger + gaps + padding pushed
+                  the fixed bar past the screen edge.
+
+                  `max-w-full` plus a shrinkable parent fixes it where a `vw`
+                  cap could not: `vw` resolves against the unzoomed viewport, so
+                  it never engaged. `object-contain` keeps the aspect ratio while
+                  the box narrows.
+                */
+                className="h-8 w-auto max-w-full object-contain lg:h-9"
                 fetchPriority="high"
               />
             </Link>

@@ -38,7 +38,7 @@ export function PackageCard({
         className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 rounded-t-xl bg-gradient-to-r from-brand-500 to-brand-400 transition-transform duration-400 ease-premium group-hover:scale-x-100"
       />
 
-      <div className="flex flex-1 flex-col p-6 sm:p-7">
+      <div className="flex min-w-0 flex-1 flex-col p-6 sm:p-7">
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-wrap gap-2">
             {isFeature && <Badge tone="brand">Popular</Badge>}

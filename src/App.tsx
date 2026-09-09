@@ -7,6 +7,7 @@ import {
   RouteAnnouncer,
   ScrollManager,
 } from '@/components/layout/SiteChrome';
+import { AccessibilityWidget } from '@/components/a11y/AccessibilityWidget';
 import { ContentProvider } from '@/store/content';
 import Home from '@/pages/Home';
 
@@ -63,6 +64,7 @@ function SiteLayout() {
       </main>
       <Footer />
       <FloatingActions />
+      <AccessibilityWidget />
     </div>
   );
 }
@@ -75,6 +77,7 @@ function AdminLayout() {
       <Suspense fallback={<RouteFallback />}>
         <Outlet />
       </Suspense>
+      <AccessibilityWidget />
     </div>
   );
 }
