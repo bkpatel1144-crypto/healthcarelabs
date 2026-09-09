@@ -63,7 +63,7 @@ export default function AdminTestimonials() {
       <AdminToolbar query={query} onQuery={setQuery} placeholder="Search testimonials…" />
 
       {rows.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-ink-line bg-white px-6 py-16 text-center">
+        <div className="rounded-3xl border border-dashed border-brand-100 bg-white px-6 py-16 text-center">
           <p className="text-[15px] font-semibold text-ink">No testimonials published.</p>
           <p className="mx-auto mt-2 max-w-md text-[14px] leading-relaxed text-ink-muted">
             The homepage is currently showing the laboratory’s vision, mission and quality
@@ -75,7 +75,7 @@ export default function AdminTestimonials() {
           {rows.map((t) => (
             <li
               key={t.id}
-              className="flex flex-col rounded-xl border border-ink-line bg-white p-6"
+              className="flex flex-col rounded-3xl bg-white shadow-soft ring-1 ring-brand-50 p-6"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex gap-0.5" aria-label={`${t.rating} out of 5`}>

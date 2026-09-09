@@ -210,7 +210,7 @@ export function AdminModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative my-auto w-full max-w-2xl rounded-2xl border border-ink-line bg-white shadow-2xl"
+        className="relative my-auto w-full max-w-2xl rounded-3xl bg-white shadow-[0_40px_90px_-30px_rgba(11,32,88,0.5)] ring-1 ring-brand-100"
       >
         <div className="border-b border-ink-line px-7 py-5">
           <h2 className="text-[19px] font-bold tracking-[-0.02em] text-ink">{title}</h2>
@@ -271,7 +271,7 @@ export function useConfirm() {
 
 export function AdminEmpty({ message }: { message: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-ink-line bg-white px-6 py-16 text-center">
+    <div className="rounded-3xl border border-dashed border-brand-100 bg-white px-6 py-16 text-center">
       <p className="text-[15px] text-ink-muted">{message}</p>
     </div>
   );

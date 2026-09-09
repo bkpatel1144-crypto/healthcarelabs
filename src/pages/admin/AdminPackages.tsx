@@ -80,7 +80,7 @@ export default function AdminPackages() {
       {rows.length === 0 ? (
         <AdminEmpty message="No packages match that search." />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-ink-line bg-white">
+        <div className="overflow-x-auto rounded-3xl bg-white shadow-soft ring-1 ring-brand-50">
           <table className="w-full min-w-[760px] text-left">
             <caption className="sr-only">Health packages</caption>
             <thead>

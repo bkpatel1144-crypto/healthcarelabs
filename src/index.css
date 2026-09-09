@@ -12,7 +12,14 @@
 
   @media (min-width: 1024px) {
     :root {
-      --header-h: 84px;
+      --header-h: 76px;
+    }
+  }
+
+  /* The utility strip adds 40px at rest, and only from xl where it renders. */
+  @media (min-width: 1280px) {
+    :root {
+      --header-h: 116px;
     }
   }
 

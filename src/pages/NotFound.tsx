@@ -13,7 +13,7 @@ export default function NotFound() {
   });
 
   return (
-    <section className="relative flex min-h-[calc(100vh-84px)] items-center overflow-hidden bg-white pt-[74px] lg:pt-[84px]">
+    <section className="relative flex min-h-[calc(100vh-84px)] items-center overflow-hidden bg-white pt-[74px] lg:pt-[76px] xl:pt-[116px]">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(150deg,#FFFFFF_0%,#F4F8FF_50%,#E9F2FF_100%)]" />
         <div className="absolute inset-0 bg-mesh-hero opacity-70" />

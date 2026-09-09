@@ -34,7 +34,7 @@ export function PageHeader({
     colour mesh as the hero so the pages feel continuous with it.
   */
   return (
-    <section className="relative overflow-hidden bg-white pt-[74px] lg:pt-[84px]">
+    <section className="relative overflow-hidden bg-white pt-[74px] lg:pt-[76px] xl:pt-[116px]">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(175deg,#FFFFFF_0%,#F4F8FF_60%,#E9F2FF_100%)]" />
         <div className="absolute inset-0 bg-mesh-hero opacity-70" />

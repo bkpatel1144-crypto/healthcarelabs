@@ -23,7 +23,13 @@ import { cn } from '@/lib/cn';
 type Variant = 'dark' | 'light' | 'compact';
 
 export function AccreditationBadge({
-  variant = 'dark',
+  /*
+    Defaults to the light treatment. It defaulted to 'dark' while the site was
+    navy; once the footer went light a bare <AccreditationBadge /> there
+    rendered white text on a white card. The light ground is now the common
+    case, so the default should be the safe one.
+  */
+  variant = 'light',
   className,
 }: {
   variant?: Variant;

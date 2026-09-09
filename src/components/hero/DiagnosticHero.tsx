@@ -35,7 +35,7 @@ export function DiagnosticHero() {
 
   return (
     <section
-      className="relative isolate overflow-hidden bg-white pt-[74px] lg:pt-[84px]"
+      className="relative isolate overflow-hidden bg-white pt-[74px] lg:pt-[76px] xl:pt-[116px]"
       aria-labelledby="hero-heading"
     >
       {/* ---------- Light atmosphere: colour mesh, not a dark scrim ---------- */}

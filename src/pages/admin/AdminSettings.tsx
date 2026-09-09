@@ -61,7 +61,7 @@ export default function AdminSettings() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* ---- Data management ---- */}
-        <section className="rounded-xl border border-ink-line bg-white p-6 sm:p-7">
+        <section className="rounded-3xl bg-white shadow-soft ring-1 ring-brand-50 p-6 sm:p-7">
           <h2 className="text-[17px] font-bold tracking-[-0.02em] text-ink">Data</h2>
           <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
             Everything lives in this browser. Export to move it to another machine, or import a file
@@ -132,7 +132,7 @@ export default function AdminSettings() {
 
         {/* ---- Preferences + config ---- */}
         <div className="space-y-6">
-          <section className="rounded-xl border border-ink-line bg-white p-6 sm:p-7">
+          <section className="rounded-3xl bg-white shadow-soft ring-1 ring-brand-50 p-6 sm:p-7">
             <h2 className="text-[17px] font-bold tracking-[-0.02em] text-ink">Display</h2>
             <label className="mt-5 flex cursor-pointer items-start gap-3 text-[14.5px] text-ink">
               <input
@@ -158,7 +158,7 @@ export default function AdminSettings() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-ink-line bg-white p-6 sm:p-7">
+          <section className="rounded-3xl bg-white shadow-soft ring-1 ring-brand-50 p-6 sm:p-7">
             <h2 className="text-[17px] font-bold tracking-[-0.02em] text-ink">
               Business information
             </h2>

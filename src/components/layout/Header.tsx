@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, Menu, Phone, X } from 'lucide-react';
+import { Clock, MessageCircle, Menu, Phone, ShieldCheck, X } from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { NAV_LINKS, SITE_CONFIG, telHref, whatsappHref } from '@/config/site';
+import { ACCREDITATION } from '@/data/accreditation';
 import { cn } from '@/lib/cn';
 import { useSheen } from '@/hooks/useSheen';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
@@ -101,7 +102,55 @@ export function Header() {
         it — the polarity flipped with the palette.
       */}
       <header className="fixed inset-x-0 top-0 z-50">
+        {/*
+          Utility strip.
+
+          A clinic's phone number, hours and accreditation are the things
+          visitors most often arrive looking for, and burying them in the
+          footer means scrolling past a long page to reach them. The strip puts
+          them at the very top at rest and collapses to nothing the moment the
+          page moves, so it costs no height once you are reading. Desktop only:
+          below xl there is no room beside the logo, and the drawer already
+          carries the same details.
+        */}
         <div
+          data-header-strip=""
+          aria-hidden={floating}
+          className={cn(
+            'hidden overflow-hidden transition-all duration-400 ease-premium xl:block',
+            floating ? 'max-h-0 opacity-0' : 'max-h-10 opacity-100',
+          )}
+        >
+          <div className="bg-gradient-to-r from-brand-700 via-brand-600 to-mint-600">
+            <div className="mx-auto flex h-10 w-full max-w-shell items-center justify-between gap-6 px-[clamp(2.5rem,4.5vw,5.5rem)] text-white">
+              <p className="flex items-center gap-2 text-[12px] font-semibold">
+                <ShieldCheck className="h-[15px] w-[15px]" strokeWidth={2.4} aria-hidden="true" />
+                NABL accredited
+                <span className="font-mono text-[11.5px] text-white/85">
+                  {ACCREDITATION.certificateNumber}
+                </span>
+              </p>
+
+              <div className="flex items-center gap-6 text-[12px]">
+                <p className="flex items-center gap-2 text-white/90">
+                  <Clock className="h-[15px] w-[15px]" strokeWidth={2.2} aria-hidden="true" />
+                  {SITE_CONFIG.hours[0].days}
+                  <span className="font-semibold tabular-nums">{SITE_CONFIG.hours[0].time}</span>
+                </p>
+                <a
+                  href={telHref()}
+                  className="flex items-center gap-2 font-semibold tabular-nums underline-offset-4 transition-colors hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <Phone className="h-[15px] w-[15px]" strokeWidth={2.4} aria-hidden="true" />
+                  {SITE_CONFIG.phoneDisplay}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          data-header-shell=""
           className={cn(
             'relative transition-all duration-400 ease-premium',
             floating
@@ -110,12 +159,13 @@ export function Header() {
           )}
         >
           <div
+            data-header-bar=""
             {...(floating ? sheen : {})}
             className={cn(
               'mx-auto flex w-full items-center justify-between gap-3 transition-all duration-400 ease-premium sm:gap-6',
               floating
                 ? 'glass-bar glass-sheen h-[62px] rounded-full px-3 sm:px-5 lg:h-[68px] lg:px-6'
-                : 'h-[74px] px-3.5 sm:px-8 lg:h-[84px] lg:px-[clamp(2.5rem,4.5vw,5.5rem)]',
+                : 'h-[74px] px-3.5 sm:px-8 lg:h-[76px] lg:px-[clamp(2.5rem,4.5vw,5.5rem)]',
             )}
           >
             <Link
@@ -165,15 +215,15 @@ export function Header() {
             <nav aria-label="Primary" className="hidden xl:block">
               <ul className="flex items-center gap-1">
                 {NAV_LINKS.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.href} className="relative">
                     <NavLink
                       to={link.href}
                       end={link.href === '/'}
                       className={({ isActive }) =>
                         cn(
-                          'relative block whitespace-nowrap rounded-lg px-3.5 py-2 text-[14.5px] font-medium transition-colors duration-200',
+                          'relative block whitespace-nowrap rounded-full px-3.5 py-2 text-[14.5px] font-medium transition-colors duration-200',
                           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-                          isActive ? 'text-brand-600' : 'text-ink-muted hover:text-ink',
+                          isActive ? 'text-brand-700' : 'text-ink-muted hover:text-ink',
                         )
                       }
                     >
@@ -184,8 +234,8 @@ export function Header() {
                             <motion.span
                               layoutId={reduced ? undefined : 'nav-active'}
                               aria-hidden="true"
-                              className="absolute inset-x-3.5 -bottom-px h-[2px] rounded-full bg-brand-500"
-                              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                              className="absolute inset-0 -z-10 rounded-full bg-brand-50 ring-1 ring-inset ring-brand-200/70"
+                              transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                             />
                           )}
                         </>

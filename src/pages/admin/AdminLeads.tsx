@@ -78,7 +78,7 @@ export default function AdminLeads() {
       ) : (
         <ul className="space-y-4">
           {rows.map((c) => (
-            <li key={c.id} className="rounded-xl border border-ink-line bg-white p-6">
+            <li key={c.id} className="rounded-3xl bg-white shadow-soft ring-1 ring-brand-50 p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <h2 className="text-[16px] font-bold text-ink">{c.name}</h2>
@@ -179,7 +179,7 @@ export function AdminAppointments() {
       ) : (
         <ul className="space-y-4">
           {rows.map((a) => (
-            <li key={a.id} className="rounded-xl border border-ink-line bg-white p-6">
+            <li key={a.id} className="rounded-3xl bg-white shadow-soft ring-1 ring-brand-50 p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <h2 className="text-[16px] font-bold text-ink">{a.name}</h2>

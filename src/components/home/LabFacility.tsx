@@ -118,34 +118,55 @@ export function LabFacility() {
         </ul>
 
         {/* ---------- Instruments ---------- */}
-        <div className="mt-14">
-          <h3 className="flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-ink-soft">
-            <Cpu className="h-4 w-4 text-brand-500" strokeWidth={2.2} aria-hidden="true" />
-            Installed analysers
-          </h3>
+        {/*
+          Cards, not a two-column list.
 
-          <ul className="mt-5 divide-y divide-brand-50 border-y border-brand-50">
+          As a list this read as unfinished: the name sat far left, the
+          capability chips far right, and between them was 330px of empty
+          page at 1440 with dividers too faint to bridge it. Named equipment
+          is the strongest evidence on this page, so it gets the same card
+          treatment as everything else rather than looking like raw data.
+        */}
+        <div className="mt-14">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+            <h3 className="flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-ink-soft">
+              <Cpu className="h-4 w-4 text-brand-500" strokeWidth={2.2} aria-hidden="true" />
+              Installed analysers
+            </h3>
+            <p className="text-[12.5px] tabular-nums text-ink-soft">
+              {INSTRUMENTS.length} named instruments
+            </p>
+          </div>
+
+          <ul className="mt-5 grid gap-5 sm:grid-cols-2">
             {INSTRUMENTS.map((inst, i) => (
               <Reveal
                 as="li"
                 key={`${inst.make}-${inst.model}`}
                 delay={i}
-                className="grid gap-x-8 gap-y-3 py-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] sm:items-baseline"
+                className="group flex h-full flex-col rounded-3xl bg-white p-6 shadow-card ring-1 ring-brand-50 transition-transform duration-300 hover:-translate-y-1"
               >
-                <div>
-                  <p className="text-[17px] font-bold leading-tight tracking-[-0.02em] text-ink">
-                    {inst.make} <span className="text-brand-600">{inst.model}</span>
-                  </p>
-                  <p className="mt-1.5 text-[13px] text-ink-muted">{inst.role}</p>
-                  <p className="mt-1 text-[11.5px] font-bold uppercase tracking-[0.12em] text-ink-soft">
-                    {inst.department}
-                  </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-[17px] font-bold leading-tight tracking-[-0.02em] text-ink">
+                      {inst.make} <span className="text-brand-600">{inst.model}</span>
+                    </p>
+                    <p className="mt-1.5 text-[13px] text-ink-muted">{inst.role}</p>
+                  </div>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 transition-colors duration-300 group-hover:bg-brand-500 group-hover:text-white">
+                    <Cpu className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
+                  </span>
                 </div>
-                <ul className="flex flex-wrap gap-2">
+
+                <p className="mt-4 inline-flex w-fit items-center rounded-full bg-mint-50 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-mint-600 ring-1 ring-inset ring-mint-100">
+                  {inst.department}
+                </p>
+
+                <ul className="mt-auto flex flex-wrap gap-2 border-t border-brand-50 pt-5">
                   {inst.covers.map((c) => (
                     <li
                       key={c}
-                      className="rounded-lg bg-white px-2.5 py-1.5 text-[12.5px] text-ink-muted shadow-soft ring-1 ring-brand-50"
+                      className="rounded-lg bg-surface-soft px-2.5 py-1.5 text-[12.5px] text-ink-muted ring-1 ring-brand-50"
                     >
                       {c}
                     </li>
