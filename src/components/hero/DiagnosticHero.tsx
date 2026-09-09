@@ -1,13 +1,11 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Clock, Home, Phone, ShieldCheck, Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Clock, Home, Phone, ShieldCheck, Star } from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { Container } from '@/components/common/Primitives';
 import { HeroFinder } from './HeroFinder';
 import { HeroMedia } from './HeroMedia';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { SITE_CONFIG, telHref } from '@/config/site';
-import { PACKAGES } from '@/data/packages';
 import { ACCREDITATION } from '@/data/accreditation';
 import { cn } from '@/lib/cn';
 
@@ -22,9 +20,6 @@ import { cn } from '@/lib/cn';
  */
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-const PACKAGE_COUNT = PACKAGES.length;
-const TEST_COUNT = new Set(PACKAGES.flatMap((p) => p.tests)).size;
 
 export function DiagnosticHero() {
   const reduced = usePrefersReducedMotion();
@@ -59,10 +54,10 @@ export function DiagnosticHero() {
         />
       </div>
 
-      <Container size="full" className="relative pb-16 pt-10 sm:pt-14 lg:pb-24 lg:pt-16">
-        <div className="grid items-center gap-y-12 lg:grid-cols-12 lg:gap-x-14 xl:gap-x-20">
+      <Container size="full" className="relative pb-12 pt-8 sm:pt-10 lg:pb-14 lg:pt-12 lg:short:pb-8 lg:short:pt-6">
+        <div className="grid gap-y-12 lg:grid-cols-12 lg:items-stretch lg:gap-x-14 xl:gap-x-20">
           {/* ---------------- Copy ---------------- */}
-          <div className="lg:col-span-6 xl:col-span-5">
+          <div className="flex flex-col justify-center lg:col-span-6 2xl:col-span-5">
             <motion.div {...rise(0)} className="flex flex-wrap items-center gap-2.5">
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand-700 shadow-soft ring-1 ring-brand-100">
                 <ShieldCheck className="h-3.5 w-3.5 text-mint-500" strokeWidth={2.6} aria-hidden="true" />
@@ -80,7 +75,7 @@ export function DiagnosticHero() {
             <motion.h1
               id="hero-heading"
               {...rise(0.08)}
-              className="mt-7 text-balance text-[clamp(2.5rem,5.4vw,4.4rem)] font-extrabold leading-[1.02] tracking-tightest text-ink"
+              className="mt-6 text-balance text-[clamp(2.35rem,4.6vw,3.9rem)] font-extrabold leading-[1.04] tracking-tightest text-ink lg:short:mt-5 lg:short:text-[clamp(2rem,3.4vw,2.9rem)]"
             >
               Your trusted partner in{' '}
               <span className="relative whitespace-nowrap">
@@ -110,7 +105,7 @@ export function DiagnosticHero() {
 
             <motion.p
               {...rise(0.16)}
-              className="mt-7 max-w-xl text-pretty text-[17px] leading-relaxed text-ink-muted sm:text-[18px]"
+              className="mt-5 max-w-xl text-pretty text-[16.5px] leading-relaxed text-ink-muted sm:text-[17.5px] lg:short:mt-4 lg:short:text-[16px]"
             >
               Advanced diagnostics, preventive health packages and trusted laboratory care —
               designed around you, with home collection across Surat.
@@ -118,7 +113,7 @@ export function DiagnosticHero() {
 
             <motion.div
               {...rise(0.24)}
-              className="mt-9 flex flex-col items-stretch gap-3.5 sm:flex-row sm:items-center"
+              className="mt-7 flex flex-col items-stretch gap-3.5 sm:flex-row sm:flex-wrap sm:items-center lg:short:mt-6"
             >
               <Button to="/health-package" size="lg" className="!rounded-full whitespace-nowrap shadow-glow">
                 Explore Health Packages
@@ -139,20 +134,20 @@ export function DiagnosticHero() {
             {SITE_CONFIG.stats.length > 0 && (
               <motion.dl
                 {...rise(0.32)}
-                className="mt-12 grid max-w-xl grid-cols-3 gap-3 sm:gap-4"
+                className="mt-8 grid max-w-xl grid-cols-3 gap-3 sm:gap-4 lg:short:mt-6 lg:short:gap-3"
               >
                 {SITE_CONFIG.stats.map((stat, i) => (
                   <div
                     key={stat.label}
                     className={cn(
-                      'rounded-2xl bg-white p-4 shadow-soft ring-1 ring-brand-50 transition-transform duration-300 hover:-translate-y-0.5 sm:p-5',
+                      'rounded-2xl bg-white p-3.5 shadow-soft ring-1 ring-brand-50 transition-transform duration-300 hover:-translate-y-0.5 sm:p-4',
                     )}
                   >
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
                       <span
                         className={cn(
-                          'block text-[26px] font-extrabold leading-none tracking-tightest tabular-nums sm:text-[32px]',
+                          'block text-[26px] font-extrabold leading-none tracking-tightest tabular-nums sm:text-[32px] lg:short:text-[27px]',
                           [
                             'text-brand-600',
                             'text-mint-500',
@@ -174,7 +169,7 @@ export function DiagnosticHero() {
 
             <motion.div
               {...rise(0.4)}
-              className="mt-8 flex flex-col items-start gap-3.5 text-sm sm:flex-row sm:items-center sm:gap-x-7"
+              className="mt-7 flex flex-col items-start gap-3.5 text-sm sm:flex-row sm:items-center sm:gap-x-7 lg:short:mt-5"
             >
               <a
                 href={telHref()}
@@ -195,32 +190,20 @@ export function DiagnosticHero() {
             </motion.div>
           </div>
 
-          {/* ---------------- Media + finder ---------------- */}
-          <div className="lg:col-span-6 xl:col-span-6 xl:col-start-7">
+          {/* ---------------- Media ---------------- */}
+          <div className="lg:col-span-6 2xl:col-start-7">
             <HeroMedia />
-            <div className="mt-5 hidden lg:block">
-              <HeroFinder />
-            </div>
           </div>
         </div>
-
-        <motion.p {...rise(0.5)} className="mt-14 lg:hidden">
-          <Link
-            to="/health-package"
-            className="inline-flex items-center gap-2 text-[15px] font-semibold text-brand-600"
-          >
-            Browse all {PACKAGE_COUNT} packages · {TEST_COUNT}+ tests
-            <ArrowRight className="h-4 w-4" strokeWidth={2.4} aria-hidden="true" />
-          </Link>
-        </motion.p>
       </Container>
 
-      {/* ---------- Finder below the hero on small screens ---------- */}
-      <div className="relative overflow-hidden bg-surface-tint pb-14 pt-2 lg:hidden">
-        <Container>
-          <HeroFinder />
-        </Container>
-      </div>
+      {/*
+        One finder, full width, at every size. It was previously stacked inside
+        the right column on desktop and repeated in a mobile-only band, which
+        made the media column far taller than the copy and rendered the search
+        twice in the document.
+      */}
+      <HeroFinder />
     </section>
   );
 }

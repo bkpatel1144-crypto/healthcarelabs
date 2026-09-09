@@ -54,7 +54,7 @@ export function HeroMedia() {
         };
 
   return (
-    <div className="relative">
+    <div className="relative lg:h-full">
       {/* Soft colour bloom behind the composition. */}
       <div
         aria-hidden="true"
@@ -65,13 +65,13 @@ export function HeroMedia() {
         initial={reduced ? false : { opacity: 0, scale: 0.97, y: 18 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.85, delay: 0.2, ease: EASE }}
-        className="relative"
+        className="relative lg:h-full"
       >
         {/*
           Asymmetric rounding rather than a plain rectangle — a large radius on
           one corner is what stops a photo in a box looking like a stock frame.
         */}
-        <div className="relative overflow-hidden rounded-[2rem] rounded-tr-[5rem] bg-surface-tint shadow-card ring-1 ring-white">
+        <div className="relative overflow-hidden rounded-[2rem] rounded-tr-[5rem] bg-surface-tint shadow-card ring-1 ring-white lg:h-full">
           {photo ? (
             <picture>
               <source type="image/avif" srcSet={photo.avif} sizes="(min-width:1024px) 52vw, 92vw" />
@@ -85,11 +85,11 @@ export function HeroMedia() {
                 height={photo.height}
                 fetchPriority="high"
                 decoding="async"
-                className="aspect-[4/3] w-full object-cover sm:aspect-[16/11]"
+                className="aspect-[4/3] w-full object-cover sm:aspect-[16/11] lg:aspect-auto lg:h-full"
               />
             </picture>
           ) : (
-            <div className="aspect-[16/11] w-full bg-gradient-to-br from-brand-100 to-surface-sky" />
+            <div className="aspect-[16/11] w-full bg-gradient-to-br from-brand-100 to-surface-sky lg:aspect-auto lg:h-full" />
           )}
 
           {/* Warm wash so the photo sits in the palette rather than beside it. */}
@@ -131,7 +131,7 @@ export function HeroMedia() {
             initial={reduced ? false : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.55, delay: 0.75 + d * 0.15, ease: EASE }}
-            className={cn('absolute hidden sm:block', position)}
+            className={cn('absolute hidden xl:block', position)}
           >
             <motion.div
               {...float(d)}
@@ -156,7 +156,7 @@ export function HeroMedia() {
           initial={reduced ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 1.05, ease: EASE }}
-          className="absolute -right-1 top-4 hidden lg:block"
+          className="absolute -right-1 top-4 hidden xl:block"
         >
           <div className="flex items-center gap-2 rounded-full bg-mint-400 px-3.5 py-2 shadow-card">
             <CheckCircle2 className="h-4 w-4 text-white" strokeWidth={2.6} aria-hidden="true" />

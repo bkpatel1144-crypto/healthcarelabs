@@ -92,6 +92,11 @@ export default {
         liftLg: '0 30px 70px -32px rgba(11,32,88,0.45)',
         inset: 'inset 0 1px 0 rgba(255,255,255,0.08)',
       },
+      screens: {
+        /* Short viewports: 1366x768 and 1280x720 laptops, where a hero sized
+           for a 900px screen runs past the fold. */
+        short: { raw: '(max-height: 820px)' },
+      },
       backgroundImage: {
         'mesh-hero':
           'radial-gradient(at 12% 18%, rgba(53,199,244,0.28) 0px, transparent 55%), radial-gradient(at 88% 12%, rgba(255,122,69,0.20) 0px, transparent 50%), radial-gradient(at 72% 82%, rgba(20,196,163,0.22) 0px, transparent 52%), radial-gradient(at 30% 88%, rgba(21,155,211,0.20) 0px, transparent 55%)',

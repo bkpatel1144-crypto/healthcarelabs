@@ -106,7 +106,7 @@ export function AccessibilityWidget() {
         aria-label={open ? 'Close accessibility options' : 'Open accessibility options'}
         className={cn(
           'flex items-center',
-          'fixed bottom-5 left-4 z-[65] h-14 w-14 justify-center rounded-full bg-navy-900',
+          'fixed bottom-4 left-3 z-[65] h-12 w-12 justify-center rounded-full bg-navy-900',
           'sm:bottom-auto sm:left-0 sm:top-1/2 sm:h-auto sm:w-auto sm:-translate-y-1/2',
           'sm:rounded-l-none sm:rounded-r-xl sm:py-4 sm:pl-2 sm:pr-2.5',
           'text-white shadow-[0_10px_30px_-10px_rgba(3,10,32,0.7)] ring-1 ring-inset ring-white/15',
@@ -116,7 +116,7 @@ export function AccessibilityWidget() {
       >
         <span className="flex flex-col items-center gap-2">
           <Accessibility
-            className="h-6 w-6 text-brand-300 sm:h-5 sm:w-5"
+            className="h-[22px] w-[22px] text-brand-300 sm:h-5 sm:w-5"
             strokeWidth={2.2}
             aria-hidden="true"
           />
