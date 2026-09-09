@@ -39,20 +39,20 @@ export default function Offers() {
           <>
             Current pricing,
             <br />
-            <span className="text-brand-400">published in full.</span>
+            <span className="bg-gradient-to-r from-brand-700 to-coral-600 bg-clip-text text-transparent">published in full.</span>
           </>
         }
         description="Every package below shows what it originally cost and what it costs now. No countdown theatre, no invented deadlines — just the pricing the lab publishes."
         crumbs={[{ label: 'My Offers' }]}
         aside={
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-7 rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm">
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-7 rounded-4xl bg-white p-7 shadow-card ring-1 ring-brand-50">
             <div>
               <dt className="sr-only">Packages with reduced pricing</dt>
               <dd>
-                <span className="block text-[30px] font-extrabold leading-none tracking-tightest text-white tabular-nums">
+                <span className="block text-[30px] font-extrabold leading-none tracking-tightest text-brand-600 tabular-nums">
                   {liveOffers.length}
                 </span>
-                <span className="mt-2 block text-[12.5px] text-slate-400">
+                <span className="mt-2 block text-[12.5px] text-ink-soft">
                   Packages with reduced pricing
                 </span>
               </dd>
@@ -60,10 +60,10 @@ export default function Offers() {
             <div>
               <dt className="sr-only">Largest single saving</dt>
               <dd>
-                <span className="block text-[30px] font-extrabold leading-none tracking-tightest text-white tabular-nums">
+                <span className="block text-[30px] font-extrabold leading-none tracking-tightest text-coral-500 tabular-nums">
                   {formatPrice(biggestSaving)}
                 </span>
-                <span className="mt-2 block text-[12.5px] text-slate-400">Largest single saving</span>
+                <span className="mt-2 block text-[12.5px] text-ink-soft">Largest single saving</span>
               </dd>
             </div>
           </dl>
@@ -185,21 +185,21 @@ function LeadOffer({ offer }: { offer: Offer }) {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center border-t border-brand-100 bg-navy-900 p-8 text-white sm:p-11 lg:col-span-5 lg:border-l lg:border-t-0">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-300">
+      <div className="flex flex-col justify-center bg-gradient-to-br from-brand-600 via-brand-500 to-mint-400 p-8 text-white sm:p-11 lg:col-span-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
           Current price
         </p>
         <p className="mt-4 text-[clamp(2.5rem,5vw,3.5rem)] font-extrabold leading-none tracking-tightest tabular-nums">
           {formatPrice(offer.offerPrice)}
         </p>
         {offer.originalPrice !== null && (
-          <p className="mt-3 text-[17px] text-slate-400">
+          <p className="mt-3 text-[17px] text-white/80">
             Originally{' '}
             <span className="line-through tabular-nums">{formatPrice(offer.originalPrice)}</span>
           </p>
         )}
         {save !== null && (
-          <p className="mt-6 inline-flex w-fit items-center gap-2 rounded-lg bg-emerald-500/15 px-3.5 py-2 text-[14px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/25">
+          <p className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[14px] font-semibold text-brand-700 shadow-soft">
             You save {formatPrice(save)}
           </p>
         )}

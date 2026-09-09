@@ -97,6 +97,17 @@ export const SITE_CONFIG: SiteConfig = {
     telegram: '',
   },
 
+  /*
+    Operational figures as published by the lab on healthcare-labs.com. These
+    are the client's own claims, reproduced — not computed and not invented.
+    Clear the array to stop rendering them.
+  */
+  stats: [
+    { label: 'Regional processing labs across India', value: '15', suffix: '+' },
+    { label: 'Samples processed daily', value: '1K', suffix: '+' },
+    { label: 'Samples processed to date', value: '15L', suffix: '+' },
+  ],
+
   accreditations: [
     {
       label: 'NABL Accredited',
@@ -106,8 +117,6 @@ export const SITE_CONFIG: SiteConfig = {
       logo: '/brand/nabl-accreditation.png',
     },
   ],
-
-  stats: [],
 
   currency: { code: 'INR', symbol: '₹', locale: 'en-IN' },
 };

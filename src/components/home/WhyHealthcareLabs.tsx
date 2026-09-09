@@ -100,7 +100,7 @@ export function WhyHealthcareLabs() {
                 delay={i}
                 className="group grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 border-b border-ink-line py-8 first:pt-0 last:border-b-0 last:pb-0 sm:gap-x-8"
               >
-                <span className="font-mono text-[13px] font-medium tabular-nums text-brand-400 transition-colors group-hover:text-brand-600">
+                <span className="font-mono text-[13px] font-medium tabular-nums text-brand-500 transition-colors group-hover:text-brand-700">
                   {r.index}
                 </span>
                 <h3 className="text-[19px] font-bold leading-snug tracking-[-0.02em] text-ink sm:text-[21px]">

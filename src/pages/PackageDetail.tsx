@@ -111,37 +111,37 @@ function PackageDetailView({ pkg }: { pkg: HealthPackage }) {
         description={pkg.summary}
         crumbs={[{ label: 'Health Packages', to: '/health-package' }, { label: pkg.name }]}
         aside={
-          <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-7 backdrop-blur-sm">
+          <div className="rounded-4xl bg-white p-7 shadow-card ring-1 ring-brand-50">
             {pkg.offerPrice !== null ? (
               <>
                 <div className="flex flex-wrap items-baseline gap-3">
-                  <span className="text-[40px] font-extrabold leading-none tracking-tightest text-white tabular-nums">
+                  <span className="text-[40px] font-extrabold leading-none tracking-tightest text-brand-600 tabular-nums">
                     {formatPrice(pkg.offerPrice)}
                   </span>
                   {pkg.price !== null && (
-                    <span className="text-[18px] font-medium text-slate-400 line-through tabular-nums">
+                    <span className="text-[18px] font-medium text-ink-soft line-through tabular-nums">
                       {formatPrice(pkg.price)}
                     </span>
                   )}
                 </div>
                 {save !== null && pct !== null && (
-                  <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-emerald-500/15 px-3 py-1.5 text-[13px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/25">
+                  <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-mint-50 px-3 py-1.5 text-[13px] font-semibold text-mint-600 ring-1 ring-inset ring-mint-100">
                     You save {formatPrice(save)} · {pct}% off
                   </p>
                 )}
               </>
             ) : (
               <>
-                <p className="text-[26px] font-extrabold tracking-editorial text-white">
+                <p className="text-[26px] font-extrabold tracking-editorial text-ink">
                   Priced on request
                 </p>
                 {pkg.priceNote && (
-                  <p className="mt-3 text-[14px] leading-relaxed text-slate-300">{pkg.priceNote}</p>
+                  <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">{pkg.priceNote}</p>
                 )}
               </>
             )}
 
-            <dl className="mt-7 space-y-3.5 border-t border-white/10 pt-6 text-[14px]">
+            <dl className="mt-7 space-y-3.5 border-t border-brand-50 pt-6 text-[14px]">
               <SpecRow Icon={ListChecks} label="Tests included" value={`${pkg.tests.length}`} />
               <SpecRow Icon={Clock} label="Report ready" value={pkg.reportTime} />
               <SpecRow
@@ -152,12 +152,12 @@ function PackageDetailView({ pkg }: { pkg: HealthPackage }) {
             </dl>
 
             <div className="mt-7 space-y-2.5">
-              <Button to="/contact-us#home-collection" variant="onDark" size="lg" className="w-full">
+              <Button to="/contact-us#home-collection" size="lg" className="w-full !rounded-full shadow-glow">
                 Book this package
                 <ButtonArrow />
               </Button>
               <div className="grid grid-cols-2 gap-2.5">
-                <Button href={telHref()} variant="outlineDark" size="md">
+                <Button href={telHref()} variant="secondary" size="md">
                   <Phone className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                   Call
                 </Button>
@@ -165,7 +165,7 @@ function PackageDetailView({ pkg }: { pkg: HealthPackage }) {
                   href={whatsappHref(
                     `Hello Healthcare Labs, I would like to know more about the ${pkg.name} package.`,
                   )}
-                  variant="outlineDark"
+                  variant="secondary"
                   size="md"
                 >
                   WhatsApp
@@ -181,7 +181,7 @@ function PackageDetailView({ pkg }: { pkg: HealthPackage }) {
               <li key={c.id}>
                 <Link
                   to={`/health-package?concern=${c.id}`}
-                  className="inline-flex items-center rounded-lg bg-white/[0.07] px-3 py-1.5 text-[12.5px] font-semibold text-brand-200 ring-1 ring-inset ring-white/10 transition-colors hover:bg-white/[0.14] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
+                  className="inline-flex items-center rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-semibold text-brand-700 shadow-soft ring-1 ring-brand-100 transition-colors hover:bg-brand-50 hover:ring-brand-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
                 >
                   {c.label}
                 </Link>
@@ -343,11 +343,11 @@ function SpecRow({
 }) {
   return (
     <div className="flex items-start justify-between gap-4">
-      <dt className="flex items-center gap-2.5 text-slate-400">
-        <Icon className="h-[17px] w-[17px] shrink-0 text-brand-400" strokeWidth={2} aria-hidden="true" />
+      <dt className="flex items-center gap-2.5 text-ink-muted">
+        <Icon className="h-[17px] w-[17px] shrink-0 text-brand-500" strokeWidth={2} aria-hidden="true" />
         {label}
       </dt>
-      <dd className="text-right font-semibold text-white">{value}</dd>
+      <dd className="text-right font-semibold text-ink">{value}</dd>
     </div>
   );
 }

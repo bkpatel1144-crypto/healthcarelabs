@@ -79,29 +79,29 @@ export default function About() {
           <>
             Diagnostics done
             <br />
-            <span className="text-brand-400">carefully.</span>
+            <span className="bg-gradient-to-r from-brand-700 to-mint-600 bg-clip-text text-transparent">carefully.</span>
           </>
         }
         description={`Healthcare Labs is the diagnostics practice of ${SITE_CONFIG.legalName}, based in Surat. Pathology, imaging and cardiac testing under one roof, with preventive health packages built around the questions people actually bring in.`}
         crumbs={[{ label: 'About Us' }]}
         aside={
-          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm">
-            <h2 className="flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-300">
+          <div className="rounded-4xl bg-white p-7 shadow-card ring-1 ring-brand-50">
+            <h2 className="flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">
               <Building2 className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
               Where we are
             </h2>
-            <p className="mt-5 text-[15.5px] leading-relaxed text-slate-300">
+            <p className="mt-5 text-[15.5px] leading-relaxed text-ink-muted">
               {SITE_CONFIG.address.full}
             </p>
-            <dl className="mt-7 space-y-4 border-t border-white/10 pt-6 text-[14px]">
+            <dl className="mt-7 space-y-4 border-t border-brand-50 pt-6 text-[14px]">
               {SITE_CONFIG.hours.map((h) => (
                 <div key={h.days} className="flex items-baseline justify-between gap-4">
-                  <dt className="text-slate-400">{h.days}</dt>
-                  <dd className="font-semibold tabular-nums text-white">{h.time}</dd>
+                  <dt className="text-ink-soft">{h.days}</dt>
+                  <dd className="font-semibold tabular-nums text-ink">{h.time}</dd>
                 </div>
               ))}
             </dl>
-            <Button href={mapHref()} variant="outlineDark" size="md" className="mt-7 w-full">
+            <Button href={mapHref()} variant="secondary" size="md" className="mt-7 w-full">
               Open in Maps
               <ButtonArrow />
             </Button>
@@ -159,17 +159,16 @@ export default function About() {
       {/* ---- Vision / Mission / Quality, verbatim ---- */}
       <section
         aria-labelledby="values-heading"
-        className="relative overflow-hidden bg-navy-900 py-20 text-white sm:py-28"
+        className="relative overflow-hidden bg-surface-soft py-20 sm:py-28"
       >
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-grid-dark [background-size:72px_72px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_0%,#000,transparent_76%)]"
+          className="pointer-events-none absolute inset-0 bg-grid-light [background-size:72px_72px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_0%,#000,transparent_76%)]"
         />
         <Container className="relative">
           <SectionHeading
             eyebrow="Vision, Mission & Quality"
-            tone="dark"
-            align="center"
+                        align="center"
             title={<span id="values-heading">The lab’s own words</span>}
             description="Published by Desai Healthcare Pathology Laboratory and reproduced here unchanged."
           />
@@ -182,18 +181,18 @@ export default function About() {
                   as="li"
                   key={c.id}
                   delay={i}
-                  className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.035] p-8 transition-colors duration-300 hover:border-brand-400/30 hover:bg-white/[0.06] sm:p-9"
+                  className="flex flex-col rounded-4xl bg-white p-8 shadow-card ring-1 ring-brand-50 transition-transform duration-300 hover:-translate-y-1 sm:p-9"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300 ring-1 ring-inset ring-brand-400/25">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100">
                     <Icon className="h-[22px] w-[22px]" strokeWidth={1.9} aria-hidden="true" />
                   </span>
-                  <p className="mt-7 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-300">
+                  <p className="mt-7 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">
                     {c.label}
                   </p>
-                  <p className="mt-4 text-balance text-[20px] font-bold leading-snug tracking-[-0.02em] text-white">
+                  <p className="mt-4 text-balance text-[20px] font-bold leading-snug tracking-[-0.02em] text-ink">
                     {c.statement}
                   </p>
-                  <p className="mt-3.5 text-[14.5px] leading-relaxed text-slate-400">{c.detail}</p>
+                  <p className="mt-3.5 text-[14.5px] leading-relaxed text-ink-muted">{c.detail}</p>
                 </Reveal>
               );
             })}

@@ -69,16 +69,16 @@ export function HomeCollectionSection({
       className={compact ? 'py-4' : 'bg-white py-20 sm:py-28'}
     >
       <Container className={compact ? '!px-0' : undefined}>
-        <div className="overflow-hidden rounded-2xl border border-ink-line bg-mist lg:grid lg:grid-cols-12">
+        <div className="overflow-hidden rounded-4xl bg-white shadow-card ring-1 ring-brand-50 lg:grid lg:grid-cols-12">
           {/* ---- Pitch ---- */}
-          <div className="relative overflow-hidden bg-navy-900 p-8 text-white sm:p-11 lg:col-span-5">
+          <div className="relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-500 to-mint-400 p-8 text-white sm:p-11 lg:col-span-5">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-grid-dark [background-size:56px_56px] [mask-image:radial-gradient(ellipse_90%_70%_at_20%_0%,#000,transparent_72%)]"
+              className="pointer-events-none absolute inset-0 bg-grid-dark [background-size:56px_56px] [mask-image:radial-gradient(ellipse_90%_70%_at_20%_0%,#000,transparent_72%)] opacity-70"
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.20),transparent_66%)] blur-2xl"
+              className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.30),transparent_66%)] blur-2xl"
             />
 
             <div className="relative">
@@ -89,25 +89,25 @@ export function HomeCollectionSection({
               >
                 Healthcare that comes to you.
               </h2>
-              <p className="mt-5 max-w-sm text-[15.5px] leading-relaxed text-slate-300/90">
+              <p className="mt-5 max-w-sm text-[15.5px] leading-relaxed text-white/85">
                 Tell us when and where. A trained phlebotomist collects the sample at your address,
                 and the report reaches you the same way it would from the centre.
               </p>
 
-              <ul className="mt-9 space-y-4 border-t border-white/10 pt-8">
+              <ul className="mt-9 space-y-4 border-t border-white/25 pt-8">
                 {ASSURANCES.map(({ Icon, text }) => (
-                  <li key={text} className="flex items-start gap-3.5 text-[14.5px] text-slate-300">
-                    <Icon className="mt-0.5 h-[18px] w-[18px] shrink-0 text-brand-400" strokeWidth={2} aria-hidden="true" />
+                  <li key={text} className="flex items-start gap-3.5 text-[14.5px] text-white/90">
+                    <Icon className="mt-0.5 h-[18px] w-[18px] shrink-0 text-white" strokeWidth={2} aria-hidden="true" />
                     {text}
                   </li>
                 ))}
               </ul>
 
-              <p className="mt-9 text-[13.5px] text-slate-400">
+              <p className="mt-9 text-[13.5px] text-white/75">
                 Prefer to talk it through?{' '}
                 <a
                   href={telHref()}
-                  className="font-semibold text-brand-300 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-300"
+                  className="font-semibold text-white underline underline-offset-4 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
                   {SITE_CONFIG.phoneDisplay}
                 </a>
@@ -198,7 +198,7 @@ export function HomeCollectionForm() {
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         className="flex h-full min-h-[420px] flex-col items-start justify-center"
       >
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-200">
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-mint-50 text-mint-600 ring-1 ring-inset ring-mint-100">
           <CheckCircle2 className="h-7 w-7" strokeWidth={2} aria-hidden="true" />
         </span>
         <h3 className="mt-6 text-[26px] font-extrabold tracking-editorial text-ink">
@@ -217,7 +217,7 @@ export function HomeCollectionForm() {
         </p>
 
         <p className="mt-5 flex items-start gap-2 text-[13px] leading-relaxed text-ink-soft">
-          <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" strokeWidth={2} aria-hidden="true" />
+          <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" strokeWidth={2} aria-hidden="true" />
           {storageAvailable
             ? 'Your request is saved in this browser and appears in the local admin panel. This site has no backend, so it is not transmitted anywhere.'
             : 'Your browser is blocking local storage, so this request is held only for this session. Please call the lab to confirm.'}

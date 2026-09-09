@@ -68,7 +68,7 @@ export default function Blog() {
           <>
             Understand the test
             <br />
-            <span className="text-brand-400">before you take it.</span>
+            <span className="bg-gradient-to-r from-brand-700 to-mint-600 bg-clip-text text-transparent">before you take it.</span>
           </>
         }
         description="Preparation, interpretation and preventive practice, written plainly. Nothing here replaces a conversation with your physician — it is meant to make that conversation better."

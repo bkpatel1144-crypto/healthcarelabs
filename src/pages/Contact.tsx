@@ -40,7 +40,7 @@ export default function Contact() {
           <>
             Talk to the lab
             <br />
-            <span className="text-brand-400">directly.</span>
+            <span className="bg-gradient-to-r from-brand-700 to-mint-600 bg-clip-text text-transparent">directly.</span>
           </>
         }
         description="Questions about a package, a test, preparation or a report — the fastest route is a phone call. Everything else reaches the same team."

@@ -105,17 +105,24 @@ export function AccessibilityWidget() {
         aria-controls="a11y-panel"
         aria-label={open ? 'Close accessibility options' : 'Open accessibility options'}
         className={cn(
-          'fixed left-0 top-1/2 z-[65] -translate-y-1/2 rounded-r-xl bg-navy-900 py-4 pl-2 pr-2.5',
+          'flex items-center',
+          'fixed bottom-5 left-4 z-[65] h-14 w-14 justify-center rounded-full bg-navy-900',
+          'sm:bottom-auto sm:left-0 sm:top-1/2 sm:h-auto sm:w-auto sm:-translate-y-1/2',
+          'sm:rounded-l-none sm:rounded-r-xl sm:py-4 sm:pl-2 sm:pr-2.5',
           'text-white shadow-[0_10px_30px_-10px_rgba(3,10,32,0.7)] ring-1 ring-inset ring-white/15',
           'transition-colors hover:bg-navy-800',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400',
         )}
       >
         <span className="flex flex-col items-center gap-2">
-          <Accessibility className="h-5 w-5 text-brand-300" strokeWidth={2.2} aria-hidden="true" />
+          <Accessibility
+            className="h-6 w-6 text-brand-300 sm:h-5 sm:w-5"
+            strokeWidth={2.2}
+            aria-hidden="true"
+          />
           <span
             aria-hidden="true"
-            className="text-[10px] font-bold uppercase tracking-[0.14em] [writing-mode:vertical-rl]"
+            className="hidden text-[10px] font-bold uppercase tracking-[0.14em] [writing-mode:vertical-rl] sm:inline"
           >
             A11Y
           </span>
@@ -136,7 +143,8 @@ export function AccessibilityWidget() {
             exit={reduced ? undefined : { opacity: 0, x: -16 }}
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
-              'fixed left-3 top-1/2 z-[66] w-[264px] -translate-y-1/2 rounded-2xl border border-ink-line',
+              'fixed bottom-24 left-3 z-[66] w-[264px] rounded-2xl border border-ink-line',
+              'sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2',
               'bg-white p-5 shadow-[0_28px_70px_-24px_rgba(11,32,88,0.5)]',
               'sm:left-14',
             )}

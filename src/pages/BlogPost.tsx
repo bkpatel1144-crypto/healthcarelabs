@@ -68,13 +68,13 @@ function Article({ post }: { post: Post }) {
         title={post.title}
         crumbs={[{ label: 'Blog', to: '/blog' }, { label: post.title }]}
       >
-        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-7 text-[14px] text-slate-400">
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-brand-100 pt-7 text-[14px] text-ink-muted">
           <span className="flex items-center gap-2">
-            <PenLine className="h-4 w-4 text-brand-400" strokeWidth={2} aria-hidden="true" />
+            <PenLine className="h-4 w-4 text-brand-500" strokeWidth={2} aria-hidden="true" />
             {post.author}
           </span>
           <span className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-brand-400" strokeWidth={2} aria-hidden="true" />
+            <Clock className="h-4 w-4 text-brand-500" strokeWidth={2} aria-hidden="true" />
             {post.readingMinutes} min read
           </span>
           <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
@@ -150,14 +150,14 @@ function Article({ post }: { post: Post }) {
             <aside className="lg:col-span-4">
               <div className="lg:sticky lg:top-32 space-y-8">
                 {suggestedPackage && (
-                  <div className="rounded-2xl border border-ink-line bg-navy-900 p-7 text-white">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-300">
+                  <div className="rounded-4xl bg-gradient-to-br from-brand-600 via-brand-500 to-mint-400 p-7 text-white shadow-card">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
                       Ready to test?
                     </p>
                     <h2 className="mt-4 text-[20px] font-bold leading-snug tracking-[-0.02em]">
                       {suggestedPackage.name}
                     </h2>
-                    <p className="mt-3 text-[14px] leading-relaxed text-slate-400">
+                    <p className="mt-3 text-[14px] leading-relaxed text-white/85">
                       {suggestedPackage.summary}
                     </p>
                     <Button

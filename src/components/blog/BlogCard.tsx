@@ -9,15 +9,16 @@ import type { BlogPost } from '@/types';
  * stock imagery would cheapen it. Instead each card is typographic, with a
  * generated abstract plate derived from the post's category.
  */
+/* Brighter, saturated plates — the light theme needs colour here, not shade. */
 const CATEGORY_TINT: Record<string, string> = {
-  'Preventive Health': 'from-brand-500/90 to-brand-700',
-  Nutrition: 'from-emerald-500/90 to-emerald-700',
-  "Women's Health": 'from-fuchsia-500/85 to-fuchsia-700',
-  "Men's Health": 'from-indigo-500/85 to-indigo-700',
-  Diabetes: 'from-amber-500/85 to-amber-700',
-  'Heart Health': 'from-rose-500/85 to-rose-700',
-  Wellness: 'from-teal-500/85 to-teal-700',
-  'Lab Tests': 'from-navy-600 to-navy-900',
+  'Preventive Health': 'from-brand-400 to-brand-600',
+  Nutrition: 'from-mint-400 to-mint-600',
+  "Women's Health": 'from-fuchsia-400 to-fuchsia-600',
+  "Men's Health": 'from-indigo-400 to-indigo-600',
+  Diabetes: 'from-amber-400 to-amber-600',
+  'Heart Health': 'from-coral-400 to-coral-600',
+  Wellness: 'from-teal-400 to-teal-600',
+  'Lab Tests': 'from-brand-500 to-mint-500',
 };
 
 export function BlogCard({
@@ -126,7 +127,7 @@ function Plate({
   className?: string;
   compact?: boolean;
 }) {
-  const tint = CATEGORY_TINT[post.category] ?? 'from-brand-500/90 to-brand-700';
+  const tint = CATEGORY_TINT[post.category] ?? 'from-brand-400 to-brand-600';
   // Deterministic seed from the slug.
   const seed = post.slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const points = Array.from({ length: 9 }, (_, i) => {

@@ -87,13 +87,13 @@ export default function Packages() {
           <>
             Find the panel that answers
             <br />
-            <span className="text-brand-400">your question.</span>
+            <span className="bg-gradient-to-r from-brand-700 to-mint-600 bg-clip-text text-transparent">your question.</span>
           </>
         }
         description="Every package lists the tests it includes, who it suits, how to prepare and when the report is ready. Filter by concern, budget or home collection."
         crumbs={[{ label: 'Health Packages' }]}
         aside={
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-7 rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm">
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-7 rounded-4xl bg-white p-7 shadow-card ring-1 ring-brand-50">
             <Stat value={String(livePackages.length)} label="Packages published" />
             <Stat
               value={String(new Set(livePackages.flatMap((p) => p.tests)).size)}
@@ -164,10 +164,10 @@ function Stat({ value, label }: { value: string; label: string }) {
     <div>
       <dt className="sr-only">{label}</dt>
       <dd>
-        <span className="block text-[30px] font-extrabold leading-none tracking-tightest text-white tabular-nums">
+        <span className="block text-[30px] font-extrabold leading-none tracking-tightest text-brand-600 tabular-nums">
           {value}
         </span>
-        <span className="mt-2 block text-[12.5px] leading-snug text-slate-400">{label}</span>
+        <span className="mt-2 block text-[12.5px] leading-snug text-ink-soft">{label}</span>
       </dd>
     </div>
   );

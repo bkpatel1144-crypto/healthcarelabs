@@ -30,15 +30,15 @@ export function AccreditationSection() {
     <section
       id="accreditation"
       aria-labelledby="accreditation-heading"
-      className="relative overflow-hidden bg-navy-900 py-20 text-white sm:py-28"
+      className="relative overflow-hidden bg-white py-20 sm:py-28"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-grid-dark [background-size:72px_72px] [mask-image:radial-gradient(ellipse_70%_70%_at_30%_20%,#000,transparent_75%)]"
+        className="pointer-events-none absolute inset-0 bg-grid-light [background-size:72px_72px] [mask-image:radial-gradient(ellipse_70%_70%_at_30%_20%,#000,transparent_75%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-32 top-1/3 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(21,155,211,0.16),transparent_66%)] blur-2xl"
+        className="pointer-events-none absolute -left-32 top-1/3 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.18),transparent_66%)] blur-2xl"
       />
 
       <Container className="relative">
@@ -52,23 +52,23 @@ export function AccreditationSection() {
         >
           {/* ---------- The record ---------- */}
           <div className={photos.length > 0 ? 'lg:col-span-5' : 'max-w-3xl'}>
-            <Eyebrow tone="dark">Accreditation</Eyebrow>
+            <Eyebrow>Accreditation</Eyebrow>
             <h2
               id="accreditation-heading"
-              className="mt-6 text-balance text-[clamp(1.9rem,3.6vw,3rem)] font-extrabold leading-[1.06] tracking-editorial"
+              className="mt-6 text-balance text-[clamp(1.9rem,3.6vw,3rem)] font-extrabold leading-[1.06] tracking-editorial text-ink"
             >
               NABL accredited,
               <br />
-              <span className="text-brand-400">certificate {ACCREDITATION.certificateNumber}.</span>
+              <span className="text-brand-600">certificate {ACCREDITATION.certificateNumber}.</span>
             </h2>
-            <p className="mt-6 text-pretty text-[16px] leading-relaxed text-slate-300/90">
+            <p className="mt-6 text-pretty text-[16px] leading-relaxed text-ink-muted">
               Accredited by the {ACCREDITATION.body} ({ACCREDITATION.bodyShort}), a constituent
               board of the {ACCREDITATION.parentBody}, for {ACCREDITATION.scope.toLowerCase()}.
             </p>
 
             <dl
               className={cn(
-                'mt-9 overflow-hidden rounded-xl border border-white/10 bg-white/[0.03]',
+                'mt-9 overflow-hidden rounded-3xl bg-brand-50/60 shadow-soft ring-1 ring-brand-50',
                 photos.length > 0
                   ? 'space-y-px'
                   : 'grid gap-px sm:grid-cols-2 lg:grid-cols-4',
@@ -89,22 +89,22 @@ export function AccreditationSection() {
               <Row Icon={MapPin} label="Ceremony" value={ACCREDITATION.ceremony.venue} stacked={stacked} />
             </dl>
 
-            <p className="mt-8 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            <p className="mt-8 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
               What that covers
             </p>
             <ul className="mt-3 space-y-2.5">
               {ACCREDITATION.meaning.map((point) => (
-                <li key={point} className="flex gap-3 text-[14.5px] leading-relaxed text-slate-300">
+                <li key={point} className="flex gap-3 text-[14.5px] leading-relaxed text-ink-muted">
                   <span
                     aria-hidden="true"
-                    className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-brand-400"
+                    className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-mint-400"
                   />
                   {point}
                 </li>
               ))}
             </ul>
 
-            <p className="mt-8 border-t border-white/10 pt-6 text-[13.5px] leading-relaxed text-slate-400">
+            <p className="mt-8 border-t border-brand-50 pt-6 text-[13.5px] leading-relaxed text-ink-soft">
               A copy of the certificate is available from the lab on request.
             </p>
           </div>
@@ -122,8 +122,8 @@ export function AccreditationSection() {
                   className="aspect-[4/3] w-full sm:aspect-[16/10]"
                 />
                 <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13.5px]">
-                  <span className="font-semibold text-white">{lead.caption}</span>
-                  <span className="text-slate-400">
+                  <span className="font-semibold text-ink">{lead.caption}</span>
+                  <span className="text-ink-soft">
                     {ACCREDITATION.ceremony.venue} ·{' '}
                     {formatDate(ACCREDITATION.ceremony.date, {
                       day: 'numeric',
@@ -182,17 +182,17 @@ function Row({
   return (
     <div
       className={cn(
-        'bg-white/[0.02] px-5 py-4',
+        'bg-white px-5 py-4',
         stacked ? 'block' : 'flex items-center justify-between gap-4',
       )}
     >
-      <dt className="flex items-center gap-2.5 text-[13.5px] text-slate-400">
-        <Icon className="h-4 w-4 shrink-0 text-brand-400" strokeWidth={2} aria-hidden="true" />
+      <dt className="flex items-center gap-2.5 text-[13.5px] text-ink-muted">
+        <Icon className="h-4 w-4 shrink-0 text-brand-500" strokeWidth={2} aria-hidden="true" />
         {label}
       </dt>
       <dd
         className={cn(
-          'text-[14px] font-semibold text-white',
+          'text-[14px] font-semibold text-ink',
           stacked ? 'mt-1.5' : 'text-right',
           mono && 'font-mono tabular-nums',
         )}

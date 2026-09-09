@@ -69,9 +69,12 @@ counts, accuracy percentages, turnaround guarantees, and attributed patient
 testimonials. Package and test counts shown on the site are computed from the
 catalogue at build time, so they cannot drift.
 
-`src/data/testimonials.ts` ships as an empty array on purpose. The homepage
-renders the lab's published commitments instead, and switches to a testimonial
-carousel automatically once real, consented entries are added via `/admin`.
+`src/data/testimonials.ts` carries the seven reviews Healthcare Labs publishes
+on healthcare-labs.com, transcribed verbatim from named reviewers — nothing
+there is written or embellished. The homepage renders them as a scrolling card
+wall; if the array is emptied it falls back to the lab's own published vision,
+mission and quality statements, labelled as the organisation's words rather
+than a patient's. More entries can be added via `/admin`.
 
 Template junk from the old WordPress site was dropped entirely: `demo@gmail.com`,
 `+91 9988776655`, the "5th Street, 21st Floor, New York" address, four stock
@@ -293,15 +296,28 @@ is an ARIA listbox with roving `aria-activedescendant`, full keyboard support
 flip near the viewport edge, and a hidden input so the value still participates
 in form semantics.
 
-**Header is dark in both states.** Transparent at rest so the navy hero runs to
-the top edge, contracting into a floating navy-glass capsule on scroll. A white
-bar cut a bright band across the hero; staying dark also means one text colour
-scheme throughout. `/admin` opens on a light background, so it starts in the
-capsule state.
+**The palette is light.** The build originally ran deep navy throughout. The
+client compared it to their existing site — white, vivid blue, photographs of
+people — and read the dark version as cold and dated rather than premium. The
+polarity is now flipped: white and soft-blue grounds, a colour mesh in the
+hero, coral and mint as the second and third accents, and three saturated
+gradient blocks (the quick-action strip, the home-collection panel, the closing
+CTA) as the colour anchors. Dark is kept only where it is load-bearing: the
+footer, the photo lightbox, image scrims, and the admin shell.
 
-**No accreditation band on the homepage.** NABL is surfaced by the hero pill,
-the footer badge and the dedicated section on About. A fourth treatment as a
-band above the capability strip was redundant and read as filler.
+Every gradient headline ends on a 600-weight stop. mint-400 measures 2.2:1 on
+white and coral-400 2.9:1, both under the 3:1 large-text floor, which made the
+last word of each headline the least readable one; the 600 stops measure
+4.7–6.9:1.
+
+**Header is light in both states.** A white glass bar at rest, flush to the top
+edge, contracting into a floating white-glass capsule on scroll. It was dark for
+as long as the hero was navy — the polarity flipped with the palette.
+`/admin` opens on a light background, so it starts in the capsule state.
+
+**The accreditation band is on the homepage and on About.** NABL is the lab's
+strongest single credential, so it gets the hero pill, the footer badge, and a
+full section with the certificate and ceremony photography on both pages.
 
 **The header switches to the drawer below `xl`, not `lg`.** Six nav links plus
 two icon buttons plus the CTA do not fit between 1024 and 1180 — the labels

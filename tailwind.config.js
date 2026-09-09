@@ -32,6 +32,36 @@ export default {
           900: '#11425C',
         },
         mist: '#F7FAFC',
+
+        /* Light grounds — the page sits on these instead of navy. */
+        surface: {
+          DEFAULT: '#FFFFFF',
+          soft: '#F4F8FF',
+          tint: '#E9F2FF',
+          sky: '#DCEBFF',
+        },
+
+        /* Warm accent: energy against an otherwise all-blue palette. */
+        coral: {
+          50: '#FFF3EE',
+          100: '#FFE2D5',
+          200: '#FFC4AC',
+          300: '#FF9E78',
+          400: '#FF7A45',
+          500: '#F2571C',
+          600: '#CE4413',
+        },
+
+        /* Secondary for "health" cues. */
+        mint: {
+          50: '#E8FBF6',
+          100: '#C8F5EA',
+          200: '#8FEAD7',
+          300: '#4DD9BE',
+          400: '#14C4A3',
+          500: '#059E84',
+          600: '#067A68',
+        },
       },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
@@ -45,13 +75,26 @@ export default {
       maxWidth: {
         shell: '1560px',
       },
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+      },
       boxShadow: {
+        /* Blue-tinted shadows: on a white ground, neutral grey shadows look
+           dirty, while a tint of the brand colour reads as depth. */
+        soft: '0 2px 8px -2px rgba(16,58,120,0.08), 0 12px 28px -12px rgba(16,58,120,0.12)',
+        card: '0 4px 14px -4px rgba(16,58,120,0.10), 0 20px 48px -20px rgba(16,58,120,0.20)',
+        cardHover: '0 8px 22px -6px rgba(16,58,120,0.16), 0 32px 64px -24px rgba(16,58,120,0.28)',
+        glow: '0 18px 44px -14px rgba(21,155,211,0.55)',
+        glowCoral: '0 18px 44px -14px rgba(255,122,69,0.45)',
         header: '0 1px 0 rgba(16,24,40,0.06), 0 12px 32px -18px rgba(16,24,40,0.28)',
         lift: '0 18px 40px -24px rgba(16,24,40,0.35)',
         liftLg: '0 30px 70px -32px rgba(11,32,88,0.45)',
         inset: 'inset 0 1px 0 rgba(255,255,255,0.08)',
       },
       backgroundImage: {
+        'mesh-hero':
+          'radial-gradient(at 12% 18%, rgba(53,199,244,0.28) 0px, transparent 55%), radial-gradient(at 88% 12%, rgba(255,122,69,0.20) 0px, transparent 50%), radial-gradient(at 72% 82%, rgba(20,196,163,0.22) 0px, transparent 52%), radial-gradient(at 30% 88%, rgba(21,155,211,0.20) 0px, transparent 55%)',
         'grid-light':
           'linear-gradient(to right, rgba(16,24,40,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(16,24,40,0.05) 1px, transparent 1px)',
         'grid-dark':

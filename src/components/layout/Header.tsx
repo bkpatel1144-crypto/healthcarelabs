@@ -84,26 +84,27 @@ export function Header() {
       </a>
 
       {/*
-        Two-state header, dark in both. At rest it is fully transparent so the
-        navy hero runs to the top edge; once the page scrolls it contracts into
-        a floating navy-glass capsule with a top margin.
+        Light header, two states: a clean white bar at rest, contracting into a
+        floating white capsule on scroll.
 
-        A white bar was the obvious first choice and the wrong one — it cut a
-        bright band straight across the hero. Staying dark also means one text
-        colour scheme throughout, so nothing has to swap between states.
+        This was dark for as long as the hero was dark navy. Now the hero is
+        white with a colour mesh, so a dark bar is the thing that cuts across
+        it — the polarity flipped with the palette.
       */}
       <header className="fixed inset-x-0 top-0 z-50">
         <div
           className={cn(
             'relative transition-all duration-400 ease-premium',
-            floating ? 'px-3 pt-3 sm:px-6 sm:pt-4' : 'px-0 pt-0',
+            floating
+              ? 'px-3 pt-3 sm:px-6 sm:pt-4'
+              : 'border-b border-brand-50 bg-white/80 px-0 pt-0 backdrop-blur-md',
           )}
         >
           <div
             className={cn(
               'mx-auto flex w-full items-center justify-between gap-3 transition-all duration-400 ease-premium sm:gap-6',
               floating
-                ? 'h-[62px] rounded-full bg-navy-900/75 px-4 shadow-[0_18px_44px_-16px_rgba(3,10,32,0.75)] ring-1 ring-inset ring-white/12 backdrop-blur-2xl backdrop-saturate-150 sm:px-5 lg:h-[68px] lg:px-6'
+                ? 'h-[62px] rounded-full bg-white/85 px-4 shadow-card ring-1 ring-brand-50 backdrop-blur-xl backdrop-saturate-150 sm:px-5 lg:h-[68px] lg:px-6'
                 : 'h-[74px] px-5 sm:px-8 lg:h-[84px] lg:px-[clamp(2.5rem,4.5vw,5.5rem)]',
             )}
           >
@@ -114,7 +115,7 @@ export function Header() {
             >
               {/* Light variant: the bar is dark in both the resting and floating states. */}
               <img
-                src="/brand/healthcare-labs-logo-light.png"
+                src="/brand/healthcare-labs-logo.png"
                 alt={SITE_CONFIG.brandName}
                 width={1400}
                 height={223}
@@ -150,8 +151,8 @@ export function Header() {
                       className={({ isActive }) =>
                         cn(
                           'relative block whitespace-nowrap rounded-lg px-3.5 py-2 text-[14.5px] font-medium transition-colors duration-200',
-                          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300',
-                          isActive ? 'text-white' : 'text-white/80 hover:text-white',
+                          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+                          isActive ? 'text-brand-600' : 'text-ink-muted hover:text-ink',
                         )
                       }
                     >
@@ -162,7 +163,7 @@ export function Header() {
                             <motion.span
                               layoutId={reduced ? undefined : 'nav-active'}
                               aria-hidden="true"
-                              className="absolute inset-x-3.5 -bottom-px h-[2px] rounded-full bg-brand-400"
+                              className="absolute inset-x-3.5 -bottom-px h-[2px] rounded-full bg-brand-500"
                               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
                             />
                           )}
@@ -179,7 +180,7 @@ export function Header() {
               <a
                 href={telHref()}
                 aria-label={`Call ${SITE_CONFIG.brandName} on ${SITE_CONFIG.phoneDisplay}`}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-slate-200 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-white/5 hover:text-brand-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-100 bg-white text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
               >
                 <Phone className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
               </a>
@@ -188,14 +189,14 @@ export function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Chat with Healthcare Labs on WhatsApp"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-slate-200 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-white/5 hover:text-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-mint-100 bg-white text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-mint-300 hover:text-mint-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
               >
                 <MessageCircle className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
               </a>
               <Button
                 to="/contact-us#home-collection"
                 size="md"
-                className="ml-2 whitespace-nowrap !rounded-full"
+                className="ml-2 whitespace-nowrap !rounded-full shadow-glow"
               >
                 Book a Health Check
                 <ButtonArrow />
@@ -210,7 +211,7 @@ export function Header() {
               aria-label="Open navigation menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-brand-400 hover:bg-white/5 hover:text-brand-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300 xl:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-brand-100 bg-white text-ink transition-colors hover:border-brand-300 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 xl:hidden"
             >
               <Menu className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
             </button>

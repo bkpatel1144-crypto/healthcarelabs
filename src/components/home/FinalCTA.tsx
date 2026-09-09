@@ -5,17 +5,18 @@ import { SITE_CONFIG, telHref } from '@/config/site';
 
 export function FinalCTA() {
   return (
-    <section aria-labelledby="cta-heading" className="relative overflow-hidden bg-navy-900">
+    <section aria-labelledby="cta-heading" className="relative overflow-hidden bg-brand-600">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,#07133D_0%,#0B2058_52%,#0A1F5A_100%)]" />
-        <div className="absolute inset-0 bg-grid-dark [background-size:72px_72px] [mask-image:radial-gradient(ellipse_60%_80%_at_75%_50%,#000,transparent_72%)]" />
-        <div className="absolute -right-24 top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.18),transparent_66%)] blur-2xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(115deg,#0C7CB0_0%,#159BD3_46%,#14C4A3_100%)]" />
+        <div className="absolute inset-0 bg-grid-dark [background-size:72px_72px] [mask-image:radial-gradient(ellipse_60%_80%_at_75%_50%,#000,transparent_72%)] opacity-70" />
+        <div className="absolute -right-24 top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.28),transparent_66%)] blur-2xl" />
+        <div className="absolute -left-16 -top-20 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.32),transparent_66%)] blur-2xl" />
         {/* Faint specimen silhouette echoing the hero. */}
         <svg
-          className="absolute right-[8%] top-1/2 hidden h-[300px] -translate-y-1/2 opacity-[0.12] lg:block"
+          className="absolute right-[8%] top-1/2 hidden h-[300px] -translate-y-1/2 opacity-[0.22] lg:block"
           viewBox="0 0 120 300"
           fill="none"
-          stroke="#8FD9F7"
+          stroke="#FFFFFF"
           strokeWidth="1.5"
         >
           <path d="M32 40 h56 v190 a28 28 0 0 1 -28 28 a28 28 0 0 1 -28 -28 z" />
@@ -32,9 +33,9 @@ export function FinalCTA() {
             className="text-balance text-[clamp(2rem,4.4vw,3.4rem)] font-extrabold leading-[1.04] tracking-editorial text-white"
           >
             Book the check you have been
-            <span className="text-brand-400"> putting off.</span>
+            <span className="text-coral-200"> putting off.</span>
           </h2>
-          <p className="mt-6 max-w-xl text-pretty text-[17px] leading-relaxed text-slate-300/90">
+          <p className="mt-6 max-w-xl text-pretty text-[17px] leading-relaxed text-white/85">
             Pick a package, choose a slot, and have the sample collected at home or at the centre.
             The lab confirms every booking by phone before the visit.
           </p>
@@ -50,7 +51,7 @@ export function FinalCTA() {
             </Button>
           </div>
 
-          <p className="mt-8 text-[13.5px] text-slate-400">
+          <p className="mt-8 text-[13.5px] text-white/75">
             {SITE_CONFIG.hours.map((h) => `${h.days}: ${h.time}`).join('  ·  ')}
           </p>
         </div>

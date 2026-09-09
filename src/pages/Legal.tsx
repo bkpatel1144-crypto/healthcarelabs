@@ -129,7 +129,7 @@ function LegalPage({
               {clauses.map((c, i) => (
                 <li key={c.heading}>
                   <h2 className="flex items-baseline gap-4 text-[22px] font-bold leading-snug tracking-editorial text-ink">
-                    <span className="font-mono text-[13px] font-medium tabular-nums text-brand-400">
+                    <span className="font-mono text-[13px] font-medium tabular-nums text-brand-500">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     {c.heading}

@@ -37,36 +37,36 @@ const ACTIONS = [
 
 export function QuickActions() {
   return (
-    <section aria-label="Quick actions" className="bg-mist py-16 sm:py-20">
+    <section aria-label="Quick actions" className="bg-white py-16 sm:py-20">
       <Container>
-        <div className="overflow-hidden rounded-2xl bg-navy-900 shadow-liftLg">
+        <div className="overflow-hidden rounded-4xl bg-gradient-to-br from-brand-600 via-brand-500 to-mint-400 shadow-card">
           <div className="relative">
             <div
               aria-hidden="true"
-              className="absolute inset-0 bg-grid-dark [background-size:56px_56px] [mask-image:radial-gradient(ellipse_80%_100%_at_50%_0%,#000,transparent_75%)]"
+              className="absolute inset-0 bg-grid-dark [background-size:56px_56px] [mask-image:radial-gradient(ellipse_80%_100%_at_50%_0%,#000,transparent_75%)] opacity-60"
             />
             <ul className="relative grid sm:grid-cols-2 lg:grid-cols-4">
               {ACTIONS.map(({ Icon, label, detail, to, href }, i) => {
                 const inner = (
                   <>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/[0.07] text-brand-300 ring-1 ring-inset ring-white/10 transition-all duration-300 group-hover:bg-brand-500 group-hover:text-white group-hover:ring-brand-400">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 text-white ring-1 ring-inset ring-white/30 transition-all duration-300 group-hover:bg-white group-hover:text-brand-600">
                       <Icon className="h-[19px] w-[19px]" strokeWidth={1.9} aria-hidden="true" />
                     </span>
                     <span className="mt-5 block text-[15.5px] font-bold tracking-[-0.01em] text-white">
                       {label}
                     </span>
-                    <span className="mt-1.5 block text-[13.5px] leading-relaxed text-slate-400">
+                    <span className="mt-1.5 block text-[13.5px] leading-relaxed text-white/75">
                       {detail}
                     </span>
                     <span
                       aria-hidden="true"
-                      className="mt-5 block h-px w-9 bg-brand-400/50 transition-all duration-300 group-hover:w-16 group-hover:bg-brand-400"
+                      className="mt-5 block h-px w-9 bg-white/50 transition-all duration-300 group-hover:w-16 group-hover:bg-white"
                     />
                   </>
                 );
 
                 const classes =
-                  'group block h-full border-b border-white/[0.08] p-7 transition-colors duration-300 hover:bg-white/[0.035] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-300 sm:p-8 lg:border-b-0 lg:border-r lg:last:border-r-0';
+                  'group block h-full border-b border-white/15 p-7 transition-colors duration-300 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white sm:p-8 lg:border-b-0 lg:border-r lg:last:border-r-0';
 
                 return (
                   <Reveal as="li" key={label} delay={i} className="sm:[&:nth-child(-n+2)]:border-b lg:[&:nth-child(-n+2)]:border-b-0">

@@ -10,7 +10,7 @@ export function FeaturedPackages() {
   if (featured.length === 0) return null;
 
   return (
-    <section aria-labelledby="packages-heading" className="bg-mist py-20 sm:py-28">
+    <section aria-labelledby="packages-heading" className="bg-white py-20 sm:py-28">
       <Container>
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeading

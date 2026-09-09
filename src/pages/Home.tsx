@@ -2,6 +2,7 @@ import { DiagnosticHero } from '@/components/hero/DiagnosticHero';
 import { TrustStrip } from '@/components/home/TrustStrip';
 import { QuickActions } from '@/components/home/QuickActions';
 import { WhyHealthcareLabs } from '@/components/home/WhyHealthcareLabs';
+import { AccreditationSection } from '@/components/common/AccreditationSection';
 import { HealthConcerns } from '@/components/home/HealthConcerns';
 import { FeaturedPackages } from '@/components/home/FeaturedPackages';
 import { DiagnosticJourney } from '@/components/home/DiagnosticJourney';
@@ -33,6 +34,7 @@ export default function Home() {
       <TrustStrip />
       <QuickActions />
       <WhyHealthcareLabs />
+      <AccreditationSection />
       <HealthConcerns />
       <FeaturedPackages />
       <DiagnosticJourney />

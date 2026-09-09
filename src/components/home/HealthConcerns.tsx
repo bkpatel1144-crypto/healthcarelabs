@@ -65,26 +65,25 @@ export function HealthConcerns() {
   return (
     <section
       aria-labelledby="concerns-heading"
-      className="relative overflow-hidden bg-navy-900 py-20 text-white sm:py-28"
+      className="relative overflow-hidden bg-surface-soft py-20 sm:py-28"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-grid-dark [background-size:72px_72px] [mask-image:radial-gradient(ellipse_70%_70%_at_30%_20%,#000,transparent_75%)]"
+        className="pointer-events-none absolute inset-0 bg-grid-light [background-size:72px_72px] [mask-image:radial-gradient(ellipse_70%_70%_at_30%_20%,#000,transparent_75%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 top-1/4 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(21,155,211,0.18),transparent_66%)] blur-2xl"
+        className="pointer-events-none absolute -right-32 top-1/4 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.20),transparent_66%)] blur-2xl"
       />
 
       <Container className="relative">
         <SectionHeading
           eyebrow="Health Concerns"
-          tone="dark"
-          title={
+                    title={
             <span id="concerns-heading">
               Understand your health.
               <br />
-              Start with the <span className="text-brand-400">right test.</span>
+              Start with the <span className="text-brand-600">right test.</span>
             </span>
           }
           description="Pick what you want to look into. The catalogue filters to the panels built for it, so you are not choosing a package from a price list alone."
@@ -117,15 +116,15 @@ export function HealthConcerns() {
                     'group inline-flex shrink-0 snap-start items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-3 text-[14px] font-semibold transition-all duration-200 ease-premium',
                     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300',
                     isActive
-                      ? 'bg-brand-500 text-white shadow-[0_12px_28px_-14px_rgba(21,155,211,0.95)]'
-                      : 'bg-white/[0.05] text-slate-300 ring-1 ring-inset ring-white/10 hover:bg-white/[0.1] hover:text-white',
+                      ? 'bg-brand-500 text-white shadow-glow'
+                      : 'bg-white text-ink-muted shadow-soft ring-1 ring-brand-50 hover:text-brand-600 hover:ring-brand-200',
                   )}
                 >
                   <ConcernIcon
                     name={c.icon}
                     className={cn(
                       'h-[17px] w-[17px] transition-colors',
-                      isActive ? 'text-white' : 'text-brand-300',
+                      isActive ? 'text-white' : 'text-brand-500',
                     )}
                   />
                   {c.label}
@@ -137,7 +136,7 @@ export function HealthConcerns() {
           {/* Edge fade so it reads as scrollable rather than clipped. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-5 bottom-3 top-0 w-14 bg-gradient-to-l from-navy-900 to-transparent sm:-right-8 lg:hidden"
+            className="pointer-events-none absolute -right-5 bottom-3 top-0 w-14 bg-gradient-to-l from-surface-soft to-transparent sm:-right-8 lg:hidden"
           />
         </div>
 
@@ -146,7 +145,7 @@ export function HealthConcerns() {
           id="concern-panel"
           role="tabpanel"
           aria-labelledby={`concern-tab-${active}`}
-          className="mt-10 grid gap-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm sm:p-9 lg:grid-cols-12 lg:gap-12"
+          className="mt-10 grid gap-8 rounded-4xl bg-white p-6 shadow-card ring-1 ring-brand-50 sm:p-9 lg:grid-cols-12 lg:gap-12"
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -157,25 +156,25 @@ export function HealthConcerns() {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="lg:col-span-4"
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300 ring-1 ring-inset ring-brand-400/25">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100">
                 <ConcernIcon name={concern.icon} className="h-6 w-6" />
               </span>
-              <h3 className="mt-5 text-[24px] font-bold tracking-editorial text-white">
+              <h3 className="mt-5 text-[24px] font-bold tracking-editorial text-ink">
                 {concern.label}
               </h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-slate-300/90">
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
                 {concern.description}
               </p>
 
-              <p className="mt-7 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
+              <p className="mt-7 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
                 People usually test when
               </p>
               <ul className="mt-3 space-y-2.5">
                 {concern.signals.map((s) => (
-                  <li key={s} className="flex gap-2.5 text-[14px] text-slate-300">
+                  <li key={s} className="flex gap-2.5 text-[14px] text-ink-muted">
                     <span
                       aria-hidden="true"
-                      className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-brand-400"
+                      className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-mint-400"
                     />
                     {s}
                   </li>
@@ -186,12 +185,12 @@ export function HealthConcerns() {
 
           <div className="lg:col-span-8">
             <div className="flex items-baseline justify-between gap-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
                 Matching packages
               </p>
               <Link
                 to={`/health-package?concern=${active}`}
-                className="group inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-brand-300 transition-colors hover:text-brand-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-300"
+                className="group inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-brand-600 transition-colors hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
               >
                 View all
                 <ArrowRight
@@ -209,10 +208,10 @@ export function HealthConcerns() {
                 animate={{ opacity: 1 }}
                 exit={reduced ? undefined : { opacity: 0 }}
                 transition={{ duration: 0.25 }}
-                className="mt-4 divide-y divide-white/[0.08] border-t border-white/[0.08]"
+                className="mt-4 divide-y divide-brand-50 border-t border-brand-50"
               >
                 {matches.length === 0 && (
-                  <li className="py-8 text-[15px] text-slate-400">
+                  <li className="py-8 text-[15px] text-ink-muted">
                     No package is filed under this concern yet. Call the lab and a panel can be put
                     together for you.
                   </li>
@@ -223,30 +222,30 @@ export function HealthConcerns() {
                     <li key={p.id}>
                       <Link
                         to={`/health-package/${p.slug}`}
-                        className="group flex items-center justify-between gap-6 py-5 transition-colors hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-300"
+                        className="group -mx-3 flex items-center justify-between gap-6 rounded-2xl px-3 py-5 transition-colors hover:bg-surface-soft focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-400"
                       >
                         <div className="min-w-0">
-                          <h4 className="truncate text-[16px] font-semibold text-white transition-colors group-hover:text-brand-300">
+                          <h4 className="truncate text-[16px] font-semibold text-ink transition-colors group-hover:text-brand-600">
                             {p.name}
                           </h4>
-                          <p className="mt-1 text-[13px] text-slate-400">
+                          <p className="mt-1 text-[13px] text-ink-soft">
                             {p.tests.length} tests · Report {p.reportTime.toLowerCase()}
                           </p>
                         </div>
                         <div className="shrink-0 text-right">
                           {p.offerPrice !== null ? (
                             <>
-                              <span className="block text-[17px] font-bold tabular-nums text-white">
+                              <span className="block text-[17px] font-bold tabular-nums text-ink">
                                 {formatPrice(p.offerPrice)}
                               </span>
                               {pct !== null && (
-                                <span className="mt-0.5 block text-[12px] font-semibold text-emerald-400">
+                                <span className="mt-0.5 block text-[12px] font-semibold text-mint-600">
                                   {pct}% off
                                 </span>
                               )}
                             </>
                           ) : (
-                            <span className="block text-[14px] font-semibold text-slate-300">
+                            <span className="block text-[14px] font-semibold text-ink-muted">
                               On request
                             </span>
                           )}
