@@ -351,14 +351,19 @@ seam to SSIM 0.88 / PSNR 27dB. Output is 540x960 H.264 High@4.0 at 498KB —
 level pinned for the same reason as the hero video, because hardware decoders
 reject level 5.0.
 
-It waits until the visitor is past the hero, is dismissible with the dismissal
-remembered, renders only from xl (below that the accessibility button holds
-the same corner), and never appears on `/admin`. Under
-`prefers-reduced-motion` the poster frame replaces the clip — the hero video
-plays regardless because it is the centre of the page and the client asked for
-that specifically, but a clip looping in the corner of the screen is
-decoration, and looping decoration is what that setting is asking us not to
-do.
+The card plays muted on a loop and is the resting state — an earlier version
+rested as a 76px bubble that expanded on hover, which kept it off the content
+but meant the video was never actually on show. It appears once the visitor is
+past 75% of the first viewport, because an always-on card at bottom-left
+covers the first hero stat outright and the hero carries its own video inset.
+164px wide from sm, 186px from lg, 200px from xl. Dismissible with the
+dismissal remembered, never on `/admin`, and not rendered below sm at all —
+the accessibility launcher becomes a corner button in exactly that spot there
+and the comparison dock spans the full width.
+
+It plays under `prefers-reduced-motion` too, at the client's explicit
+instruction. Worth knowing that Windows reports "animation effects off" as
+reduced motion, which is what silently withheld the hero video once before.
 
 **Package comparison.** Seventeen packages overlap heavily, so the real
 question is not "what is in this one" but "what does this have that the
