@@ -9,6 +9,7 @@ import {
 } from '@/components/layout/SiteChrome';
 import { AccessibilityWidget } from '@/components/a11y/AccessibilityWidget';
 import { CompareDock } from '@/components/packages/ComparePackages';
+import { LabReelAd } from '@/components/common/LabReelAd';
 import { ContentProvider } from '@/store/content';
 import Home from '@/pages/Home';
 
@@ -65,6 +66,7 @@ function SiteLayout() {
       </main>
       <Footer />
       <CompareDock />
+      <LabReelAd />
       <FloatingActions />
       <AccessibilityWidget />
     </div>

@@ -16,6 +16,8 @@ export const STORAGE_KEYS = {
   preferences: 'healthcare_labs_preferences',
   accessibility: 'healthcare_labs_a11y',
   seedVersion: 'healthcare_labs_seed_version',
+  /* Whether the visitor has dismissed the floating lab reel. */
+  reelDismissed: 'healthcare_labs_reel_dismissed',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

@@ -338,6 +338,28 @@ the photo pulled the ground behind the nav to rgb(188,198,208) - 4.44:1
 against `text-ink-muted`, under the 4.5:1 floor. At `.glass-bar` density the
 measured worst case is 5.9:1.
 
+**Floating lab reel.** A vertical clip of the lab's own microscope work sits
+bottom-left as a 76px live bubble and expands to a card with one call to
+action on hover, focus or click. The card alone measured 212x366 and covered a
+section heading outright, so the resting state is the bubble and the card is
+something the visitor asks for.
+
+Source is 1080x1920 ProRes, 8.96s, 126MB, no audio track. First and last
+frames measured SSIM 0.24 / PSNR 11dB against each other, so a plain loop
+visibly jumped; the encode crossfades the tail into the head, which brings the
+seam to SSIM 0.88 / PSNR 27dB. Output is 540x960 H.264 High@4.0 at 498KB —
+level pinned for the same reason as the hero video, because hardware decoders
+reject level 5.0.
+
+It waits until the visitor is past the hero, is dismissible with the dismissal
+remembered, renders only from xl (below that the accessibility button holds
+the same corner), and never appears on `/admin`. Under
+`prefers-reduced-motion` the poster frame replaces the clip — the hero video
+plays regardless because it is the centre of the page and the client asked for
+that specifically, but a clip looping in the corner of the screen is
+decoration, and looping decoration is what that setting is asking us not to
+do.
+
 **Package comparison.** Seventeen packages overlap heavily, so the real
 question is not "what is in this one" but "what does this have that the
 cheaper one doesn't". `CompareToggle` queues up to three packages from the
