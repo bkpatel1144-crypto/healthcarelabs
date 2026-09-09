@@ -310,6 +310,50 @@ white and coral-400 2.9:1, both under the 3:1 large-text floor, which made the
 last word of each headline the least readable one; the 600 stops measure
 4.7–6.9:1.
 
+**Glass is a system, not a class.** `src/index.css` defines four tiers -
+`.glass`, `.glass-bar`, `.glass-solid` and `.glass-dark` - sharing one recipe:
+a gradient fill rather than a flat alpha, `saturate()` on the backdrop so
+colour behind blooms through instead of going grey, an inset 1px highlight
+along the top edge, and a low wide shadow. The inset lip is what separates
+glass from a translucent rectangle; without it a blurred pane reads as a grey
+band. A `@supports not (backdrop-filter)` fallback drops to near-opaque fills,
+because a translucent pane over a photograph is unreadable without the blur.
+
+Glass is applied only where something is worth blurring - the header over the
+hero mesh, badges and chips over photographs, the finder band over its colour
+blooms, icon tiles on the gradient sections, the compare dock and sheet over
+the page. Never over flat white, where it is invisible and only costs paint
+time.
+
+`.glass-sheen` adds a highlight that tracks the pointer, driven by `useSheen`
+writing three CSS custom properties straight onto the element - no React
+state, and positions are batched to an animation frame so a high-polling-rate
+mouse cannot queue more style writes than the compositor draws. Hidden on
+coarse pointers and under `prefers-reduced-motion`, where there is no hover to
+track.
+
+The header capsule uses `.glass-bar` rather than `.glass` for a measured
+reason: it crosses the hero photograph as you scroll, and at `.glass` density
+the photo pulled the ground behind the nav to rgb(188,198,208) - 4.44:1
+against `text-ink-muted`, under the 4.5:1 floor. At `.glass-bar` density the
+measured worst case is 5.9:1.
+
+**Package comparison.** Seventeen packages overlap heavily, so the real
+question is not "what is in this one" but "what does this have that the
+cheaper one doesn't". `CompareToggle` queues up to three packages from the
+cards or a detail page, a glass dock shows the selection, and the sheet lays
+out the union of their tests with a tick or dash per column. Rows where every
+package agrees collapse behind a toggle, so the differences lead. The queue
+lives in the same localStorage preferences as saved packages.
+
+Matching is on the exact published test name. The lab's own lists word some
+tests two ways - "S. TSH" and "TSH", "CBC Indices, ESR" and "CBC, ESR & Blood
+Indices" - and deciding that two differently-worded entries are the same test
+is the lab's call, not this site's, so the sheet says as much rather than
+merging entries and silently changing their test counts. Thirty-two such pairs
+exist in the catalogue; normalising case, punctuation and word order collapses
+none of them, so a normaliser would not help.
+
 **Header is light in both states.** A white glass bar at rest, flush to the top
 edge, contracting into a floating white-glass capsule on scroll. It was dark for
 as long as the hero was navy — the polarity flipped with the palette.

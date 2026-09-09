@@ -34,7 +34,14 @@ const DEFAULT_PREFERENCES: Preferences = {
   lastConcern: null,
   reducedEffects: false,
   savedPackages: [],
+  comparePackages: [],
 };
+
+/**
+ * Three packages is the most that fits a readable comparison: at four the
+ * columns are narrower than the test names that label the rows.
+ */
+export const COMPARE_LIMIT = 3;
 
 export interface ContentState {
   packages: HealthPackage[];
@@ -72,6 +79,9 @@ export interface ContentApi extends ContentState {
 
   setPreferences: (patch: Partial<Preferences>) => void;
   toggleSavedPackage: (slug: string) => void;
+  /** Adds or removes a slug from the comparison queue. Full queue is a no-op. */
+  toggleComparePackage: (slug: string) => void;
+  clearCompare: () => void;
 
   exportJson: () => string;
   importJson: (raw: string) => { ok: boolean; error?: string };
@@ -230,6 +240,33 @@ export function ContentProvider({ children }: { children: ReactNode }) {
             },
           };
         }),
+
+      toggleComparePackage: (slug) =>
+        setState((prev) => {
+          const queue = prev.preferences.comparePackages;
+          if (queue.includes(slug)) {
+            return {
+              ...prev,
+              preferences: {
+                ...prev.preferences,
+                comparePackages: queue.filter((s) => s !== slug),
+              },
+            };
+          }
+          // Silently ignore an add past the cap; the UI disables the control,
+          // so reaching here means a stale render or a restored over-long list.
+          if (queue.length >= COMPARE_LIMIT) return prev;
+          return {
+            ...prev,
+            preferences: { ...prev.preferences, comparePackages: [...queue, slug] },
+          };
+        }),
+
+      clearCompare: () =>
+        setState((prev) => ({
+          ...prev,
+          preferences: { ...prev.preferences, comparePackages: [] },
+        })),
 
       exportJson: () =>
         JSON.stringify(

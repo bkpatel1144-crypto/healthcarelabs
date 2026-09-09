@@ -16,6 +16,7 @@ import { Button, ButtonArrow } from '@/components/common/Button';
 import { PackageCard } from '@/components/packages/PackageCard';
 import { HomeCollectionSection } from '@/components/home/HomeCollection';
 import { useContent } from '@/store/content';
+import { CompareToggle } from '@/components/packages/ComparePackages';
 import { useSeo } from '@/lib/seo';
 import { formatPrice, savings, savingsPercent } from '@/lib/format';
 import { HEALTH_CONCERNS } from '@/data/healthConcerns';
@@ -156,6 +157,7 @@ function PackageDetailView({ pkg }: { pkg: HealthPackage }) {
                 Book this package
                 <ButtonArrow />
               </Button>
+              <CompareToggle slug={pkg.slug} variant="label" className="w-full justify-center" />
               <div className="grid grid-cols-2 gap-2.5">
                 <Button href={telHref()} variant="secondary" size="md">
                   <Phone className="h-4 w-4" strokeWidth={2} aria-hidden="true" />

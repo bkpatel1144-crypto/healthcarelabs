@@ -5,10 +5,12 @@ import { MessageCircle, Menu, Phone, X } from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { NAV_LINKS, SITE_CONFIG, telHref, whatsappHref } from '@/config/site';
 import { cn } from '@/lib/cn';
+import { useSheen } from '@/hooks/useSheen';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const sheen = useSheen<HTMLDivElement>();
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const reduced = usePrefersReducedMotion();
@@ -84,8 +86,15 @@ export function Header() {
       </a>
 
       {/*
-        Light header, two states: a clean white bar at rest, contracting into a
-        floating white capsule on scroll.
+        Light header, two states: a glass bar at rest, contracting into a
+        floating glass capsule on scroll.
+
+        Both states use the shared `.glass` recipe — gradient fill, saturated
+        backdrop, and the inset 1px specular lip along the top edge. The lip is
+        what sells it: a flat translucent fill over the hero mesh reads as a
+        grey band, whereas an edge that catches light reads as a pane sitting
+        above the page. The capsule adds the pointer-tracking sheen, since a
+        capsule is small enough for a highlight to cross it in one gesture.
 
         This was dark for as long as the hero was dark navy. Now the hero is
         white with a colour mesh, so a dark bar is the thing that cuts across
@@ -97,20 +106,32 @@ export function Header() {
             'relative transition-all duration-400 ease-premium',
             floating
               ? 'px-3 pt-3 sm:px-6 sm:pt-4'
-              : 'border-b border-brand-50 bg-white/80 px-0 pt-0 backdrop-blur-md',
+              : 'glass-bar rounded-none border-x-0 border-t-0 border-b-white/60 px-0 pt-0',
           )}
         >
           <div
+            {...(floating ? sheen : {})}
             className={cn(
               'mx-auto flex w-full items-center justify-between gap-3 transition-all duration-400 ease-premium sm:gap-6',
               floating
-                ? 'h-[62px] rounded-full bg-white/85 px-4 shadow-card ring-1 ring-brand-50 backdrop-blur-xl backdrop-saturate-150 sm:px-5 lg:h-[68px] lg:px-6'
-                : 'h-[74px] px-5 sm:px-8 lg:h-[84px] lg:px-[clamp(2.5rem,4.5vw,5.5rem)]',
+                ? 'glass-bar glass-sheen h-[62px] rounded-full px-3 sm:px-5 lg:h-[68px] lg:px-6'
+                : 'h-[74px] px-3.5 sm:px-8 lg:h-[84px] lg:px-[clamp(2.5rem,4.5vw,5.5rem)]',
             )}
           >
             <Link
               to="/"
-              className="min-w-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
+              /*
+                The percentage cap is what actually bounds the logo. `max-w-full`
+                on the image resolves against this link, and the link was
+                content-sized — so the image's own height-driven width (h-8 on a
+                1400x223 file is ~200px) was the constraint, and nothing made it
+                give way. At 320-360px with the accessibility panel's 140% text
+                scale that left ~228px of layout space for a bar that wanted
+                270px, and the page scrolled sideways. Capping the link gives
+                `max-w-full` something real to clamp to; `object-contain`
+                letterboxes rather than distorting.
+              */
+              className="min-w-0 max-w-[58%] rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500 sm:max-w-none"
               aria-label={`${SITE_CONFIG.brandName} — home`}
             >
               {/* Light variant: the bar is dark in both the resting and floating states. */}
@@ -233,7 +254,7 @@ export function Header() {
               type="button"
               aria-label="Close navigation menu"
               onClick={() => setMenuOpen(false)}
-              className="absolute inset-0 h-full w-full cursor-default bg-navy-950/55 backdrop-blur-sm"
+              className="absolute inset-0 h-full w-full cursor-default bg-navy-950/45 backdrop-blur-md"
             />
 
             <motion.div
@@ -246,7 +267,7 @@ export function Header() {
               animate={{ x: 0 }}
               exit={reduced ? undefined : { x: '100%' }}
               transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-y-0 right-0 flex w-[min(400px,88vw)] flex-col bg-white shadow-2xl"
+              className="glass-solid absolute inset-y-0 right-0 flex w-[min(400px,88vw)] flex-col rounded-none border-y-0 border-r-0"
             >
               <div className="flex h-[74px] shrink-0 items-center justify-between border-b border-ink-line px-6">
                 <img

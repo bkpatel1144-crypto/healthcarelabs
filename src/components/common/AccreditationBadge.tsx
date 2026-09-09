@@ -39,7 +39,7 @@ export function AccreditationBadge({
   const showLogo = Boolean(logo) && !logoFailed;
 
   const shells: Record<Variant, string> = {
-    dark: 'bg-white/[0.06] ring-1 ring-inset ring-white/15 backdrop-blur-sm',
+    dark: 'glass-dark',
     light: 'bg-white ring-1 ring-inset ring-ink-line',
     compact: 'bg-brand-50 ring-1 ring-inset ring-brand-200',
   };

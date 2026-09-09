@@ -51,7 +51,7 @@ export function FinalCTA() {
             </Button>
           </div>
 
-          <p className="mt-8 text-[13.5px] text-white/75">
+          <p className="glass-dark mt-8 inline-block rounded-2xl px-4 py-3 text-[13.5px] text-white/90">
             {SITE_CONFIG.hours.map((h) => `${h.days}: ${h.time}`).join('  ·  ')}
           </p>
         </div>

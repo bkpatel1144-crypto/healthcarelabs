@@ -130,6 +130,8 @@ export interface Preferences {
   lastConcern: ConcernId | null;
   reducedEffects: boolean;
   savedPackages: string[];
+  /** Slugs queued for side-by-side comparison. Capped at COMPARE_LIMIT. */
+  comparePackages: string[];
 }
 
 /** A processed photograph emitted by scripts/optimise-images.mjs. */

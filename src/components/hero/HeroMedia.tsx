@@ -4,6 +4,7 @@ import { LAB_PHOTOS } from '@/data/labPhotos';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { useAutoplayVideo } from '@/hooks/useAutoplayVideo';
 import { cn } from '@/lib/cn';
+import { useSheen } from '@/hooks/useSheen';
 
 /**
  * The hero's visual: the lab's own reception photograph, with the video as a
@@ -23,7 +24,7 @@ const BADGES = [
     Icon: Home,
     title: 'Home collection',
     detail: 'Across Surat',
-    tone: 'bg-white text-brand-600 ring-brand-100',
+    tone: 'text-brand-700',
     position: '-left-3 top-8 sm:-left-6',
     float: 0,
   },
@@ -31,7 +32,7 @@ const BADGES = [
     Icon: FileCheck2,
     title: 'Digital reports',
     detail: 'Shared securely',
-    tone: 'bg-white text-mint-600 ring-mint-100',
+    tone: 'text-mint-700',
     position: '-right-2 bottom-28 sm:-right-5',
     float: 1.6,
   },
@@ -40,6 +41,7 @@ const BADGES = [
 export function HeroMedia() {
   const reduced = usePrefersReducedMotion();
   const videoRef = useAutoplayVideo();
+  const sheen = useSheen<HTMLDivElement>();
 
   // Reception is the lead photo in the lab collection; fall back to whatever is
   // first if that manifest entry has not been generated yet.
@@ -102,7 +104,7 @@ export function HeroMedia() {
         {/* ---------- Video inset ---------- */}
         <motion.div
           {...float(0.8)}
-          className="absolute -bottom-8 left-4 w-[42%] max-w-[220px] overflow-hidden rounded-2xl bg-white p-1.5 shadow-card ring-1 ring-white sm:left-8"
+          className="glass absolute -bottom-8 left-4 w-[42%] max-w-[220px] overflow-hidden rounded-2xl p-1.5 sm:left-8"
         >
           <video
             ref={videoRef}
@@ -119,7 +121,7 @@ export function HeroMedia() {
           >
             <source src="/media/hero-lab-720.mp4" type="video/mp4" />
           </video>
-          <p className="px-1.5 pb-1 pt-2 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-600">
+          <p className="px-1.5 pb-1 pt-2 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-700">
             Inside the lab
           </p>
         </motion.div>
@@ -136,11 +138,12 @@ export function HeroMedia() {
             <motion.div
               {...float(d)}
               className={cn(
-                'flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5 shadow-card ring-1',
+                'glass glass-sheen flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5',
                 tone,
               )}
+              {...sheen}
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-current/10">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                 <Icon className="h-[17px] w-[17px]" strokeWidth={2.2} aria-hidden="true" />
               </span>
               <span>
@@ -158,7 +161,7 @@ export function HeroMedia() {
           transition={{ duration: 0.55, delay: 1.05, ease: EASE }}
           className="absolute -right-1 top-4 hidden xl:block"
         >
-          <div className="flex items-center gap-2 rounded-full bg-mint-400 px-3.5 py-2 shadow-card">
+          <div className="flex items-center gap-2 rounded-full bg-mint-500 px-3.5 py-2 shadow-[0_14px_30px_-14px_rgba(6,122,104,0.8),inset_0_1px_0_rgba(255,255,255,0.4)]">
             <CheckCircle2 className="h-4 w-4 text-white" strokeWidth={2.6} aria-hidden="true" />
             <span className="text-[11.5px] font-bold uppercase tracking-[0.1em] text-white">
               Verified reports

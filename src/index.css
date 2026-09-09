@@ -142,6 +142,168 @@
   .scroll-row::-webkit-scrollbar-thumb:hover {
     background: rgba(53, 199, 244, 0.8);
   }
+
+  /* ------------------------------------------------------------------ Glass
+     Three surfaces, one recipe.
+
+     What separates glass that reads as glass from a translucent rectangle is
+     not the blur — it is the edge. Real glass catches light along its top lip
+     and holds a slightly brighter, more saturated version of whatever is
+     behind it. So each surface here carries:
+
+       1. a gradient fill rather than a flat alpha, so the pane has a light
+          side and a shadow side;
+       2. `saturate()` on the backdrop, so colour behind blooms through
+          instead of going grey;
+       3. an inset 1px highlight along the top edge — the specular lip;
+       4. a low, wide drop shadow, so it floats rather than sits.
+
+     Glass needs something worth blurring behind it, so these are used over
+     the hero mesh, over photographs and over the gradient bands — never over
+     flat white, where the effect is invisible and only costs paint time.
+  */
+  .glass {
+    background-image: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.58) 55%,
+      rgba(238, 248, 254, 0.62) 100%
+    );
+    backdrop-filter: blur(18px) saturate(1.7);
+    -webkit-backdrop-filter: blur(18px) saturate(1.7);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow:
+      0 20px 44px -26px rgba(11, 32, 88, 0.3),
+      0 2px 8px -4px rgba(11, 32, 88, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+
+  /*
+    Bar tier: denser than `.glass`, used where the pane carries small text and
+    may pass over anything at all.
+
+    The header capsule crosses the hero photograph as you scroll, and at
+    `.glass` density the photo pulled the ground behind the nav down to
+    rgb(188,198,208) — 4.44:1 against `text-ink-muted`, just under the 4.5:1
+    floor for normal text. Measured worst case at this density is 5.9:1.
+  */
+  .glass-bar {
+    background-image: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.89) 0%,
+      rgba(255, 255, 255, 0.8) 55%,
+      rgba(238, 248, 254, 0.82) 100%
+    );
+    backdrop-filter: blur(20px) saturate(1.7);
+    -webkit-backdrop-filter: blur(20px) saturate(1.7);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow:
+      0 20px 44px -26px rgba(11, 32, 88, 0.3),
+      0 2px 8px -4px rgba(11, 32, 88, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+
+  /* For text-heavy panes, where legibility outranks transparency. */
+  .glass-solid {
+    background-image: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.86) 100%
+    );
+    backdrop-filter: blur(22px) saturate(1.5);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+      0 24px 50px -28px rgba(11, 32, 88, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+  }
+
+  /* Over photographs, the navy footer and the gradient bands. */
+  .glass-dark {
+    background-image: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.09) 100%
+    );
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    box-shadow:
+      0 18px 40px -24px rgba(3, 10, 32, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  }
+
+  /*
+    Without backdrop-filter (Firefox with it disabled, older Safari, and any
+    engine under forced-colors) a translucent pane over a photograph is
+    unreadable. Fall back to near-opaque fills and keep the edge treatment,
+    which is what carries most of the character anyway.
+  */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass,
+    .glass-bar,
+    .glass-solid {
+      background-image: linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.97) 0%,
+        rgba(240, 248, 255, 0.97) 100%
+      );
+    }
+
+    .glass-dark {
+      background-image: linear-gradient(
+        140deg,
+        rgba(9, 26, 62, 0.86) 0%,
+        rgba(9, 26, 62, 0.76) 100%
+      );
+    }
+  }
+
+  /*
+    Specular sheen.
+
+    A soft highlight that tracks the pointer across the pane, the way a
+    reflection slides over a real sheet of glass. `--sheen` is driven to 1 by
+    the pointer hook and back to 0 on leave, so the highlight fades in and out
+    instead of popping. Everything is composited (opacity + background
+    position only), so it never triggers layout.
+  */
+  .glass-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-sheen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--sheen, 0);
+    transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    background: radial-gradient(
+      420px circle at var(--sheen-x, 50%) var(--sheen-y, 0%),
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.14) 38%,
+      transparent 62%
+    );
+  }
+
+  .glass-sheen-dark::after {
+    background: radial-gradient(
+      420px circle at var(--sheen-x, 50%) var(--sheen-y, 0%),
+      rgba(255, 255, 255, 0.26),
+      rgba(255, 255, 255, 0.08) 40%,
+      transparent 64%
+    );
+  }
+
+  /* A coarse pointer cannot hover, so the sheen would only ever flash on tap. */
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    .glass-sheen::after {
+      display: none;
+    }
+  }
 }
 
 @layer utilities {

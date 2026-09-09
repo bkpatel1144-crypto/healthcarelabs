@@ -49,7 +49,7 @@ export function QuickActions() {
               {ACTIONS.map(({ Icon, label, detail, to, href }, i) => {
                 const inner = (
                   <>
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 text-white ring-1 ring-inset ring-white/30 transition-all duration-300 group-hover:bg-white group-hover:text-brand-600">
+                    <span className="glass-dark flex h-11 w-11 items-center justify-center rounded-2xl text-white transition-all duration-300 group-hover:bg-white group-hover:bg-none group-hover:text-brand-600">
                       <Icon className="h-[19px] w-[19px]" strokeWidth={1.9} aria-hidden="true" />
                     </span>
                     <span className="mt-5 block text-[15.5px] font-bold tracking-[-0.01em] text-white">

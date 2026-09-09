@@ -7,6 +7,7 @@ import { useContent } from '@/store/content';
 import { formatPrice, savingsPercent } from '@/lib/format';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
+import { useSheen } from '@/hooks/useSheen';
 
 /**
  * A working test finder, as a full-width band directly under the hero.
@@ -32,6 +33,7 @@ export function HeroFinder() {
   const navigate = useNavigate();
   const reduced = usePrefersReducedMotion();
   const [query, setQuery] = useState('');
+  const sheen = useSheen<HTMLDivElement>();
   // useId rather than a literal: the finder is one instance now, but a
   // hardcoded id silently breaks `<label for>` the moment it is rendered twice.
   const inputId = useId();
@@ -68,14 +70,23 @@ export function HeroFinder() {
   };
 
   return (
-    <section aria-label="Find a test or package" className="relative bg-surface-tint py-10 sm:py-12">
-      <Container>
+    <section
+      aria-label="Find a test or package"
+      className="relative overflow-hidden bg-surface-tint py-10 sm:py-12"
+    >
+      {/* Glass needs something behind it: two blooms under the pane. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-24 top-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.35),transparent_66%)] blur-2xl" />
+        <div className="absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.28),transparent_66%)] blur-2xl" />
+      </div>
+      <Container className="relative">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-4xl bg-white p-5 shadow-card ring-1 ring-brand-50 sm:p-7"
+          {...sheen}
+          className="glass-solid glass-sheen rounded-4xl p-5 sm:p-7"
         >
           {/* ---------- Search row ---------- */}
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">

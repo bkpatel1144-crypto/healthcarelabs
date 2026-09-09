@@ -8,6 +8,7 @@ import {
   ScrollManager,
 } from '@/components/layout/SiteChrome';
 import { AccessibilityWidget } from '@/components/a11y/AccessibilityWidget';
+import { CompareDock } from '@/components/packages/ComparePackages';
 import { ContentProvider } from '@/store/content';
 import Home from '@/pages/Home';
 
@@ -63,6 +64,7 @@ function SiteLayout() {
         </Suspense>
       </main>
       <Footer />
+      <CompareDock />
       <FloatingActions />
       <AccessibilityWidget />
     </div>

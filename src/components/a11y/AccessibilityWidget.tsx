@@ -143,9 +143,8 @@ export function AccessibilityWidget() {
             exit={reduced ? undefined : { opacity: 0, x: -16 }}
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
-              'fixed bottom-24 left-3 z-[66] w-[264px] rounded-2xl border border-ink-line',
+              'glass-solid fixed bottom-24 left-3 z-[66] w-[264px] rounded-3xl p-5',
               'sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2',
-              'bg-white p-5 shadow-[0_28px_70px_-24px_rgba(11,32,88,0.5)]',
               'sm:left-14',
             )}
           >

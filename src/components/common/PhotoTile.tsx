@@ -65,7 +65,7 @@ export function PhotoTile({
       )}
 
       {showTag && photo.tag && (
-        <span className="absolute left-3 top-3 rounded-md bg-navy-950/70 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-200 ring-1 ring-inset ring-white/15 backdrop-blur-sm">
+        <span className="glass-dark absolute left-3 top-3 rounded-lg px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-white">
           {photo.tag}
         </span>
       )}
@@ -78,7 +78,7 @@ export function PhotoTile({
 
       <span
         aria-hidden="true"
-        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 text-white opacity-0 ring-1 ring-inset ring-white/25 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100"
+        className="glass-dark absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       >
         <Expand className="h-4 w-4" strokeWidth={2.2} />
       </span>

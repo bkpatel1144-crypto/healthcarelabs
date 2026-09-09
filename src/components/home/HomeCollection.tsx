@@ -97,7 +97,9 @@ export function HomeCollectionSection({
               <ul className="mt-9 space-y-4 border-t border-white/25 pt-8">
                 {ASSURANCES.map(({ Icon, text }) => (
                   <li key={text} className="flex items-start gap-3.5 text-[14.5px] text-white/90">
-                    <Icon className="mt-0.5 h-[18px] w-[18px] shrink-0 text-white" strokeWidth={2} aria-hidden="true" />
+                    <span className="glass-dark mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg">
+                      <Icon className="h-[15px] w-[15px] text-white" strokeWidth={2.2} aria-hidden="true" />
+                    </span>
                     {text}
                   </li>
                 ))}

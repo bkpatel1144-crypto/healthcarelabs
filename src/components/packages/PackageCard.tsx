@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Bookmark, Clock, Home, ListChecks } from 'lucide-react';
+import { CompareToggle } from '@/components/packages/ComparePackages';
 import { Badge } from '@/components/common/Primitives';
 import { formatPrice, savings, savingsPercent } from '@/lib/format';
 import { useContent } from '@/store/content';
@@ -39,7 +40,7 @@ export function PackageCard({
       />
 
       <div className="flex min-w-0 flex-1 flex-col p-6 sm:p-7">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2.5">
           <div className="flex flex-wrap gap-2">
             {isFeature && <Badge tone="brand">Popular</Badge>}
             {pct !== null && <Badge tone="success">Save {pct}%</Badge>}
@@ -51,6 +52,8 @@ export function PackageCard({
             )}
           </div>
 
+          <div className="relative z-10 ml-auto flex min-w-0 items-center gap-1.5">
+          <CompareToggle slug={pkg.slug} />
           <button
             type="button"
             onClick={() => toggleSavedPackage(pkg.slug)}
@@ -71,6 +74,7 @@ export function PackageCard({
               aria-hidden="true"
             />
           </button>
+          </div>
         </div>
 
         <h3 className="mt-5 text-[19px] font-bold leading-snug tracking-[-0.02em] text-ink">
@@ -109,11 +113,11 @@ export function PackageCard({
         )}
 
         {/* ---- Price block ---- */}
-        <div className="mt-auto flex items-end justify-between gap-4 border-t border-ink-line pt-6">
-          <div>
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-3 border-t border-ink-line pt-6">
+          <div className="min-w-0">
             {pkg.offerPrice !== null ? (
               <>
-                <div className="flex items-baseline gap-2.5">
+                <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                   <span className="text-[26px] font-extrabold leading-none tracking-tightest text-ink tabular-nums">
                     {formatPrice(pkg.offerPrice)}
                   </span>
