@@ -28,6 +28,20 @@ import { useSheen } from '@/hooks/useSheen';
  * so someone who arrives knowing they need an HbA1c reaches the right package
  * in two interactions without touching the navigation.
  */
+/*
+  Example searches, not links.
+
+  These fill the search field rather than navigating, which is the one thing
+  this control can offer that nothing else on the page does. The first draft
+  put the twelve health concerns here and they duplicated the concern tabs in
+  the section immediately below — the same twelve labels twice, and links to
+  the package listing on this page went from 6 to 17.
+
+  The terms are the tests that appear in the most packages, so every one of
+  them returns results.
+*/
+const EXAMPLE_SEARCHES = ['Lipid Profile', 'HbA1c', 'Vit. B12', 'CBC', 'Blood Group', 'Urine R/M'];
+
 export function HeroFinder() {
   const { livePackages } = useContent();
   const navigate = useNavigate();
@@ -40,14 +54,17 @@ export function HeroFinder() {
 
   const trimmed = query.trim().toLowerCase();
 
+  /*
+    With no query this shows concerns, not packages.
+
+    It used to list three featured panels with their prices, which made it the
+    first of three priced package listings on the homepage. Before a visitor
+    has told us anything, the useful offer is a way in — "which of these is
+    me?" — not a shortlist they did not ask for. Prices appear the moment they
+    actually search.
+  */
   const results = useMemo(() => {
-    if (!trimmed) {
-      // No query: show the featured panels, cheapest first.
-      return livePackages
-        .filter((p) => p.featured)
-        .sort((a, b) => (a.offerPrice ?? a.price ?? 0) - (b.offerPrice ?? b.price ?? 0))
-        .slice(0, 3);
-    }
+    if (!trimmed) return [];
     // Name matches rank above test matches, so typing "thyroid" surfaces the
     // thyroid panel before every package that merely includes a TSH.
     const scored = livePackages
@@ -142,7 +159,7 @@ export function HeroFinder() {
           <div className="mt-6 border-t border-brand-50 pt-5">
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
               <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft">
-                {trimmed ? `${results.length === 0 ? 'No' : 'Top'} matches` : 'Most booked'}
+                {trimmed ? `${results.length === 0 ? 'No' : 'Top'} matches` : 'Try one of these'}
               </p>
               <p className="flex items-center gap-2 text-[12px] text-ink-soft">
                 <ShieldCheck
@@ -154,8 +171,27 @@ export function HeroFinder() {
               </p>
             </div>
 
-            <ul aria-live="polite" className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {results.length === 0 && (
+            {!trimmed && (
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {EXAMPLE_SEARCHES.map((term) => (
+                  <li key={term}>
+                    <button
+                      type="button"
+                      onClick={() => setQuery(term)}
+                      className="inline-flex items-center rounded-full bg-surface-soft px-3.5 py-2 text-[13px] font-semibold text-ink-muted ring-1 ring-brand-50 transition-colors hover:bg-white hover:text-brand-700 hover:ring-brand-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+                    >
+                      {term}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <ul
+              aria-live="polite"
+              className={cn('mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3', !trimmed && 'hidden')}
+            >
+              {trimmed && results.length === 0 && (
                 <li className="text-[14px] leading-relaxed text-ink-muted sm:col-span-2 lg:col-span-3">
                   Nothing matches “{query.trim()}”. The lab can quote any test that is not listed —
                   just call.

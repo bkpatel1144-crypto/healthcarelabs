@@ -6,7 +6,6 @@ import { Container, SectionHeading } from '@/components/common/Primitives';
 import { ConcernIcon } from '@/components/common/ConcernIcon';
 import { HEALTH_CONCERNS } from '@/data/healthConcerns';
 import { useContent } from '@/store/content';
-import { formatPrice, savingsPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import type { ConcernId } from '@/types';
@@ -216,8 +215,18 @@ export function HealthConcerns() {
                     together for you.
                   </li>
                 )}
+                {/*
+                  No prices here, deliberately.
+
+                  This is the "which of these is me?" step, and the page
+                  carried the same priced package rows in three places — the
+                  hero finder, this list and the packages section — 24 prices
+                  and 13 package cards on one screenful of scrolling. Pricing
+                  now lives in exactly one section. What belongs here is
+                  whether the panel answers your question: its name, how many
+                  parameters it covers, and when the report lands.
+                */}
                 {matches.map((p) => {
-                  const pct = savingsPercent(p.price, p.offerPrice);
                   return (
                     <li key={p.id}>
                       <Link
@@ -232,24 +241,14 @@ export function HealthConcerns() {
                             {p.tests.length} tests · Report {p.reportTime.toLowerCase()}
                           </p>
                         </div>
-                        <div className="shrink-0 text-right">
-                          {p.offerPrice !== null ? (
-                            <>
-                              <span className="block text-[17px] font-bold tabular-nums text-ink">
-                                {formatPrice(p.offerPrice)}
-                              </span>
-                              {pct !== null && (
-                                <span className="mt-0.5 block text-[12px] font-semibold text-mint-600">
-                                  {pct}% off
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <span className="block text-[14px] font-semibold text-ink-muted">
-                              On request
-                            </span>
-                          )}
-                        </div>
+                        <span className="flex shrink-0 items-center gap-1.5 text-[13.5px] font-semibold text-brand-600">
+                          View panel
+                          <ArrowRight
+                            className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                            strokeWidth={2.4}
+                            aria-hidden="true"
+                          />
+                        </span>
                       </Link>
                     </li>
                   );
