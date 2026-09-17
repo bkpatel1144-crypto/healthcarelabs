@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Bookmark, Clock, Home, ListChecks } from 'lucide-react';
 import { CompareToggle } from '@/components/packages/ComparePackages';
+import { AddToVisit } from '@/components/packages/VisitPlanner';
 import { Badge } from '@/components/common/Primitives';
 import { formatPrice, savings, savingsPercent } from '@/lib/format';
 import { useContent } from '@/store/content';
@@ -53,6 +54,7 @@ export function PackageCard({
           </div>
 
           <div className="relative z-10 ml-auto flex min-w-0 items-center gap-1.5">
+          <AddToVisit slug={pkg.slug} />
           <CompareToggle slug={pkg.slug} />
           <button
             type="button"

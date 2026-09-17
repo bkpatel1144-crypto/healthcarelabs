@@ -13,6 +13,7 @@ import {
   type Errors,
 } from '@/components/common/Form';
 import { useContent } from '@/store/content';
+import { VisitSummary } from '@/components/packages/VisitPlanner';
 import { SITE_CONFIG, telHref } from '@/config/site';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
@@ -128,7 +129,8 @@ export function HomeCollectionSection({
 }
 
 export function HomeCollectionForm() {
-  const { livePackages, addAppointment, storageAvailable } = useContent();
+  const { livePackages, addAppointment, storageAvailable, preferences, clearVisit } =
+    useContent();
   const reduced = usePrefersReducedMotion();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Errors<FormState>>({});
@@ -176,6 +178,13 @@ export function HomeCollectionForm() {
       target?.focus();
       return;
     }
+    /*
+      The planned visit travels with the booking. `packageSlug` keeps its old
+      meaning — one package, chosen in this form — so existing appointments and
+      the admin list are unaffected; `packageSlugs` carries the whole plan when
+      there is one, and the plan is cleared once it has been handed over.
+    */
+    const planned = preferences.visitPackages;
     addAppointment({
       name: form.name.trim(),
       phone: form.phone.trim(),
@@ -183,9 +192,11 @@ export function HomeCollectionForm() {
       preferredDate: form.preferredDate,
       preferredTime: form.preferredTime,
       address: form.address.trim(),
-      packageSlug: form.packageSlug,
+      packageSlug: form.packageSlug || planned[0] || '',
+      ...(planned.length > 0 ? { packageSlugs: planned } : {}),
       notes: form.notes.trim(),
     });
+    if (planned.length > 0) clearVisit();
     setSubmitted({ name: form.name.trim().split(' ')[0], date: form.preferredDate });
     setForm(EMPTY);
     setErrors({});
@@ -240,6 +251,8 @@ export function HomeCollectionForm() {
 
   return (
     <form onSubmit={onSubmit} noValidate>
+      <VisitSummary />
+
       <h3 className="text-[20px] font-bold tracking-[-0.02em] text-ink">Book a home collection</h3>
       <p className="mt-2 text-[14.5px] text-ink-muted">
         Fields marked <span className="text-rose-500">*</span> are required.

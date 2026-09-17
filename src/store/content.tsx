@@ -35,6 +35,7 @@ const DEFAULT_PREFERENCES: Preferences = {
   reducedEffects: false,
   savedPackages: [],
   comparePackages: [],
+  visitPackages: [],
 };
 
 /**
@@ -82,6 +83,9 @@ export interface ContentApi extends ContentState {
   /** Adds or removes a slug from the comparison queue. Full queue is a no-op. */
   toggleComparePackage: (slug: string) => void;
   clearCompare: () => void;
+  /** Adds or removes a package from the visit the visitor is planning. */
+  toggleVisitPackage: (slug: string) => void;
+  clearVisit: () => void;
 
   exportJson: () => string;
   importJson: (raw: string) => { ok: boolean; error?: string };
@@ -266,6 +270,26 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         setState((prev) => ({
           ...prev,
           preferences: { ...prev.preferences, comparePackages: [] },
+        })),
+
+      toggleVisitPackage: (slug) =>
+        setState((prev) => {
+          const list = prev.preferences.visitPackages;
+          return {
+            ...prev,
+            preferences: {
+              ...prev.preferences,
+              visitPackages: list.includes(slug)
+                ? list.filter((s) => s !== slug)
+                : [...list, slug],
+            },
+          };
+        }),
+
+      clearVisit: () =>
+        setState((prev) => ({
+          ...prev,
+          preferences: { ...prev.preferences, visitPackages: [] },
         })),
 
       exportJson: () =>

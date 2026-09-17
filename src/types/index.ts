@@ -111,6 +111,12 @@ export interface AppointmentLead {
   preferredTime: string;
   address: string;
   packageSlug: string;
+  /**
+   * Everything the visitor put in their visit plan. Optional because
+   * appointments stored before the planner existed do not have it, and a
+   * reload must not lose them.
+   */
+  packageSlugs?: string[];
   notes?: string;
   status: 'new' | 'contacted' | 'scheduled' | 'closed';
   createdAt: string;
@@ -132,6 +138,8 @@ export interface Preferences {
   savedPackages: string[];
   /** Slugs queued for side-by-side comparison. Capped at COMPARE_LIMIT. */
   comparePackages: string[];
+  /** Packages the visitor has added to the visit they are planning. */
+  visitPackages: string[];
 }
 
 /** A processed photograph emitted by scripts/optimise-images.mjs. */

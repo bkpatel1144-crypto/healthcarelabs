@@ -227,7 +227,19 @@ export function AdminAppointments() {
 
               <dl className="mt-4 grid gap-x-8 gap-y-3 border-t border-ink-line pt-4 text-[14px] sm:grid-cols-2">
                 <Row label="Preferred slot" value={`${a.preferredDate} · ${a.preferredTime}`} />
-                <Row label="Package" value={packageName(a.packageSlug)} />
+                {/*
+                  A booking can now cover several packages. Show the whole plan
+                  when there is one — a lab calling the patient back needs to
+                  know they asked for three panels, not the first of three.
+                */}
+                {a.packageSlugs && a.packageSlugs.length > 1 ? (
+                  <Row
+                    label={`Packages (${a.packageSlugs.length})`}
+                    value={a.packageSlugs.map(packageName).join(' · ')}
+                  />
+                ) : (
+                  <Row label="Package" value={packageName(a.packageSlug)} />
+                )}
                 <Row label="Address" value={a.address} className="sm:col-span-2" />
                 {a.notes && <Row label="Notes" value={a.notes} className="sm:col-span-2" />}
               </dl>

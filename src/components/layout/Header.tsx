@@ -7,6 +7,7 @@ import { NAV_LINKS, SITE_CONFIG, telHref, whatsappHref } from '@/config/site';
 import { ACCREDITATION } from '@/data/accreditation';
 import { cn } from '@/lib/cn';
 import { useSheen } from '@/hooks/useSheen';
+import { VisitButton } from '@/components/packages/VisitPlanner';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 export function Header() {
@@ -245,6 +246,11 @@ export function Header() {
 
             {/* ---- Desktop actions ---- */}
             <div className="hidden items-center gap-2 xl:flex">
+              {/*
+                The visit plan lives in the header rather than as a sixth
+                floating dock. A cart belongs where people look for one.
+              */}
+              <VisitButton className="border border-brand-100 bg-white" />
               <a
                 href={telHref()}
                 aria-label={`Call ${SITE_CONFIG.brandName} on ${SITE_CONFIG.phoneDisplay}`}
