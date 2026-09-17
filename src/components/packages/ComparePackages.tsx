@@ -264,10 +264,10 @@ function CompareSheet({
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={reduced ? undefined : { y: 30, opacity: 0 }}
             transition={{ duration: 0.34, ease: EASE }}
-            className="glass-solid relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-4xl sm:max-h-[86vh] sm:rounded-4xl"
+            className="glass-solid relative flex max-h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-4xl sm:max-h-[92vh] sm:rounded-4xl"
           >
             {/* ---- Header ---- */}
-            <div className="flex shrink-0 items-start justify-between gap-4 border-b border-brand-50 p-5 sm:p-7">
+            <div className="flex shrink-0 items-center justify-between gap-4 border-b border-brand-50 p-5 sm:px-6 sm:py-5">
               <div className="min-w-0">
                 <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-brand-600">
                   <Scale className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
@@ -275,7 +275,7 @@ function CompareSheet({
                 </p>
                 <h2
                   id="compare-title"
-                  className="mt-2 text-[21px] font-extrabold tracking-editorial text-ink sm:text-[25px]"
+                  className="mt-1.5 text-[19px] font-extrabold tracking-editorial text-ink sm:text-[22px]"
                 >
                   {differing.length === 0
                     ? 'These panels cover the same tests'
@@ -295,7 +295,7 @@ function CompareSheet({
 
             {/* ---- Scrolling table ---- */}
             <div className="min-h-0 flex-1 overflow-auto">
-              <table className="w-full border-collapse text-left">
+              <table className="w-full table-fixed border-collapse text-left">
                 <caption className="sr-only">
                   Tests included in {picked.map((p) => p.name).join(', ')}
                 </caption>
@@ -303,7 +303,7 @@ function CompareSheet({
                   <tr>
                     <th
                       scope="col"
-                      className="glass-solid w-[38%] rounded-none border-0 border-b border-brand-100 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft sm:px-7"
+                      className="glass-solid w-[30%] rounded-none border-0 border-b border-brand-100 px-4 py-3.5 text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft sm:px-6"
                     >
                       Test
                     </th>
@@ -386,7 +386,7 @@ function CompareSheet({
                     <tr key={test} className="even:bg-surface-soft/40">
                       <th
                         scope="row"
-                        className="border-b border-brand-50 px-5 py-3 text-[13.5px] font-medium text-ink sm:px-7"
+                        className="border-b border-brand-50 px-4 py-2.5 text-[13.5px] font-medium text-ink sm:px-6"
                       >
                         {test}
                       </th>
@@ -407,7 +407,7 @@ function CompareSheet({
                           ) : (
                             <>
                               <Minus
-                                className="mx-auto h-[18px] w-[18px] text-ink-line"
+                                className="mx-auto h-[18px] w-[18px] text-ink-soft/55"
                                 strokeWidth={2.4}
                                 aria-hidden="true"
                               />
@@ -423,7 +423,7 @@ function CompareSheet({
             </div>
 
             {/* ---- Footer ---- */}
-            <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-brand-100 p-5 sm:p-7">
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-brand-100 p-5 sm:px-6 sm:py-4">
               {/*
                 The lab's published lists name some tests two ways — "S. TSH"
                 and "TSH", "CBC Indices, ESR" and "CBC, ESR & Blood Indices".
@@ -471,7 +471,7 @@ function SpecRow({
     <tr>
       <th
         scope="row"
-        className="border-b border-brand-50 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-soft sm:px-7"
+        className="border-b border-brand-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-soft sm:px-6"
       >
         {label}
       </th>

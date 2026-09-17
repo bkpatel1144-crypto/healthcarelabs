@@ -48,12 +48,12 @@ export function DiagnosticHero() {
           delay={0.6}
         />
         <motion.div
-          className="absolute -right-24 -top-24 h-[46vh] w-[46vh] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.22),transparent_68%)]"
+          className="absolute -right-24 -top-24 h-[46vh] w-[46vh] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.30)_0%,rgba(255,122,69,0.18)_28%,rgba(255,122,69,0.07)_52%,transparent_76%)]"
           animate={reduced ? undefined : { x: [0, -34, 0], y: [0, 26, 0] }}
           transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
-          className="absolute -left-20 top-1/3 h-[42vh] w-[42vh] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.20),transparent_66%)]"
+          className="absolute -left-20 top-1/3 h-[42vh] w-[42vh] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.28)_0%,rgba(20,196,163,0.16)_30%,rgba(20,196,163,0.06)_54%,transparent_78%)]"
           animate={reduced ? undefined : { x: [0, 30, 0], y: [0, -24, 0] }}
           transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
         />
