@@ -93,9 +93,15 @@ export default {
         inset: 'inset 0 1px 0 rgba(255,255,255,0.08)',
       },
       screens: {
-        /* Short viewports: 1366x768 and 1280x720 laptops, where a hero sized
-           for a 900px screen runs past the fold. */
-        short: { raw: '(max-height: 820px)' },
+        /* Height stages for the hero.
+
+           `short` covers the ordinary desktop heights — 864, 900, 930 — where
+           the full editorial headline overflows by 4-56px; it steps the type
+           down one size rather than shrinking it outright. `shorter` is the
+           1366x768 and 1280x720 laptop case, which needs the compact
+           treatment. */
+        short: { raw: '(max-height: 960px)' },
+        shorter: { raw: '(max-height: 780px)' },
       },
       backgroundImage: {
         'mesh-hero':

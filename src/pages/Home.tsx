@@ -1,4 +1,5 @@
 import { DiagnosticHero } from '@/components/hero/DiagnosticHero';
+import { LabRibbon } from '@/components/home/LabRibbon';
 import { TrustStrip } from '@/components/home/TrustStrip';
 import { QuickActions } from '@/components/home/QuickActions';
 import { WhyHealthcareLabs } from '@/components/home/WhyHealthcareLabs';
@@ -31,6 +32,7 @@ export default function Home() {
   return (
     <>
       <DiagnosticHero />
+      <LabRibbon />
       <TrustStrip />
       <QuickActions />
       <WhyHealthcareLabs />

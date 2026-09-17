@@ -313,6 +313,34 @@
   }
 }
 
+  /*
+    Film grain.
+
+    A large flat colour field rendered by a browser is perfectly smooth, and
+    perfectly smooth is what makes a page look like a template screenshot. A
+    trace of noise over everything gives the whites and the gradients a
+    surface. It is an inline SVG turbulence rather than an image, so it costs
+    no request, and it sits at 3.5% on a fixed layer so it never scrolls with
+    the content or intercepts a pointer.
+
+    Excluded under forced-colors, where a decorative overlay only interferes.
+  */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (forced-colors: active) {
+    body::after {
+      display: none;
+    }
+  }
+
 @layer utilities {
   /* Tailwind's line-clamp plugin is built in from 3.3 — these aliases keep the
      intent obvious at the call site. */
