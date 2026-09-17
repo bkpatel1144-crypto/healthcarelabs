@@ -115,7 +115,7 @@ export function CompareDock() {
           >
             <div
               {...sheen}
-              className="glass glass-sheen pointer-events-auto flex w-full min-w-0 max-w-full items-center justify-between gap-2 rounded-full py-2 pl-4 pr-2 sm:w-auto sm:justify-start sm:gap-4 sm:pl-5"
+              className="glass-flat glass-sheen pointer-events-auto flex w-full min-w-0 max-w-full items-center justify-between gap-2 rounded-full py-2 pl-4 pr-2 sm:w-auto sm:justify-start sm:gap-4 sm:pl-5"
             >
               <p className="hidden shrink-0 items-center gap-2 text-[12px] font-bold uppercase tracking-[0.14em] text-brand-700 sm:flex">
                 <Scale className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" />

@@ -72,7 +72,7 @@ export function HealthConcerns() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 top-1/4 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.20),transparent_66%)] blur-2xl"
+        className="pointer-events-none absolute -right-32 top-1/4 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.20),transparent_66%)]"
       />
 
       <Container className="relative">

@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion, useScroll } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Clock, Home, Phone, ShieldCheck, Star } from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { Container } from '@/components/common/Primitives';
@@ -8,7 +7,7 @@ import { HeroMedia } from './HeroMedia';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { SITE_CONFIG, telHref } from '@/config/site';
 import { cn } from '@/lib/cn';
-import { CountUp, Magnetic, PulseLine, WordReveal, useParallaxY } from '@/components/common/Motion';
+import { CountUp, Magnetic, PulseLine, WordReveal } from '@/components/common/Motion';
 
 /**
  * Bright, people-led hero on a light ground.
@@ -24,21 +23,6 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function DiagnosticHero() {
   const reduced = usePrefersReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-
-  /*
-    Scroll-linked depth. The copy, the photograph and the background blooms
-    each leave the viewport at a different rate, which is what stops the hero
-    reading as one flat sheet sliding away. Travel is small on purpose — a
-    hero that detaches from the page is a trick, not a design.
-  */
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  });
-  const copyY = useParallaxY(scrollYProgress, 64);
-  const mediaY = useParallaxY(scrollYProgress, -46);
-  const bloomY = useParallaxY(scrollYProgress, 120);
 
   const rise = (delay: number) =>
     reduced
@@ -51,12 +35,11 @@ export function DiagnosticHero() {
 
   return (
     <section
-      ref={sectionRef}
       className="relative isolate overflow-hidden bg-white pt-[74px] lg:pt-[76px] xl:pt-[116px]"
       aria-labelledby="hero-heading"
     >
       {/* ---------- Light atmosphere: colour mesh, not a dark scrim ---------- */}
-      <motion.div style={{ y: bloomY }} aria-hidden="true" className="absolute inset-0 -z-10">
+      <div aria-hidden="true" className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_38%,#F4F8FF_72%,#E9F2FF_100%)]" />
         <div className="absolute inset-0 bg-mesh-hero opacity-60" />
         {/* The signature trace, drawn once across the full width of the hero. */}
@@ -65,24 +48,21 @@ export function DiagnosticHero() {
           delay={0.6}
         />
         <motion.div
-          className="absolute -right-24 -top-24 h-[46vh] w-[46vh] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.22),transparent_68%)] blur-2xl"
+          className="absolute -right-24 -top-24 h-[46vh] w-[46vh] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.22),transparent_68%)]"
           animate={reduced ? undefined : { x: [0, -34, 0], y: [0, 26, 0] }}
           transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
-          className="absolute -left-20 top-1/3 h-[42vh] w-[42vh] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.20),transparent_66%)] blur-2xl"
+          className="absolute -left-20 top-1/3 h-[42vh] w-[42vh] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.20),transparent_66%)]"
           animate={reduced ? undefined : { x: [0, 30, 0], y: [0, -24, 0] }}
           transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
         />
-      </motion.div>
+      </div>
 
       <Container size="full" className="relative pb-12 pt-8 sm:pt-10 lg:pb-14 lg:pt-12 lg:short:pb-10 lg:short:pt-8 lg:shorter:pb-8 lg:shorter:pt-6">
         <div className="grid gap-y-12 lg:grid-cols-12 lg:items-stretch lg:gap-x-14 xl:gap-x-20">
           {/* ---------------- Copy ---------------- */}
-          <motion.div
-            style={{ y: copyY }}
-            className="flex flex-col justify-center lg:col-span-6 2xl:col-span-5"
-          >
+          <div className="flex flex-col justify-center lg:col-span-6 2xl:col-span-5">
             <motion.div {...rise(0)} className="flex flex-wrap items-center gap-2.5">
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand-700 shadow-soft ring-1 ring-brand-100">
                 <ShieldCheck className="h-3.5 w-3.5 text-mint-500" strokeWidth={2.6} aria-hidden="true" />
@@ -227,12 +207,12 @@ export function DiagnosticHero() {
                 </span>
               </p>
             </motion.div>
-          </motion.div>
+          </div>
 
           {/* ---------------- Media ---------------- */}
-          <motion.div style={{ y: mediaY }} className="lg:col-span-6 2xl:col-start-7">
+          <div className="lg:col-span-6 2xl:col-start-7">
             <HeroMedia />
-          </motion.div>
+          </div>
         </div>
       </Container>
 

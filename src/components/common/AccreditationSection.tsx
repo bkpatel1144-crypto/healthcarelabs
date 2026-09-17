@@ -38,7 +38,7 @@ export function AccreditationSection() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-32 top-1/3 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.18),transparent_66%)] blur-2xl"
+        className="pointer-events-none absolute -left-32 top-1/3 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.18),transparent_66%)]"
       />
 
       <Container className="relative">

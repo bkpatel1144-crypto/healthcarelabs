@@ -9,8 +9,8 @@ export function FinalCTA() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(115deg,#0C7CB0_0%,#159BD3_46%,#14C4A3_100%)]" />
         <div className="absolute inset-0 bg-grid-dark [background-size:72px_72px] [mask-image:radial-gradient(ellipse_60%_80%_at_75%_50%,#000,transparent_72%)] opacity-70" />
-        <div className="absolute -right-24 top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.28),transparent_66%)] blur-2xl" />
-        <div className="absolute -left-16 -top-20 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.32),transparent_66%)] blur-2xl" />
+        <div className="absolute -right-24 top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.28),transparent_66%)]" />
+        <div className="absolute -left-16 -top-20 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.32),transparent_66%)]" />
         {/* Faint specimen silhouette echoing the hero. */}
         <svg
           className="absolute right-[8%] top-1/2 hidden h-[300px] -translate-y-1/2 opacity-[0.22] lg:block"
@@ -51,7 +51,7 @@ export function FinalCTA() {
             </Button>
           </div>
 
-          <p className="glass-dark mt-8 inline-block rounded-2xl px-4 py-3 text-[13.5px] text-white/90">
+          <p className="glass-flat-dark mt-8 inline-block rounded-2xl px-4 py-3 text-[13.5px] text-white/90">
             {SITE_CONFIG.hours.map((h) => `${h.days}: ${h.time}`).join('  ·  ')}
           </p>
         </div>

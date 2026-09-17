@@ -44,8 +44,8 @@ export function Footer() {
       <div className="relative overflow-hidden bg-surface-soft">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-grid-light [background-size:64px_64px] [mask-image:linear-gradient(to_bottom,#000,transparent_70%)]" />
-          <div className="absolute -left-40 top-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.22),transparent_68%)] blur-2xl" />
-          <div className="absolute -right-28 bottom-0 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.18),transparent_68%)] blur-2xl" />
+          <div className="absolute -left-40 top-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.22),transparent_68%)]" />
+          <div className="absolute -right-28 bottom-0 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.18),transparent_68%)]" />
         </div>
 
         <Container className="relative">
@@ -53,10 +53,10 @@ export function Footer() {
             {/* ---- Brand block ---- */}
             <div className="lg:col-span-4">
               <img
-                src="/brand/healthcare-labs-logo.png"
+                src="/brand/healthcare-labs-logo-460.png"
                 alt={SITE_CONFIG.brandName}
-                width={1400}
-                height={223}
+                width={460}
+                height={73}
                 loading="lazy"
                 className="h-9 w-auto max-w-[220px] object-contain object-left"
               />

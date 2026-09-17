@@ -39,7 +39,7 @@ export function LabFacility() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(20,196,163,0.16),transparent_68%)] blur-2xl"
+        className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(20,196,163,0.16),transparent_68%)]"
       />
 
       <Container className="relative">

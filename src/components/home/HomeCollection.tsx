@@ -79,7 +79,7 @@ export function HomeCollectionSection({
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.30),transparent_66%)] blur-2xl"
+              className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.30),transparent_66%)]"
             />
 
             <div className="relative">
@@ -98,7 +98,7 @@ export function HomeCollectionSection({
               <ul className="mt-9 space-y-4 border-t border-white/25 pt-8">
                 {ASSURANCES.map(({ Icon, text }) => (
                   <li key={text} className="flex items-start gap-3.5 text-[14.5px] text-white/90">
-                    <span className="glass-dark mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg">
+                    <span className="glass-flat-dark mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg">
                       <Icon className="h-[15px] w-[15px] text-white" strokeWidth={2.2} aria-hidden="true" />
                     </span>
                     {text}

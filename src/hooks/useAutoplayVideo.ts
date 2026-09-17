@@ -21,10 +21,22 @@ export function useAutoplayVideo() {
     const video = ref.current;
     if (!video) return;
 
-    // A rejected play() promise is expected on a blocked attempt, not an error.
+    /*
+      A rejected play() promise is expected on a blocked attempt, not an error.
+      `pending` guards against issuing a second play() while the first is still
+      resolving — an unguarded version thrashed when several triggers fired
+      together and measured worse than doing nothing.
+    */
+    let pending = false;
     const attempt = () => {
-      if (!video.paused) return;
-      video.play().catch(() => {});
+      if (!video.paused || pending) return;
+      pending = true;
+      video
+        .play()
+        .catch(() => {})
+        .finally(() => {
+          pending = false;
+        });
     };
 
     attempt();
@@ -55,8 +67,6 @@ export function useAutoplayVideo() {
     };
     document.addEventListener('visibilitychange', onVisibility);
 
-    // Last resort: the first gesture anywhere on the page satisfies every
-    // autoplay policy there is. Fires once, then removes itself.
     const gestures = ['pointerdown', 'touchstart', 'keydown', 'scroll'] as const;
     const onGesture = () => {
       attempt();

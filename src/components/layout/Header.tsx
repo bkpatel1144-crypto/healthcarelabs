@@ -184,10 +184,10 @@ export function Header() {
             >
               {/* Light variant: the bar is dark in both the resting and floating states. */}
               <img
-                src="/brand/healthcare-labs-logo.png"
+                src="/brand/healthcare-labs-logo-460.png"
                 alt={SITE_CONFIG.brandName}
-                width={1400}
-                height={223}
+                width={460}
+                height={73}
                 /*
                   The logo is 1400x223, so at h-8 it wants ~200px. At the
                   accessibility panel's 140% text zoom the effective viewport is
@@ -324,7 +324,7 @@ export function Header() {
             >
               <div className="flex h-[74px] shrink-0 items-center justify-between border-b border-ink-line px-6">
                 <img
-                  src="/brand/healthcare-labs-logo.png"
+                  src="/brand/healthcare-labs-logo-460.png"
                   alt={SITE_CONFIG.brandName}
                   className="h-7 w-auto"
                 />

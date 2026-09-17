@@ -210,6 +210,46 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.95);
   }
 
+  /*
+    Flat glass: the same surface, without the backdrop-filter.
+
+    `backdrop-filter` makes the compositor re-read and re-blur everything
+    behind an element on every frame it moves. With 29 of them on the homepage
+    plus large filter: blur() blooms, a scroll rendered 25 frames in 3 seconds
+    — roughly 8fps, measured under real wheel input.
+
+    The character of these panes is carried by the gradient fill, the 1px
+    specular lip and the shadow, not by the blur, so the small chips and cards
+    use this and look all but identical. Real backdrop blur is kept only where
+    a pane sits over arbitrary moving content and has to stay legible: the
+    header bar, the drawers and the modal sheets.
+  */
+  .glass-flat {
+    background-image: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.82) 55%,
+      rgba(238, 248, 254, 0.86) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow:
+      0 20px 44px -26px rgba(11, 32, 88, 0.3),
+      0 2px 8px -4px rgba(11, 32, 88, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+
+  .glass-flat-dark {
+    background-image: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.12) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    box-shadow:
+      0 18px 40px -24px rgba(3, 10, 32, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  }
+
   /* For text-heavy panes, where legibility outranks transparency. */
   .glass-solid {
     background-image: linear-gradient(
@@ -312,34 +352,6 @@
     }
   }
 }
-
-  /*
-    Film grain.
-
-    A large flat colour field rendered by a browser is perfectly smooth, and
-    perfectly smooth is what makes a page look like a template screenshot. A
-    trace of noise over everything gives the whites and the gradients a
-    surface. It is an inline SVG turbulence rather than an image, so it costs
-    no request, and it sits at 3.5% on a fixed layer so it never scrolls with
-    the content or intercepts a pointer.
-
-    Excluded under forced-colors, where a decorative overlay only interferes.
-  */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  @media (forced-colors: active) {
-    body::after {
-      display: none;
-    }
-  }
 
 @layer utilities {
   /* Tailwind's line-clamp plugin is built in from 3.3 — these aliases keep the

@@ -38,7 +38,7 @@ export function PageHeader({
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(175deg,#FFFFFF_0%,#F4F8FF_60%,#E9F2FF_100%)]" />
         <div className="absolute inset-0 bg-mesh-hero opacity-70" />
-        <div className="absolute -right-28 -top-24 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.16),transparent_68%)] blur-2xl" />
+        <div className="absolute -right-28 -top-24 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(255,122,69,0.16),transparent_68%)]" />
       </div>
 
       <Container className="relative pb-16 pt-14 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-20">

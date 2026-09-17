@@ -2,19 +2,22 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, FileCheck2, Home } from 'lucide-react';
 import { LAB_PHOTOS } from '@/data/labPhotos';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
-import { useAutoplayVideo } from '@/hooks/useAutoplayVideo';
 import { cn } from '@/lib/cn';
 import { useSheen } from '@/hooks/useSheen';
 
 /**
- * The hero's visual: the lab's own reception photograph, with the video as a
- * small inset.
+ * The hero's visual: the lab's own reception photograph.
  *
  * People lead, equipment supports. The previous hero used a full-bleed video of
  * an analyser under a dark scrim; the client's preferred site leads with a
  * photograph of smiling faces, and their reception shot is the one asset with
- * real people in it. The video keeps its place as an inset, so the movement is
- * still there without the whole page going dark to accommodate it.
+ * real people in it.
+ *
+ * The small video inset that used to sit on this photograph is gone. It said
+ * the same thing as the floating lab reel — "inside the lab" — and two videos
+ * playing at once was the largest remaining cost on the homepage: a 3-second
+ * scroll measured 33.4ms median frames with them and 16.7ms without, 56
+ * rendered frames against 108.
  */
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -40,7 +43,6 @@ const BADGES = [
 
 export function HeroMedia() {
   const reduced = usePrefersReducedMotion();
-  const videoRef = useAutoplayVideo();
   const sheen = useSheen<HTMLDivElement>();
 
   // Reception is the lead photo in the lab collection; fall back to whatever is
@@ -60,7 +62,7 @@ export function HeroMedia() {
       {/* Soft colour bloom behind the composition. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-8 rounded-[3rem] bg-[radial-gradient(ellipse_at_60%_40%,rgba(53,199,244,0.22),transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute -inset-8 rounded-[3rem] bg-[radial-gradient(ellipse_at_60%_40%,rgba(53,199,244,0.22),transparent_70%)]"
       />
 
       <motion.div
@@ -101,31 +103,6 @@ export function HeroMedia() {
           />
         </div>
 
-        {/* ---------- Video inset ---------- */}
-        <motion.div
-          {...float(0.8)}
-          className="glass absolute -bottom-8 left-4 w-[42%] max-w-[220px] overflow-hidden rounded-2xl p-1.5 sm:left-8"
-        >
-          <video
-            ref={videoRef}
-            aria-hidden="true"
-            poster="/media/hero-lab-poster.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            disablePictureInPicture
-            tabIndex={-1}
-            className="aspect-[4/3] w-full rounded-xl object-cover"
-          >
-            <source src="/media/hero-lab-720.mp4" type="video/mp4" />
-          </video>
-          <p className="px-1.5 pb-1 pt-2 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-700">
-            Inside the lab
-          </p>
-        </motion.div>
-
         {/* ---------- Floating proof badges ---------- */}
         {BADGES.map(({ Icon, title, detail, tone, position, float: d }) => (
           <motion.div
@@ -138,7 +115,7 @@ export function HeroMedia() {
             <motion.div
               {...float(d)}
               className={cn(
-                'glass glass-sheen flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5',
+                'glass-flat glass-sheen flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5',
                 tone,
               )}
               {...sheen}

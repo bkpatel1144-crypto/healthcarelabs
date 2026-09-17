@@ -93,8 +93,8 @@ export function HeroFinder() {
     >
       {/* Glass needs something behind it: two blooms under the pane. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 top-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.35),transparent_66%)] blur-2xl" />
-        <div className="absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.28),transparent_66%)] blur-2xl" />
+        <div className="absolute -left-24 top-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.35),transparent_66%)]" />
+        <div className="absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.28),transparent_66%)]" />
       </div>
       <Container className="relative">
         <motion.div
@@ -103,7 +103,7 @@ export function HeroFinder() {
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           {...sheen}
-          className="glass-solid glass-sheen rounded-4xl p-5 sm:p-7"
+          className="glass-flat glass-sheen rounded-4xl p-5 sm:p-7"
         >
           {/* ---------- Search row ---------- */}
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">

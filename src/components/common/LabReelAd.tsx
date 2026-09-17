@@ -104,7 +104,7 @@ export function LabReelAd() {
             ...(reduced ? {} : { x: -20, scale: 0.96 }),
             transition: { duration: 0.26, ease: EASE },
           }}
-          className="glass glass-sheen glass-sheen-dark fixed bottom-5 left-5 z-40 hidden w-[164px] rounded-3xl p-1.5 sm:block lg:bottom-6 lg:left-6 lg:w-[186px] xl:w-[200px]"
+          className="glass-flat glass-sheen glass-sheen-dark fixed bottom-5 left-5 z-40 hidden w-[164px] rounded-3xl p-1.5 sm:block lg:bottom-6 lg:left-6 lg:w-[186px] xl:w-[200px]"
         >
           <div className="relative aspect-[9/16] overflow-hidden rounded-[1.15rem] bg-navy-950">
             {/*

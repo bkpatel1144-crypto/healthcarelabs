@@ -46,7 +46,7 @@ export function WhyHealthcareLabs() {
     <section aria-labelledby="why-heading" className="relative overflow-hidden bg-white py-20 sm:py-28">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 top-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.18),transparent_68%)] blur-2xl"
+        className="pointer-events-none absolute -right-32 top-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.18),transparent_68%)]"
       />
 
       <Container className="relative">
