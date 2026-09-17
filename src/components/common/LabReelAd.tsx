@@ -70,11 +70,20 @@ export function LabReelAd() {
     storage.set(STORAGE_KEYS.reelDismissed, true);
   };
 
-  const onAdmin = location.pathname.startsWith('/admin');
+  /*
+    Suppressed where it would sit on top of a control the visitor came to use.
+
+    On /contact-us the card landed squarely over the "Get directions" button
+    beneath the map — a promo overlay covering a primary action is a defect, not
+    a placement preference. /admin is excluded for the same reason: it is a
+    working tool, not a shop window.
+  */
+  const SUPPRESSED = ['/admin', '/contact-us'];
+  const suppressed = SUPPRESSED.some((route) => location.pathname.startsWith(route));
 
   return (
     <AnimatePresence>
-      {!dismissed && !onAdmin && pastHero && (
+      {!dismissed && !suppressed && pastHero && (
         <motion.aside
           aria-label="Inside the laboratory"
           /*

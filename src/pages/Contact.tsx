@@ -12,7 +12,7 @@ import {
   required,
   type Errors,
 } from '@/components/common/Form';
-import { MapEmbed } from '@/components/common/MapEmbed';
+import { LocationMap } from '@/components/common/LocationMap';
 import { HomeCollectionSection } from '@/components/home/HomeCollection';
 import { useContent } from '@/store/content';
 import { useSeo } from '@/lib/seo';
@@ -102,26 +102,6 @@ export default function Contact() {
 
             <aside className="lg:col-span-5">
               <div className="lg:sticky lg:top-32 space-y-6">
-                <div className="rounded-2xl border border-ink-line bg-mist p-7 sm:p-8">
-                  <h2 className="flex items-center gap-2.5 text-[17px] font-bold tracking-[-0.015em] text-ink">
-                    <MapPin className="h-5 w-5 text-brand-500" strokeWidth={2} aria-hidden="true" />
-                    The centre
-                  </h2>
-                  <address className="mt-5 not-italic text-[15px] leading-relaxed text-ink-muted">
-                    {SITE_CONFIG.legalName}
-                    <br />
-                    {SITE_CONFIG.address.line1}
-                    <br />
-                    {SITE_CONFIG.address.city} — {SITE_CONFIG.address.postalCode}
-                    <br />
-                    {SITE_CONFIG.address.state}, {SITE_CONFIG.address.country}
-                  </address>
-                  <Button href={mapHref()} variant="secondary" size="md" className="mt-6 w-full">
-                    Get directions
-                    <ButtonArrow />
-                  </Button>
-                </div>
-
                 <div className="rounded-2xl border border-ink-line bg-white p-7 sm:p-8">
                   <h2 className="flex items-center gap-2.5 text-[17px] font-bold tracking-[-0.015em] text-ink">
                     <Clock className="h-5 w-5 text-brand-500" strokeWidth={2} aria-hidden="true" />
@@ -141,12 +121,13 @@ export default function Contact() {
                   </p>
                 </div>
 
-                <MapEmbed />
               </div>
             </aside>
           </div>
         </Container>
       </section>
+
+      <LocationMap />
 
       <div className="bg-mist py-4">
         <HomeCollectionSection />
