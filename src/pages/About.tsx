@@ -233,11 +233,7 @@ export default function About() {
             <div className="text-[14px] leading-relaxed text-ink-muted">
               <p>
                 <strong className="font-semibold text-ink">Accreditation.</strong> Healthcare Labs is
-                NABL accredited for medical testing under certificate{' '}
-                <span className="font-mono font-semibold text-ink">
-                  {SITE_CONFIG.accreditations[0]?.registrationNumber}
-                </span>
-                —{' '}
+                NABL accredited for medical testing —{' '}
                 <a
                   href="#accreditation"
                   className="font-semibold text-brand-600 underline-offset-2 hover:underline"

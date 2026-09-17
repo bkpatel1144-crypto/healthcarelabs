@@ -129,7 +129,7 @@ export function LabReelAd() {
             <div className="absolute inset-x-0 bottom-0 p-3.5">
               <p className="flex items-center gap-1.5 text-[9.5px] font-bold uppercase tracking-[0.14em] text-mint-300">
                 <ShieldCheck className="h-3 w-3 shrink-0" strokeWidth={2.6} aria-hidden="true" />
-                NABL {ACCREDITATION.certificateNumber}
+                {ACCREDITATION.bodyShort} accredited
               </p>
               <p className="mt-1.5 text-[13.5px] font-bold leading-snug tracking-[-0.01em] text-white">
                 Inside our laboratory

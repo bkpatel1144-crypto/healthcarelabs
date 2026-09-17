@@ -46,7 +46,7 @@ supplied by the lab:
 
 - **17 health packages** with the lab's own published prices and test lists.
 - **Contact details, opening hours, legal entity name.**
-- **NABL accreditation**, certificate `MC-6960` (medical testing), awarded at the
+- **NABL accreditation**, certificate `the certificate number` (medical testing), awarded at the
   felicitation ceremony at Hotel Radisson Blu, New Delhi on 9 December 2024 —
   all read off the certificate and the ceremony backdrop.
 - **Vision / mission / quality statements**, quoted verbatim and labelled as the
@@ -309,6 +309,13 @@ Every gradient headline ends on a 600-weight stop. mint-400 measures 2.2:1 on
 white and coral-400 2.9:1, both under the 3:1 large-text floor, which made the
 last word of each headline the least readable one; the 600 stops measure
 4.7–6.9:1.
+
+**The accreditation certificate number is not published.** The lab asked for it
+not to appear, so it is absent from the data entirely rather than held in
+config and hidden at each call site — an unrendered value is one careless
+interpolation away from being public again, and it would still have reached the
+JSON-LD. The NABL accreditation itself, its scope and the award date are still
+published, with the certificate and ceremony photographs.
 
 **Glass is a system, not a class.** `src/index.css` defines four tiers -
 `.glass`, `.glass-bar`, `.glass-solid` and `.glass-dark` - sharing one recipe:

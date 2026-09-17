@@ -43,7 +43,7 @@ export interface SiteConfig {
    */
   accreditations: {
     label: string;
-    registrationNumber: string;
+    /* No registration number: the lab asked for it not to be published. */
     scope?: string;
     /** Path under /public to the official accreditation emblem. */
     logo?: string;
@@ -111,7 +111,6 @@ export const SITE_CONFIG: SiteConfig = {
   accreditations: [
     {
       label: 'NABL Accredited',
-      registrationNumber: 'MC-6960',
       scope: 'Medical Testing',
       // Drop the official emblem here to replace the typographic badge.
       logo: '/brand/nabl-accreditation.png',

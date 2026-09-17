@@ -1,16 +1,20 @@
 /**
  * The accreditation record.
  *
- * Every field here is evidenced: the certificate number was supplied by the
- * lab, and the ceremony details are read directly off the event backdrop in
- * the photographs. Nothing is inferred.
+ * Every field here is evidenced: the ceremony details are read directly off
+ * the event backdrop in the photographs. Nothing is inferred.
+ *
+ * The certificate number is deliberately absent. The lab asked for it not to
+ * be published, so it is not in the data at all rather than held here and
+ * hidden at each call site — an unrendered value in config is one careless
+ * interpolation away from being public again, and it would still reach the
+ * JSON-LD.
  */
 export const ACCREDITATION = {
   body: 'National Accreditation Board for Testing and Calibration Laboratories',
   bodyShort: 'NABL',
   /** NABL is a constituent board of the QCI — worth stating, it adds context. */
   parentBody: 'Quality Council of India',
-  certificateNumber: 'MC-6960',
   scope: 'Medical Testing',
   ceremony: {
     name: 'Felicitation Ceremony of Freshly Accredited Laboratories',

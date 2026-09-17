@@ -148,7 +148,6 @@ export function organizationSchema(): Record<string, unknown> {
             '@type': 'EducationalOccupationalCredential',
             credentialCategory: 'Accreditation',
             name: a.label,
-            identifier: a.registrationNumber,
             recognizedBy: {
               '@type': 'Organization',
               name: ACCREDITATION.body,

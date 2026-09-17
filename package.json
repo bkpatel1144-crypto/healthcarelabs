@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit",
+    "lint": "tsc -b --force",
     "prebuild": "node scripts/generate-sitemap.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "images": "node scripts/optimise-images.mjs"

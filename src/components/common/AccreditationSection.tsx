@@ -59,7 +59,7 @@ export function AccreditationSection() {
             >
               NABL accredited,
               <br />
-              <span className="text-brand-600">certificate {ACCREDITATION.certificateNumber}.</span>
+              <span className="text-brand-600">{ACCREDITATION.scope.toLowerCase()}.</span>
             </h2>
             <p className="mt-6 text-pretty text-[16px] leading-relaxed text-ink-muted">
               Accredited by the {ACCREDITATION.body} ({ACCREDITATION.bodyShort}), a constituent
@@ -74,7 +74,6 @@ export function AccreditationSection() {
                   : 'grid gap-px sm:grid-cols-2 lg:grid-cols-4',
               )}
             >
-              <Row Icon={Award} label="Certificate" value={ACCREDITATION.certificateNumber} mono stacked={stacked} />
               <Row Icon={ShieldCheck} label="Scope" value={ACCREDITATION.scope} stacked={stacked} />
               <Row
                 Icon={CalendarDays}

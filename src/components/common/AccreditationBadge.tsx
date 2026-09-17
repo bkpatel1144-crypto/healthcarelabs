@@ -41,7 +41,7 @@ export function AccreditationBadge({
   // No evidenced accreditation configured: render nothing at all.
   if (!accreditation) return null;
 
-  const { label, registrationNumber, scope, logo } = accreditation;
+  const { label, scope, logo } = accreditation;
   const showLogo = Boolean(logo) && !logoFailed;
 
   const shells: Record<Variant, string> = {
@@ -75,9 +75,9 @@ export function AccreditationBadge({
         <span className={cn('text-[11px] font-bold uppercase tracking-[0.1em]', labelTone.compact)}>
           {label}
         </span>
-        <span className={cn('font-mono text-[11px] tabular-nums', metaTone.compact)}>
-          {registrationNumber}
-        </span>
+        {scope && (
+          <span className={cn('text-[11px] font-medium', metaTone.compact)}>{scope}</span>
+        )}
       </span>
     );
   }
@@ -89,7 +89,7 @@ export function AccreditationBadge({
       {showLogo ? (
         <img
           src={logo}
-          alt={`${label}, certificate ${registrationNumber}`}
+          alt={label}
           width={44}
           height={44}
           loading="lazy"
@@ -123,10 +123,9 @@ export function AccreditationBadge({
         >
           {label}
         </span>
-        <span className={cn('mt-1 block font-mono text-[11.5px] tabular-nums', metaTone[variant])}>
-          {registrationNumber}
-          {scope && <span className="opacity-70"> · {scope}</span>}
-        </span>
+        {scope && (
+          <span className={cn('mt-1 block text-[11.5px]', metaTone[variant])}>{scope}</span>
+        )}
         <span
           className={cn(
             'mt-0.5 block text-[11px]',
@@ -157,9 +156,9 @@ export function AccreditationPill({ className }: { className?: string }) {
       <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-200">
         {accreditation.label}
       </span>
-      <span className="font-mono text-[11px] tabular-nums text-brand-300/80">
-        {accreditation.registrationNumber}
-      </span>
+      {accreditation.scope && (
+        <span className="text-[11px] font-medium text-brand-300/80">{accreditation.scope}</span>
+      )}
     </span>
   );
 }
