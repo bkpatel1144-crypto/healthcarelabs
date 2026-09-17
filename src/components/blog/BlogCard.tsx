@@ -3,6 +3,7 @@ import { ArrowUpRight, Clock } from 'lucide-react';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import type { BlogPost } from '@/types';
+import { getPostPhoto } from '@/lib/blogImagery';
 
 /**
  * Blog cards carry no photography — the site has no licensed image library and
@@ -128,6 +129,54 @@ function Plate({
   compact?: boolean;
 }) {
   const tint = CATEGORY_TINT[post.category] ?? 'from-brand-400 to-brand-600';
+  const photo = getPostPhoto(post);
+
+  /*
+    A photograph where there is one for the subject, the generated plate only
+    where there is not. The category gradient stays as a multiply-blended wash
+    over the image, so a row of cards still reads as a set and the category is
+    still legible at a glance — without the banners all being the same picture
+    of a laboratory.
+  */
+  if (photo) {
+    return (
+      <div aria-hidden="true" className={cn('relative overflow-hidden bg-navy-950', className)}>
+        <picture>
+          <source
+            type="image/avif"
+            srcSet={photo.avif}
+            sizes={compact ? '72px' : '(min-width:1024px) 46vw, 100vw'}
+          />
+          <source
+            type="image/webp"
+            srcSet={photo.webp}
+            sizes={compact ? '72px' : '(min-width:1024px) 46vw, 100vw'}
+          />
+          <img
+            src={photo.src}
+            srcSet={photo.jpeg}
+            sizes={compact ? '72px' : '(min-width:1024px) 46vw, 100vw'}
+            alt=""
+            width={photo.width}
+            height={photo.height}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-500 ease-premium group-hover:scale-[1.04]"
+          />
+        </picture>
+        <div
+          className={cn('absolute inset-0 bg-gradient-to-br opacity-[0.28] mix-blend-multiply', tint)}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/75 via-navy-950/10 to-transparent" />
+        {!compact && (
+          <span className="absolute bottom-4 left-5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/80">
+            {photo.caption}
+          </span>
+        )}
+      </div>
+    );
+  }
+
   // Deterministic seed from the slug.
   const seed = post.slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const points = Array.from({ length: 9 }, (_, i) => {

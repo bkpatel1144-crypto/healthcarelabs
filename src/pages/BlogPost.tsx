@@ -6,6 +6,7 @@ import { Container, Reveal, SectionHeading } from '@/components/common/Primitive
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { useContent } from '@/store/content';
+import { getPostPhoto } from '@/lib/blogImagery';
 import { useSeo } from '@/lib/seo';
 import { formatDate } from '@/lib/format';
 import { SITE_CONFIG } from '@/config/site';
@@ -41,6 +42,8 @@ function Article({ post }: { post: Post }) {
     () => livePackages.find((p) => p.featured) ?? livePackages[0],
     [livePackages],
   );
+
+  const banner = getPostPhoto(post);
 
   useSeo({
     title: post.title,
@@ -80,6 +83,46 @@ function Article({ post }: { post: Post }) {
           <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
         </div>
       </PageHeader>
+
+      {/*
+        The article's own banner.
+
+        The listing showed a plate for every post while the article itself
+        opened on type alone, so the one page a reader actually lands on from
+        search had no image at all. This is the same photograph the card uses,
+        at full width, with a caption — it is the lab's own room, so it is worth
+        naming rather than treating as wallpaper.
+      */}
+      {banner && (
+        <figure className="relative -mt-4 sm:-mt-6">
+          <Container>
+            <div className="relative overflow-hidden rounded-4xl bg-navy-950 shadow-card">
+              <picture>
+                <source type="image/avif" srcSet={banner.avif} sizes="(min-width:1560px) 1560px, 100vw" />
+                <source type="image/webp" srcSet={banner.webp} sizes="(min-width:1560px) 1560px, 100vw" />
+                <img
+                  src={banner.src}
+                  srcSet={banner.jpeg}
+                  sizes="(min-width:1560px) 1560px, 100vw"
+                  alt={banner.alt}
+                  width={banner.width}
+                  height={banner.height}
+                  fetchPriority="high"
+                  decoding="async"
+                  className="aspect-[16/9] w-full object-cover sm:aspect-[21/9]"
+                />
+              </picture>
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/70 via-navy-950/10 to-transparent"
+              />
+              <figcaption className="absolute inset-x-0 bottom-0 p-5 text-[12.5px] font-semibold text-white/85 sm:p-7">
+                {banner.caption}
+              </figcaption>
+            </div>
+          </Container>
+        </figure>
+      )}
 
       <section className="bg-white py-16 sm:py-20">
         <Container>
