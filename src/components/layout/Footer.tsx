@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Clock, Instagram, Mail, MapPin, Phone } from 'lucide-react';
+import { Clock, Instagram, Mail, MapPin, Navigation, Phone } from 'lucide-react';
 import { Container } from '@/components/common/Primitives';
 import { AccreditationBadge } from '@/components/common/AccreditationBadge';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@/config/site';
 import { PACKAGES } from '@/data/packages';
 import { HEALTH_CONCERNS } from '@/data/healthConcerns';
+import { BRANCHES } from '@/data/branches';
 
 /**
  * Two-tone footer: a light link zone, then a slim deep bar for the legal text.
@@ -67,8 +68,18 @@ export function Footer() {
 
               <address className="mt-8 space-y-3 not-italic">
                 <FooterContact href={mapHref()} external Icon={MapPin}>
+                  <span className="block font-semibold text-ink">Main centre — Utran</span>
                   {SITE_CONFIG.address.full}
                 </FooterContact>
+                <Link
+                  to="/contact-us#location-heading"
+                  className="group flex gap-3 rounded-xl text-[14.5px] leading-relaxed text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
+                >
+                  <Navigation className="mt-0.5 h-[18px] w-[18px] shrink-0" strokeWidth={2} aria-hidden="true" />
+                  <span className="font-semibold underline-offset-4 group-hover:underline">
+                    All {BRANCHES.length} collection centres
+                  </span>
+                </Link>
                 <FooterContact href={telHref()} Icon={Phone}>
                   <span className="tabular-nums">{SITE_CONFIG.phoneDisplay}</span>
                   <span className="mx-2 text-ink-line">·</span>

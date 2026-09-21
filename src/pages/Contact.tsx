@@ -13,6 +13,7 @@ import {
   type Errors,
 } from '@/components/common/Form';
 import { LocationMap } from '@/components/common/LocationMap';
+import { BRANCHES } from '@/data/branches';
 import { HomeCollectionSection } from '@/components/home/HomeCollection';
 import { useContent } from '@/store/content';
 import { useSeo } from '@/lib/seo';
@@ -76,8 +77,8 @@ export default function Contact() {
             <Channel
               Icon={MapPin}
               label="Visit the centre"
-              value={`${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.state}`}
-              secondary={SITE_CONFIG.address.line1}
+              value={`${BRANCHES.length} centres across ${SITE_CONFIG.address.city}`}
+              secondary={`Main centre — ${SITE_CONFIG.address.line1}`}
               href={mapHref()}
               external
             />

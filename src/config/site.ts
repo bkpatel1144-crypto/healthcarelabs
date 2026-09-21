@@ -58,7 +58,7 @@ export interface SiteConfig {
 
 export const SITE_CONFIG: SiteConfig = {
   brandName: 'Healthcare Labs',
-  legalName: 'Desai Healthcare Pathology Laboratory [OPC] Pvt. Ltd.',
+  legalName: 'Desai Healthcare Pathology Laboratory (OPC) Pvt. Ltd.',
   tagline: 'Your Trusted Partner in Health Diagnostics',
   description:
     'Advanced diagnostics, preventive health packages and trusted laboratory care — designed around you.',

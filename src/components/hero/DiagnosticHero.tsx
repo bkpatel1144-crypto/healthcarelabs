@@ -70,7 +70,7 @@ export function DiagnosticHero() {
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-coral-50 px-3.5 py-2 text-[11.5px] font-bold uppercase tracking-[0.14em] text-coral-600 ring-1 ring-coral-100">
                 <Star className="h-3.5 w-3.5 fill-coral-400 text-coral-400" strokeWidth={0} aria-hidden="true" />
-                Trusted in Surat
+                Trusted in Gujarat
               </span>
             </motion.div>
 

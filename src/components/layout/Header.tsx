@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Clock, MessageCircle, Menu, Phone, ShieldCheck, X } from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { NAV_LINKS, SITE_CONFIG, telHref, whatsappHref } from '@/config/site';
-import { ACCREDITATION } from '@/data/accreditation';
 import { cn } from '@/lib/cn';
 import { useSheen } from '@/hooks/useSheen';
 import { VisitButton } from '@/components/packages/VisitPlanner';
@@ -124,9 +123,9 @@ export function Header() {
         >
           <div className="bg-gradient-to-r from-brand-700 via-brand-600 to-mint-600">
             <div className="mx-auto flex h-10 w-full max-w-shell items-center justify-between gap-6 px-[clamp(2.5rem,4.5vw,5.5rem)] text-white">
-              <p className="flex items-center gap-2 text-[12px] font-semibold">
-                <ShieldCheck className="h-[15px] w-[15px]" strokeWidth={2.4} aria-hidden="true" />
-                NABL accredited for {ACCREDITATION.scope.toLowerCase()}
+              <p className="flex min-w-0 items-center gap-2 text-[12px] font-semibold">
+                <ShieldCheck className="h-[15px] w-[15px] shrink-0" strokeWidth={2.4} aria-hidden="true" />
+                <span className="truncate uppercase tracking-[0.04em]">{SITE_CONFIG.legalName}</span>
               </p>
 
               <div className="flex items-center gap-6 text-[12px]">
