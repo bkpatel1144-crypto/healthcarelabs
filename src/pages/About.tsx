@@ -5,6 +5,7 @@ import {
   FlaskConical,
   HeartHandshake,
   Target,
+  Users,
 } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Container, Reveal, SectionHeading } from '@/components/common/Primitives';
@@ -14,6 +15,7 @@ import { AccreditationBadge } from '@/components/common/AccreditationBadge';
 import { AccreditationSection } from '@/components/common/AccreditationSection';
 import { CARE_COMMITMENTS } from '@/data/testimonials';
 import { PACKAGES } from '@/data/packages';
+import { TEAM_PHOTOS } from '@/data/teamPhotos';
 import { useSeo } from '@/lib/seo';
 import { SITE_CONFIG, mapHref } from '@/config/site';
 
@@ -156,6 +158,9 @@ export default function About() {
         </Container>
       </section>
 
+      {/* ---- The team ---- */}
+      <TeamSection />
+
       {/* ---- Vision / Mission / Quality, verbatim ---- */}
       <section
         aria-labelledby="values-heading"
@@ -255,5 +260,70 @@ export default function About() {
 
       <FinalCTA />
     </>
+  );
+}
+
+/**
+ * The one photograph on this site with people in it.
+ *
+ * It matters that it is the lab's own: the page above promises no stock team,
+ * and until the lab supplied this there simply was not a real one to show.
+ * Nothing is attached to it that the lab has not published — no names, no
+ * degrees, no headcount — because a caption is the easiest place on a
+ * diagnostics site to start inventing credentials.
+ */
+function TeamSection() {
+  const [photo] = TEAM_PHOTOS;
+  if (!photo) return null;
+
+  return (
+    <section aria-labelledby="team-heading" className="relative overflow-hidden bg-white py-20 sm:py-28">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-40 top-1/3 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(20,196,163,0.16),transparent_66%)]"
+      />
+      <Container className="relative">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+          <Reveal className="lg:col-span-6">
+            <figure className="relative">
+              <div className="overflow-hidden rounded-4xl shadow-liftLg ring-1 ring-brand-100">
+                <picture>
+                  <source type="image/avif" srcSet={photo.avif} sizes="(min-width: 1024px) 46vw, 92vw" />
+                  <source type="image/webp" srcSet={photo.webp} sizes="(min-width: 1024px) 46vw, 92vw" />
+                  <img
+                    src={photo.src}
+                    srcSet={photo.jpeg}
+                    sizes="(min-width: 1024px) 46vw, 92vw"
+                    alt={photo.alt}
+                    width={photo.width}
+                    height={photo.height}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full"
+                  />
+                </picture>
+              </div>
+              <figcaption className="mt-4 flex items-center gap-2.5 text-[13px] text-ink-soft">
+                <Users className="h-4 w-4 shrink-0 text-mint-500" strokeWidth={2} aria-hidden="true" />
+                {photo.caption}
+              </figcaption>
+            </figure>
+          </Reveal>
+
+          <Reveal delay={1} className="lg:col-span-6">
+            <SectionHeading
+              eyebrow="The people"
+              title={<span id="team-heading">Someone has to decide a result does not look right</span>}
+              description="An analyser produces a number. What it cannot do is weigh that number against the sample it came from and rule that the run should happen again before anything leaves the building. That judgement is a person’s, and it is the part of a laboratory a patient never sees."
+            />
+            <p className="mt-7 max-w-xl text-[15.5px] leading-relaxed text-ink-muted">
+              This is the lab’s own photograph, taken at the Utran centre — the coats, the bench and
+              the signage behind them are the actual room. No names or qualifications are printed
+              under it, because those are the lab’s to publish and not ours to assume.
+            </p>
+          </Reveal>
+        </div>
+      </Container>
+    </section>
   );
 }

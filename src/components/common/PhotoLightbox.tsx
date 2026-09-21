@@ -14,12 +14,19 @@ export function PhotoLightbox({
   index,
   onClose,
   onIndexChange,
+  noun = 'Photograph',
 }: {
   photos: SitePhoto[];
   index: number;
   onClose: () => void;
   onIndexChange: (next: number) => void;
+  /**
+   * What a screen reader should call the thing on screen. The awareness
+   * artwork is not a photograph, and announcing it as one is simply wrong.
+   */
+  noun?: string;
 }) {
+  const lower = noun.toLowerCase();
   const panelRef = useRef<HTMLDivElement>(null);
   const photo = photos[index];
 
@@ -80,7 +87,7 @@ export function PhotoLightbox({
       ref={panelRef}
       role="dialog"
       aria-modal="true"
-      aria-label={`Photograph ${index + 1} of ${photos.length}: ${photo.caption || photo.alt}`}
+      aria-label={`${noun} ${index + 1} of ${photos.length}: ${photo.caption || photo.alt}`}
       className="fixed inset-0 z-[80] flex flex-col bg-navy-950/95 backdrop-blur-sm"
     >
       <div className="flex shrink-0 items-center justify-between gap-4 px-5 py-4 sm:px-8">
@@ -90,7 +97,7 @@ export function PhotoLightbox({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close photograph"
+          aria-label={`Close ${lower}`}
           className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-brand-400 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
         >
           <X className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
@@ -102,7 +109,7 @@ export function PhotoLightbox({
           <button
             type="button"
             onClick={() => step(-1)}
-            aria-label="Previous photograph"
+            aria-label={`Previous ${lower}`}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-brand-400 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
           >
             <ChevronLeft className="h-5 w-5" strokeWidth={2.2} aria-hidden="true" />
@@ -134,7 +141,7 @@ export function PhotoLightbox({
           <button
             type="button"
             onClick={() => step(1)}
-            aria-label="Next photograph"
+            aria-label={`Next ${lower}`}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-brand-400 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
           >
             <ChevronRight className="h-5 w-5" strokeWidth={2.2} aria-hidden="true" />

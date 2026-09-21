@@ -21,6 +21,15 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const WIDTHS = [640, 1024, 1600];
 const INPUT_RE = /\.(jpe?g|png|webp|tiff?)$/i;
 
+/*
+  Photographs tolerate aggressive quantisation; artwork with lettering in it
+  does not. The awareness creatives are flat colour and small Gujarati type,
+  which is exactly what low-quality AVIF smears, so a collection can raise its
+  own encoder settings rather than everything paying for the worst case.
+*/
+const PHOTO_QUALITY = { avif: 55, webp: 76, jpeg: 80 };
+const ARTWORK_QUALITY = { avif: 72, webp: 88, jpeg: 88 };
+
 const COLLECTIONS = [
   {
     name: 'accreditation',
@@ -99,6 +108,43 @@ const COLLECTIONS = [
       },
     },
   },
+  {
+    name: 'team',
+    manifest: 'teamPhotos.ts',
+    exportName: 'TEAM_PHOTOS',
+    order: ['laboratory-team'],
+    captions: {
+      'laboratory-team': {
+        alt: 'Three members of the Healthcare Labs staff in branded laboratory coats, standing in the laboratory at the Utran centre with a microscope, sample racks and a workstation behind them.',
+        caption: 'The laboratory team at the Utran centre',
+      },
+    },
+  },
+  {
+    name: 'awareness',
+    manifest: 'awarenessPosts.ts',
+    exportName: 'AWARENESS_POSTS',
+    quality: ARTWORK_QUALITY,
+    order: ['pcos-one-sign', 'pcos-other-signs', 'burning-urination', 'choosing-a-lab'],
+    captions: {
+      'pcos-one-sign': {
+        alt: 'Healthcare Labs awareness poster in Gujarati, illustrated with a calendar and a sanitary pad, asking whether an irregular period is the only sign of PCOS and answering that a change in periods is not the only sign.',
+        caption: 'Is an irregular period the only sign of PCOS?',
+      },
+      'pcos-other-signs': {
+        alt: 'Healthcare Labs awareness poster in Gujarati listing signs some women with PCOS may notice: irregular or absent periods, acne or oily skin, extra facial or body hair, weight gain or difficulty losing weight, and thinning hair or increased hair fall. It adds that not everyone has every symptom.',
+        caption: 'The signs that can come with PCOS',
+      },
+      'burning-urination': {
+        alt: 'Healthcare Labs awareness poster in Gujarati about burning during urination, advising that repeated burning should not be ignored, that it can have several causes including a urinary tract infection, and that a urine routine and microscopy is the usual first evaluation with a urine culture where one is needed.',
+        caption: 'Burning urination: is drinking more water enough?',
+      },
+      'choosing-a-lab': {
+        alt: 'Healthcare Labs poster in Gujarati carrying the NABL emblem and headed NABL Certified Lab, saying a fast report is not the only thing that matters in a laboratory because accuracy and reliability matter as much, and advising people to choose a laboratory on its reliability rather than on how near it is.',
+        caption: 'Choose a laboratory on reliability, not on distance',
+      },
+    },
+  },
 ];
 
 function slugOf(file) {
@@ -128,6 +174,7 @@ for (const collection of COLLECTIONS) {
   }
 
   mkdirSync(outDir, { recursive: true });
+  const quality = collection.quality ?? PHOTO_QUALITY;
   const entries = [];
 
   for (const file of files) {
@@ -153,15 +200,18 @@ for (const collection of COLLECTIONS) {
       const resized = image.clone().resize({ width, withoutEnlargement: true });
       const stem = `${slug}-${hash}-${width}`;
 
-      await resized.clone().avif({ quality: 55, effort: 5 }).toFile(join(outDir, `${stem}.avif`));
+      await resized
+        .clone()
+        .avif({ quality: quality.avif, effort: 5 })
+        .toFile(join(outDir, `${stem}.avif`));
       written.avif.push({ width, file: `${stem}.avif` });
 
-      await resized.clone().webp({ quality: 76 }).toFile(join(outDir, `${stem}.webp`));
+      await resized.clone().webp({ quality: quality.webp }).toFile(join(outDir, `${stem}.webp`));
       written.webp.push({ width, file: `${stem}.webp` });
 
       await resized
         .clone()
-        .jpeg({ quality: 80, progressive: true, mozjpeg: true })
+        .jpeg({ quality: quality.jpeg, progressive: true, mozjpeg: true })
         .toFile(join(outDir, `${stem}.jpg`));
       written.jpeg.push({ width, file: `${stem}.jpg` });
     }
