@@ -13,6 +13,12 @@
  * requested full HD at every size — they are exact at 200px on a phone and at
  * 2x on a 5K display, with no raster to ship.
  *
+ * There is one drawing per entry rather than one per class. Four immunoassay
+ * analysers sharing a single picture put four identical cards in a row inside
+ * one department, which read as a template rather than as a catalogue — so the
+ * pairs are drawn apart on the real difference between them: bench-top against
+ * floor-standing, one column against two, a centrifuge against a tube rack.
+ *
  * They depict a *class* of instrument, not a specific model, which is both the
  * honest thing to show and the reason they do not resemble any manufacturer's
  * product. A photograph of the lab's own machine beats all of this, and the
@@ -21,13 +27,20 @@
 
 export type InstrumentArtKey =
   | 'chemistry'
+  | 'dry-chemistry'
   | 'hplc'
+  | 'hplc-large'
   | 'immunoassay'
+  | 'immunoassay-large'
+  | 'clia'
+  | 'clia-large'
   | 'haematology'
   | 'plate-reader'
+  | 'allergy-panel'
   | 'gel-card'
   | 'semen-analyser'
   | 'centrifuge'
+  | 'iui-prep'
   | 'histology'
   | 'cytology'
   | 'skin-prick';
@@ -84,6 +97,21 @@ const DRAWINGS: Record<InstrumentArtKey, React.ReactNode> = {
     </>
   ),
 
+  /* Dry chemistry: slide-based, so a cartridge slot and a stack of slides. */
+  'dry-chemistry': (
+    <>
+      <rect x="46" y="22" width="108" height="56" rx="6" fill={BODY} />
+      <rect x="56" y="30" width="38" height="22" rx="3" fill={SCREEN} stroke="none" />
+      <path d="M60 40h20M60 46h12" stroke="#fff" strokeWidth={2} />
+      <rect x="104" y="30" width="40" height="8" rx="3" fill={PANEL} />
+      <rect x="104" y="42" width="40" height="8" rx="3" fill={PANEL} />
+      <rect x="104" y="54" width="40" height="8" rx="3" fill={ACCENT} stroke="none" />
+      <rect x="104" y="54" width="40" height="8" rx="3" strokeWidth={1.6} />
+      <path d="M46 66h108" />
+      <circle cx="58" cy="72" r="3" fill={LIVE} stroke="none" />
+    </>
+  ),
+
   /* HPLC: cabinet plus the separation column standing beside it. */
   hplc: (
     <>
@@ -96,6 +124,22 @@ const DRAWINGS: Record<InstrumentArtKey, React.ReactNode> = {
       <rect x="140" y="18" width="24" height="60" rx="8" fill={PANEL} />
       <path d="M146 30h12M146 40h12M146 50h12" stroke={LINE} strokeWidth={1.6} opacity={0.6} />
       <path d="M126 36c10-6 10-12 14-12" />
+    </>
+  ),
+
+  /* The bigger HPLC: wider cabinet, paired columns, a longer trace. */
+  'hplc-large': (
+    <>
+      <rect x="28" y="20" width="102" height="58" rx="6" fill={BODY} />
+      <rect x="38" y="28" width="56" height="28" rx="3" fill={SCREEN} stroke="none" />
+      <path d="M42 48c8-14 12 8 20-6s12 6 20-8" stroke="#fff" strokeWidth={2} />
+      <path d="M28 62h102" />
+      <circle cx="112" cy="40" r="9" fill={PANEL} />
+      <circle cx="112" cy="40" r="3.4" fill={LIVE} stroke="none" />
+      <rect x="140" y="14" width="13" height="64" rx="6" fill={PANEL} />
+      <rect x="158" y="24" width="13" height="54" rx="6" fill={ACCENT} stroke="none" />
+      <rect x="158" y="24" width="13" height="54" rx="6" strokeWidth={1.8} />
+      <path d="M130 32c8-4 6-12 10-12" />
     </>
   ),
 
@@ -112,6 +156,58 @@ const DRAWINGS: Record<InstrumentArtKey, React.ReactNode> = {
       <path d="M57 65h14" stroke="#fff" strokeWidth={2} />
       <path d="M106 58h42" stroke={ACCENT} strokeWidth={3} />
       <path d="M106 68h28" stroke={ACCENT} strokeWidth={3} />
+    </>
+  ),
+
+  /* The floor-standing immunoassay unit: upper bay, cabinet, sample track. */
+  'immunoassay-large': (
+    <>
+      <rect x="38" y="10" width="124" height="38" rx="6" fill={BODY} />
+      <rect x="38" y="48" width="124" height="30" rx="6" fill={BODY} />
+      <rect x="48" y="18" width="52" height="22" rx="3" fill={SCREEN} stroke="none" />
+      <path d="M53 27h18M53 33h28" stroke="#fff" strokeWidth={2} />
+      <circle cx="130" cy="29" r="12" fill={PANEL} />
+      <circle cx="130" cy="29" r="4" fill={BODY} />
+      <path d="M48 62h104" stroke={ACCENT} strokeWidth={5} />
+      {[0, 1, 2, 3, 4].map((i) => (
+        <circle key={i} cx={58 + i * 22} cy={62} r="3.2" fill={i === 2 ? LIVE : BODY} strokeWidth={1.6} />
+      ))}
+    </>
+  ),
+
+  /* Compact chemiluminescence unit: reaction wheel, reagent bottles on top. */
+  clia: (
+    <>
+      <rect x="52" y="30" width="96" height="48" rx="6" fill={BODY} />
+      <circle cx="80" cy="52" r="14" fill={PANEL} />
+      <circle cx="80" cy="52" r="5" fill={BODY} />
+      <path d="M80 38v6M94 52h-6M80 66v-6M66 52h6" strokeWidth={1.8} />
+      <rect x="106" y="40" width="32" height="20" rx="3" fill={SCREEN} stroke="none" />
+      <path d="M111 48h14M111 54h8" stroke="#fff" strokeWidth={2} />
+      <rect x="62" y="18" width="10" height="12" rx="3" fill={ACCENT} stroke="none" />
+      <rect x="62" y="18" width="10" height="12" rx="3" strokeWidth={1.6} />
+      <rect x="78" y="14" width="10" height="16" rx="3" fill={LIVE} stroke="none" />
+      <rect x="78" y="14" width="10" height="16" rx="3" strokeWidth={1.6} />
+      <path d="M52 68h96" />
+    </>
+  ),
+
+  /* The larger chemiluminescence unit: loader arm over a reagent carousel. */
+  'clia-large': (
+    <>
+      <rect x="34" y="16" width="132" height="62" rx="7" fill={BODY} />
+      <rect x="44" y="24" width="60" height="26" rx="3" fill={PANEL} />
+      <circle cx="74" cy="37" r="9" fill={BODY} />
+      <circle cx="74" cy="37" r="3" fill={ACCENT} stroke="none" />
+      <path d="M116 24h40" strokeWidth={3} />
+      <path d="M136 24v14" strokeWidth={3} />
+      <circle cx="136" cy="42" r="4.5" fill={LIVE} stroke="none" />
+      <rect x="44" y="56" width="48" height="14" rx="3" fill={SCREEN} stroke="none" />
+      <path d="M49 63h20" stroke="#fff" strokeWidth={2} />
+      <rect x="104" y="54" width="52" height="18" rx="3" fill={PANEL} />
+      {[0, 1, 2, 3].map((i) => (
+        <circle key={i} cx={114 + i * 12} cy={63} r="3" fill={BODY} strokeWidth={1.4} />
+      ))}
     </>
   ),
 
@@ -142,6 +238,23 @@ const DRAWINGS: Record<InstrumentArtKey, React.ReactNode> = {
         <g key={c}>
           <circle cx={32 + c * 9} cy={59} r="2.4" fill={BODY} strokeWidth={1.4} />
           <circle cx={32 + c * 9} cy={68} r="2.4" fill={c < 3 ? LIVE : BODY} strokeWidth={1.4} />
+        </g>
+      ))}
+    </>
+  ),
+
+  /* Allergen panel: the strip plate under a reading head. */
+  'allergy-panel': (
+    <>
+      <path d="M100 12v16" strokeWidth={3} />
+      <rect x="84" y="28" width="32" height="14" rx="4" fill={SCREEN} stroke="none" />
+      <rect x="84" y="28" width="32" height="14" rx="4" strokeWidth={1.8} />
+      <rect x="34" y="50" width="132" height="26" rx="4" fill={BODY} />
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+        <g key={i}>
+          <rect x={42 + i * 15} y="54" width="10" height="18" rx="2" fill={PANEL} stroke="none" />
+          <rect x={42 + i * 15} y="54" width="10" height="18" rx="2" strokeWidth={1.4} />
+          <circle cx={47 + i * 15} cy={63} r="2.6" fill={i % 3 === 0 ? LIVE : ACCENT} stroke="none" />
         </g>
       ))}
     </>
@@ -195,6 +308,23 @@ const DRAWINGS: Record<InstrumentArtKey, React.ReactNode> = {
       <path d="M84 50l-6-12M100 46V32M116 50l6-12" strokeWidth={3} />
       <circle cx="100" cy="66" r="4.5" fill={LIVE} stroke="none" />
       <path d="M118 62h22" stroke={ACCENT} strokeWidth={3} />
+    </>
+  ),
+
+  /* IUI preparation: the tube rack and the pipette, not another centrifuge. */
+  'iui-prep': (
+    <>
+      <rect x="42" y="48" width="86" height="26" rx="4" fill={PANEL} />
+      {[0, 1, 2, 3].map((i) => (
+        <g key={i}>
+          <path d={`M${54 + i * 20} 24v30a6 6 0 0 0 12 0V24`} fill={BODY} />
+          <path d={`M${54 + i * 20} 40v14a6 6 0 0 0 12 0V40z`} fill={i === 1 ? LIVE : ACCENT} stroke="none" />
+          <path d={`M${54 + i * 20} 40v14a6 6 0 0 0 12 0V40`} strokeWidth={1.6} />
+        </g>
+      ))}
+      <path d="M150 14v34a6 6 0 0 1-12 0V14z" fill={BODY} />
+      <path d="M144 48v10" strokeWidth={3} />
+      <circle cx="144" cy="64" r="3.4" fill={SCREEN} stroke="none" />
     </>
   ),
 

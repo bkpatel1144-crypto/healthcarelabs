@@ -169,9 +169,9 @@ export function LabFacility() {
           </div>
 
           <p className="mt-9 max-w-2xl text-[13px] leading-relaxed text-ink-soft">
-            Instrument capability, not test routing — which analyser handles a given sample is
-            decided by the lab on the day. Ask the lab if you need to know the method used for a
-            specific parameter.
+            This is what the lab has, not which machine runs your sample — that is decided on
+            the day, and more than one of these can do the same test. If the method matters for a
+            particular result, ask the lab and they will tell you which was used.
           </p>
         </div>
       </Container>
@@ -285,6 +285,37 @@ function InstrumentCard({ instrument }: { instrument: Instrument }) {
           <span className="text-brand-700">{instrument.model}</span>
         </h5>
         <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">{instrument.role}</p>
+
+        {/*
+          What the machine does, for the person whose sample is in it.
+
+          The card used to carry a name, a one-line role and a row of chips,
+          which told a visitor what the machine was called and nothing about
+          why it mattered to them. "Chemiluminescent immunoassay on
+          paramagnetic particles" is the right answer for a referring doctor
+          and no answer at all for a patient, so the plain sentence leads and
+          the technical pair sits under it for whoever wants it.
+
+          What is deliberately absent is throughput, turnaround and accuracy.
+          Those describe how this lab runs rather than what the machine is, and
+          the site does not print a figure it cannot evidence.
+        */}
+        <p className="mt-3 text-[13px] leading-relaxed text-ink">{instrument.plain}</p>
+
+        <dl className="mt-4 space-y-1.5 border-t border-brand-50 pt-3.5">
+          <div className="grid grid-cols-[58px_1fr] gap-x-3">
+            <dt className="text-[10px] font-bold uppercase tracking-[0.1em] text-brand-600">
+              Method
+            </dt>
+            <dd className="text-[11.5px] leading-snug text-ink-soft">{instrument.method}</dd>
+          </div>
+          <div className="grid grid-cols-[58px_1fr] gap-x-3">
+            <dt className="text-[10px] font-bold uppercase tracking-[0.1em] text-brand-600">
+              Sample
+            </dt>
+            <dd className="text-[11.5px] leading-snug text-ink-soft">{instrument.sample}</dd>
+          </div>
+        </dl>
 
         <ul className="mt-auto flex flex-wrap gap-1.5 pt-4">
           {instrument.covers.map((c) => (
