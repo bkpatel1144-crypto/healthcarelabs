@@ -16,6 +16,7 @@ import { AccreditationSection } from '@/components/common/AccreditationSection';
 import { CARE_COMMITMENTS } from '@/data/testimonials';
 import { PACKAGES } from '@/data/packages';
 import { TEAM_PHOTOS } from '@/data/teamPhotos';
+import { AwarenessPosts } from '@/components/common/AwarenessPosts';
 import { useSeo } from '@/lib/seo';
 import { SITE_CONFIG, mapHref } from '@/config/site';
 
@@ -257,6 +258,13 @@ export default function About() {
           </div>
         </Container>
       </section>
+
+      {/*
+        The lab's own awareness posters close the page. Everything above is the
+        practice describing itself; this is the practice talking to patients in
+        their own language, which is a better last word than another claim.
+      */}
+      <AwarenessPosts />
 
       <FinalCTA />
     </>

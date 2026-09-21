@@ -11,11 +11,12 @@ import type { SitePhoto } from '@/types';
 /**
  * The lab's own awareness posters, as published.
  *
- * These are Gujarati artwork made for Instagram, and they belong on the blog
- * rather than on the homepage because they do the same job the articles do:
- * they are for the visitor who is reading, not booking. Presenting them as
- * what they are — the lab's social posts — is also the honest framing; dressing
- * a square social graphic up as a website banner would fool nobody.
+ * These are Gujarati artwork made for Instagram, and they close the About
+ * page. Everything above them there is the practice describing itself; this is
+ * the practice talking to patients in their own language, which is a better
+ * last word than another claim. Presenting them as what they are — the lab's
+ * social posts — is also the honest framing; dressing a 4:5 social graphic up
+ * as a website banner would fool nobody.
  *
  * The tile opens the poster full-size instead of linking away, because the
  * text on it is the content and it is unreadable at card width. The English

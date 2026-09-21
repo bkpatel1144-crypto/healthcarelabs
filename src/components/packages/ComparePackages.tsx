@@ -40,12 +40,15 @@ export function CompareToggle({
 }: {
   slug: string;
   className?: string;
-  variant?: 'icon' | 'label';
+  /** `compact` is a square icon button for sitting beside a card's call to action. */
+  variant?: 'icon' | 'label' | 'compact';
 }) {
   const { preferences, toggleComparePackage } = useContent();
   const queue = preferences.comparePackages;
   const selected = queue.includes(slug);
   const full = !selected && queue.length >= COMPARE_LIMIT;
+  const label = selected ? 'In comparison' : 'Compare';
+  const compact = variant === 'compact';
 
   return (
     <button
@@ -53,13 +56,20 @@ export function CompareToggle({
       onClick={() => toggleComparePackage(slug)}
       disabled={full}
       aria-pressed={selected}
+      aria-label={compact ? label : undefined}
       title={
-        full ? `Comparison is full — remove one of the ${COMPARE_LIMIT} first` : undefined
+        full
+          ? `Comparison is full — remove one of the ${COMPARE_LIMIT} first`
+          : compact
+            ? label
+            : undefined
       }
       className={cn(
-        'inline-flex min-w-0 shrink items-center gap-2 whitespace-nowrap rounded-full text-[12.5px] font-semibold transition-all duration-200',
+        'inline-flex min-w-0 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full text-[12.5px] font-semibold transition-all duration-200',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-        variant === 'icon' ? 'h-9 px-3' : 'h-11 px-5 text-[13.5px]',
+        compact && 'h-11 w-11',
+        variant === 'icon' && 'h-9 shrink px-3',
+        variant === 'label' && 'h-11 shrink px-5 text-[13.5px]',
         selected
           ? 'bg-brand-500 text-white shadow-glow'
           : 'bg-white text-ink-muted shadow-soft ring-1 ring-brand-100 hover:text-brand-600 hover:ring-brand-300',
@@ -68,7 +78,7 @@ export function CompareToggle({
       )}
     >
       <Scale className="h-4 w-4 shrink-0" strokeWidth={2.2} aria-hidden="true" />
-      <span className="truncate">{selected ? 'In comparison' : 'Compare'}</span>
+      {!compact && <span className="truncate">{label}</span>}
     </button>
   );
 }

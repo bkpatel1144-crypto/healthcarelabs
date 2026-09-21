@@ -10,9 +10,26 @@ import { cn } from '@/lib/cn';
 import type { HealthPackage } from '@/types';
 
 /**
- * Package card. Deliberately square-shouldered with a single soft radius and a
- * flat surface — the emphasis is on the type hierarchy and the price block,
- * not on shadows.
+ * Package card.
+ *
+ * The previous version put six controls above the product name — two rows of
+ * chrome before a visitor learned what they were looking at — and then gave the
+ * price, the thing they came for, a 26px number and a grey 40px arrow in the
+ * corner. Everything else was 12–15px grey on white. It read like a settings
+ * panel rather than an offer.
+ *
+ * This one is built in three zones, each with its own ground:
+ *
+ *   1. A tinted head carrying the identity — the discount, what it is, how many
+ *      tests, how long the report takes.
+ *   2. A white middle carrying the evidence — the panel contents and who it
+ *      suits.
+ *   3. A footed close carrying the transaction — the price at full size and a
+ *      real button.
+ *
+ * The secondary actions moved to that last zone as square icon buttons beside
+ * the call to action, which is where a shopper expects "add" and "compare" to
+ * live and, more to the point, is not in front of the name.
  */
 export function PackageCard({
   pkg,
@@ -30,22 +47,34 @@ export function PackageCard({
   return (
     <article
       className={cn(
-        'group relative flex h-full flex-col rounded-xl border bg-white transition-all duration-300 ease-premium',
-        'hover:-translate-y-1 hover:border-brand-200 hover:shadow-liftLg',
-        isFeature ? 'border-brand-200 ring-1 ring-brand-100' : 'border-ink-line',
+        'group relative isolate flex h-full flex-col overflow-hidden rounded-3xl bg-white',
+        'shadow-card ring-1 transition-all duration-300 ease-premium',
+        'hover:-translate-y-1.5 hover:shadow-liftLg',
+        isFeature ? 'ring-brand-200' : 'ring-brand-50 hover:ring-brand-200',
       )}
     >
-      {/* Top accent that draws in on hover. */}
-      <span
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 rounded-t-xl bg-gradient-to-r from-brand-500 to-brand-400 transition-transform duration-400 ease-premium group-hover:scale-x-100"
-      />
-
-      <div className="flex min-w-0 flex-1 flex-col p-6 sm:p-7">
-        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2.5">
-          <div className="flex flex-wrap gap-2">
+      {/* ------------------------------ 1. Head ------------------------------ */}
+      <div
+        className={cn(
+          'px-6 pb-6 pt-6 sm:px-7 sm:pt-7',
+          isFeature
+            ? 'bg-gradient-to-br from-brand-100 via-brand-50 to-surface-tint'
+            : 'bg-gradient-to-br from-brand-50 via-surface-soft to-surface-soft',
+        )}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {/*
+              The discount is the loudest thing on the card and it is solid,
+              not another pale outline. coral-600 rather than coral-500 so
+              white text on it clears 4.5:1 — measured, not assumed.
+            */}
+            {pct !== null && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-coral-600 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_-12px_rgba(206,68,19,0.9)]">
+                <span className="tabular-nums">{pct}%</span> off
+              </span>
+            )}
             {isFeature && <Badge tone="brand">Popular</Badge>}
-            {pct !== null && <Badge tone="success">Save {pct}%</Badge>}
             {pkg.homeCollection && (
               <Badge tone="home">
                 <Home className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" />
@@ -54,20 +83,17 @@ export function PackageCard({
             )}
           </div>
 
-          <div className="relative z-10 ml-auto flex min-w-0 items-center gap-1.5">
-          <AddToVisit slug={pkg.slug} />
-          <CompareToggle slug={pkg.slug} />
           <button
             type="button"
             onClick={() => toggleSavedPackage(pkg.slug)}
             aria-pressed={saved}
             aria-label={saved ? `Remove ${pkg.name} from saved` : `Save ${pkg.name}`}
             className={cn(
-              'relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-all duration-200',
+              'relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-200',
               'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
               saved
-                ? 'border-brand-300 bg-brand-50 text-brand-600'
-                : 'border-transparent text-ink-soft/50 hover:border-ink-line hover:text-brand-500',
+                ? 'bg-brand-500 text-white shadow-[0_10px_22px_-12px_rgba(15,122,172,0.9)]'
+                : 'bg-white/70 text-ink-soft ring-1 ring-brand-100 hover:bg-white hover:text-brand-600 hover:ring-brand-300',
             )}
           >
             <Bookmark
@@ -77,10 +103,9 @@ export function PackageCard({
               aria-hidden="true"
             />
           </button>
-          </div>
         </div>
 
-        <h3 className="mt-5 text-[19px] font-bold leading-snug tracking-[-0.02em] text-ink">
+        <h3 className="mt-4 text-balance text-[21px] font-extrabold leading-[1.18] tracking-editorial text-ink">
           <Link
             to={`/health-package/${pkg.slug}`}
             className="rounded before:absolute before:inset-0 before:content-[''] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
@@ -89,50 +114,61 @@ export function PackageCard({
           </Link>
         </h3>
 
-        <p className="mt-2.5 line-clamp-3 text-[14.5px] leading-relaxed text-ink-muted">
+        <p className="mt-2 line-clamp-2 text-[14px] leading-relaxed text-ink-muted">
           {pkg.summary}
         </p>
 
-        <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-ink-muted">
-          <div className="flex items-center gap-1.5">
-            <ListChecks className="h-4 w-4 text-brand-500" strokeWidth={2} aria-hidden="true" />
+        {/*
+          Tests and turnaround as two solid facts on white, rather than another
+          line of grey text with icons floating in it.
+        */}
+        <dl className="mt-5 flex flex-wrap gap-2">
+          <div className="flex items-center gap-1.5 rounded-xl bg-white px-2.5 py-1.5 text-[12.5px] shadow-soft ring-1 ring-brand-50">
+            <ListChecks className="h-[15px] w-[15px] text-brand-500" strokeWidth={2.2} aria-hidden="true" />
             <dt className="sr-only">Tests included</dt>
             <dd>
-              <span className="font-semibold tabular-nums text-ink">{pkg.tests.length}</span> tests
+              <span className="font-bold tabular-nums text-ink">{pkg.tests.length}</span>
+              <span className="text-ink-muted"> tests</span>
             </dd>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4 text-brand-500" strokeWidth={2} aria-hidden="true" />
+          <div className="flex min-w-0 items-center gap-1.5 rounded-xl bg-white px-2.5 py-1.5 text-[12.5px] shadow-soft ring-1 ring-brand-50">
+            <Clock className="h-[15px] w-[15px] shrink-0 text-mint-500" strokeWidth={2.2} aria-hidden="true" />
             <dt className="sr-only">Report time</dt>
-            <dd>{pkg.reportTime}</dd>
+            <dd className="truncate text-ink-muted">{pkg.reportTime}</dd>
           </div>
         </dl>
+      </div>
 
+      {/* ----------------------------- 2. Middle ----------------------------- */}
+      <div className="flex min-w-0 flex-1 flex-col px-6 pb-6 pt-5 sm:px-7">
         {/*
-          What is actually in the panel, on the card.
-
-          The card said "26 tests" and nothing else, so the only way to learn
-          what a body check-up covers was to open its page — which is the one
-          question every visitor has before they will consider the price. The
-          first six are always visible as chips, and the rest expand in place
-          rather than sending anyone away.
+          What is actually in the panel, on the card. The card used to say
+          "26 tests" and nothing else, so the one question every visitor has
+          before they will consider a price could only be answered by opening
+          another page.
         */}
         {pkg.tests.length > 0 && <TestList tests={pkg.tests} name={pkg.name} />}
 
         {pkg.suitableFor.length > 0 && (
-          <p className="mt-4 text-[12.5px] text-ink-soft">
-            <span className="font-semibold text-ink-muted">For:</span>{' '}
+          <p className="mt-4 text-[12.5px] leading-snug text-ink-soft">
+            <span className="font-semibold text-ink-muted">For</span>{' '}
             {pkg.suitableFor.slice(0, 2).join(' · ')}
           </p>
         )}
 
-        {/* ---- Price block ---- */}
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-3 border-t border-ink-line pt-6">
-          <div className="min-w-0">
+        {/* ------------------------------ 3. Close ------------------------------ */}
+        <div className="mt-auto border-t border-brand-50 pt-5">
+          {/* data-package-price: the row the alignment check measures, in the
+              same spirit as the header's data hooks. Several things on this
+              card are tabular-nums, so a class selector picked the wrong one. */}
+          <div
+            data-package-price
+            className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2"
+          >
             {pkg.offerPrice !== null ? (
               <>
-                <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                  <span className="text-[26px] font-extrabold leading-none tracking-tightest text-ink tabular-nums">
+                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
+                  <span className="text-[32px] font-extrabold leading-none tracking-tightest text-ink tabular-nums">
                     {formatPrice(pkg.offerPrice)}
                   </span>
                   {pkg.price !== null && (
@@ -142,32 +178,44 @@ export function PackageCard({
                   )}
                 </div>
                 {save !== null && (
-                  <p className="mt-1.5 text-[12.5px] font-semibold text-emerald-600">
-                    You save {formatPrice(save)}
-                  </p>
+                  <span className="rounded-lg bg-emerald-50 px-2 py-1 text-[11.5px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+                    Save {formatPrice(save)}
+                  </span>
                 )}
               </>
             ) : (
-              <>
-                <span className="text-[19px] font-bold leading-none text-ink">On request</span>
+              <div className="min-w-0">
+                <span className="text-[22px] font-extrabold leading-none tracking-tightest text-ink">
+                  On request
+                </span>
                 {pkg.priceNote && (
                   <p className="mt-1.5 max-w-[15rem] text-[12px] leading-snug text-ink-soft">
                     {pkg.priceNote}
                   </p>
                 )}
-              </>
+              </div>
             )}
           </div>
 
-          <span
-            aria-hidden="true"
-            className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-mist text-ink-muted transition-all duration-300 group-hover:bg-brand-500 group-hover:text-white"
-          >
-            <ArrowRight
-              className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-0.5"
-              strokeWidth={2.2}
-            />
-          </span>
+          <div className="mt-4 flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              className={cn(
+                'flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full px-4 text-[14px] font-bold',
+                'bg-gradient-to-r from-brand-600 to-brand-500 text-white',
+                'shadow-[0_14px_30px_-16px_rgba(15,122,172,0.95)] transition-all duration-300',
+                'group-hover:from-brand-700 group-hover:to-brand-600 group-hover:shadow-[0_18px_36px_-16px_rgba(15,122,172,1)]',
+              )}
+            >
+              View package
+              <ArrowRight
+                className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                strokeWidth={2.4}
+              />
+            </span>
+            <AddToVisit slug={pkg.slug} variant="compact" className="relative z-10" />
+            <CompareToggle slug={pkg.slug} variant="compact" className="relative z-10" />
+          </div>
         </div>
       </div>
     </article>
@@ -185,8 +233,8 @@ function TestList({ tests, name }: { tests: string[]; name: string }) {
   const shown = open ? tests : tests.slice(0, PREVIEW_COUNT);
 
   return (
-    <div className="relative z-10 mt-5 border-t border-ink-line pt-4">
-      <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft">
+    <div className="relative z-10 rounded-2xl bg-surface-soft p-4 ring-1 ring-inset ring-brand-50">
+      <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-brand-600">
         What is included
       </p>
 
@@ -206,7 +254,7 @@ function TestList({ tests, name }: { tests: string[]; name: string }) {
         {shown.map((test) => (
           <li
             key={test}
-            className="rounded-lg bg-surface-soft px-2 py-1 text-[12px] leading-snug text-ink-muted ring-1 ring-brand-50"
+            className="rounded-lg bg-white px-2 py-1 text-[12px] leading-snug text-ink-muted shadow-soft ring-1 ring-brand-50"
           >
             {test}
           </li>
@@ -219,7 +267,7 @@ function TestList({ tests, name }: { tests: string[]; name: string }) {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls={listId}
-          className="mt-2.5 inline-flex items-center gap-1 text-[12.5px] font-semibold text-brand-600 transition-colors hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+          className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-bold text-brand-600 transition-colors hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
         >
           {open ? 'Show fewer' : `Show all ${tests.length} tests`}
           <ChevronDown

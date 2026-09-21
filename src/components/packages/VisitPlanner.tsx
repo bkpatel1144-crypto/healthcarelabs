@@ -55,20 +55,31 @@ export function AddToVisit({
 }: {
   slug: string;
   className?: string;
-  variant?: 'icon' | 'label';
+  /**
+   * `compact` is a square icon button for sitting beside a card's call to
+   * action. It keeps its name for assistive technology and on hover, because a
+   * plus sign on its own does not say what it adds to.
+   */
+  variant?: 'icon' | 'label' | 'compact';
 }) {
   const { preferences, toggleVisitPackage } = useContent();
   const added = preferences.visitPackages.includes(slug);
+  const label = added ? 'In your visit' : 'Add to visit';
+  const compact = variant === 'compact';
 
   return (
     <button
       type="button"
       onClick={() => toggleVisitPackage(slug)}
       aria-pressed={added}
+      aria-label={compact ? label : undefined}
+      title={compact ? label : undefined}
       className={cn(
-        'inline-flex min-w-0 shrink items-center gap-2 whitespace-nowrap rounded-full font-semibold transition-all duration-200',
+        'inline-flex min-w-0 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-all duration-200',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-        variant === 'icon' ? 'h-9 px-3 text-[12.5px]' : 'h-11 px-5 text-[13.5px]',
+        compact && 'h-11 w-11',
+        variant === 'icon' && 'h-9 shrink px-3 text-[12.5px]',
+        variant === 'label' && 'h-11 shrink px-5 text-[13.5px]',
         added
           ? 'bg-mint-500 text-white shadow-[0_12px_28px_-14px_rgba(6,122,104,0.9)]'
           : 'bg-white text-ink-muted shadow-soft ring-1 ring-brand-100 hover:text-brand-600 hover:ring-brand-300',
@@ -80,7 +91,7 @@ export function AddToVisit({
       ) : (
         <Plus className="h-4 w-4 shrink-0" strokeWidth={2.6} aria-hidden="true" />
       )}
-      <span className="truncate">{added ? 'In your visit' : 'Add to visit'}</span>
+      {!compact && <span className="truncate">{label}</span>}
     </button>
   );
 }

@@ -4,7 +4,6 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { Container, Reveal } from '@/components/common/Primitives';
 import { Button } from '@/components/common/Button';
 import { BlogCard } from '@/components/blog/BlogCard';
-import { AwarenessPosts } from '@/components/blog/AwarenessPosts';
 import { useContent } from '@/store/content';
 import { useSeo } from '@/lib/seo';
 import { BLOG_CATEGORIES } from '@/data/blogs';
@@ -176,13 +175,6 @@ export default function Blog() {
           )}
         </Container>
       </section>
-
-      {/*
-        The lab's own Gujarati awareness posters, after the articles rather than
-        before them: they are the same kind of thing — reading for someone who is
-        not booking today — but the written articles are this page's promise.
-      */}
-      <AwarenessPosts />
     </>
   );
 }
