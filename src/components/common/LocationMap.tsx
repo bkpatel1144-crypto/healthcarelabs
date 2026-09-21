@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
 import { useInView } from 'framer-motion';
 import { Clock, ExternalLink, Home, MapPin, Navigation, Phone } from 'lucide-react';
+import { BranchMap } from '@/components/common/BranchMap';
+import { ScrollRail } from '@/components/common/ScrollRail';
 import { Container } from '@/components/common/Primitives';
 import { SITE_CONFIG } from '@/config/site';
 import {
   BRANCHES,
   HEAD_OFFICE,
-  branchMapQuery,
+  MAPPED_BRANCHES,
   branchTelHref,
   formatBranchPhone,
 } from '@/data/branches';
@@ -35,13 +37,10 @@ import { cn } from '@/lib/cn';
  */
 export function LocationMap() {
   const bandRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
   const near = useInView(bandRef, { once: true, margin: '400px' });
   const [activeId, setActiveId] = useState(HEAD_OFFICE.id);
   const active = BRANCHES.find((b) => b.id === activeId) ?? HEAD_OFFICE;
-
-  const embedSrc = `https://www.google.com/maps?q=${encodeURIComponent(
-    branchMapQuery(active),
-  )}&output=embed`;
 
   return (
     <section aria-labelledby="location-heading" className="relative bg-surface-soft">
@@ -61,17 +60,18 @@ export function LocationMap() {
             </span>
           </h2>
           <p className="mt-5 text-[16px] leading-relaxed text-ink-muted">
-            Pick a centre to see it on the map. Directions open the lab&rsquo;s own pin for that
-            branch.
+            All {MAPPED_BRANCHES.length} published pins are on the map from the start. Pick a
+            centre to zoom to it, or open Directions for the lab&rsquo;s own pin.
           </p>
         </div>
 
         <div className="mt-10 overflow-hidden rounded-4xl bg-white shadow-card ring-1 ring-brand-50">
           <div className="grid lg:grid-cols-12">
             {/* ------------------------- Branch list ------------------------- */}
-            <div className="order-2 lg:order-1 lg:col-span-5">
+            <div className="relative order-2 lg:order-1 lg:col-span-5">
               <ul
-                className="max-h-[560px] divide-y divide-brand-50 overflow-y-auto"
+                ref={listRef}
+                className="scroll-col max-h-[560px] divide-y divide-brand-50"
                 aria-label="Healthcare Labs collection centres"
               >
                 {BRANCHES.map((branch) => {
@@ -141,6 +141,9 @@ export function LocationMap() {
                               {branch.landline}
                             </a>
                           )}
+                          {!branch.coords && (
+                            <span className="text-[12px] text-ink-soft">Not pinned on the map</span>
+                          )}
                           <a
                             href={branch.mapUrl}
                             target="_blank"
@@ -156,6 +159,7 @@ export function LocationMap() {
                   );
                 })}
               </ul>
+              <ScrollRail targetRef={listRef} />
             </div>
 
             {/* ------------------------------ Map ------------------------------ */}
@@ -163,20 +167,19 @@ export function LocationMap() {
               ref={bandRef}
               className="relative order-1 min-h-[340px] bg-surface-tint lg:order-2 lg:col-span-7 lg:min-h-[560px]"
             >
-              {near && (
-                <iframe
-                  key={active.id}
-                  title={`Map showing Healthcare Labs ${active.name} at ${active.address}`}
-                  src={embedSrc}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                  className="absolute inset-0 h-full w-full border-0"
-                />
-              )}
+              <BranchMap
+                activeId={active.id}
+                onSelect={setActiveId}
+                load={near}
+                className="absolute inset-0 h-full w-full"
+              />
 
-              {/* Home collection, called out in colour as the lab asked. */}
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              {/*
+                Home collection, called out in colour as the lab asked. Above
+                z-400, because that is where Leaflet's map pane sits and the
+                pill was rendering underneath the tiles.
+              */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] p-4 pr-32 sm:p-5 sm:pr-40">
                 <p className="pointer-events-auto inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-mint-500 to-brand-500 px-4 py-2.5 text-[12.5px] font-bold text-white shadow-[0_16px_34px_-16px_rgba(6,122,104,0.9)]">
                   <Home className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden="true" />
                   Home collection across Surat
@@ -196,7 +199,7 @@ export function LocationMap() {
             ))}
             <p className="ml-auto flex items-center gap-2 text-[12px] text-ink-soft">
               <ExternalLink className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} aria-hidden="true" />
-              Map served by Google
+              Map data &copy; OpenStreetMap contributors
             </p>
           </div>
         </div>

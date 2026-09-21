@@ -124,6 +124,32 @@
     five rows of vertical space on a phone, so they scroll on one line
     instead, with a slim visible scrollbar so it is obvious they can.
   */
+  /*
+    A hairline vertical scrollbar in the brand colours. Two pixels is an
+    indicator rather than a grab handle, which is the point — the list is
+    scrolled with a wheel, a trackpad, a finger or the keyboard, and the bar is
+    there to say "there is more", not to be dragged. Firefox has no 2px setting
+    at all; `thin` is as close as it goes, so it gets the colour and its own
+    minimum width.
+  */
+  /*
+    The native vertical scrollbar is hidden here and redrawn by ScrollRail,
+    which explains why. In short: Chrome ignores the ::-webkit-scrollbar
+    pseudo-elements now — measured, a styled bar reserved zero gutter at every
+    width from 1px to 12px — and the standard `scrollbar-width` it replaced
+    them with has no pixel setting, only `thin`, which lands around eleven.
+  */
+  .scroll-col {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scroll-col::-webkit-scrollbar {
+    display: none;
+  }
+
   .scroll-row {
     overflow-x: auto;
     overflow-y: hidden;

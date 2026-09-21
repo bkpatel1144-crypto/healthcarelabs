@@ -10,10 +10,17 @@
  * "Directions" button opens, so a visitor always lands on the pin the lab
  * itself chose.
  *
- * `coords` is only filled in where the lab's own link carried the latitude and
- * longitude. For the rest the map is queried by address and Google geocodes
- * it, because inventing a coordinate for a place people have to physically
- * find would be worse than letting Google resolve the street address.
+ * `coords` is the pin the lab itself published, never a geocode. Two of their
+ * links carried a latitude and longitude outright; four more were short links
+ * that resolve to a Google place, and the coordinate was read out of the
+ * resolved place rather than out of a search for the lab's name.
+ *
+ * Sachin has no coordinate and that is deliberate. Its link is a Google search
+ * URL rather than a map place, and it does not resolve to one. Resolving the
+ * landmark in its address instead put it about thirteen kilometres from Sachin,
+ * so nothing was written down. A branch without a pin is listed and routed to
+ * by its own Directions link; a branch with the wrong pin sends someone to the
+ * wrong part of the city.
  */
 
 export interface Branch {
@@ -43,6 +50,8 @@ export const BRANCHES: Branch[] = [
     phones: ['9925094247', '9925088847'],
     landline: '0261-3522858',
     mapUrl: 'https://g.page/r/CTqv6i7O2GPiEAE',
+    /* Resolves to the "Healthcare Labs Surat" place. */
+    coords: { lat: 21.2333619, lng: 72.8642307 },
   },
   {
     id: 'katargam',
@@ -68,6 +77,8 @@ export const BRANCHES: Branch[] = [
     address: '805, 8th Floor, Navkar Bastion, VIP Circle, Utran, Surat - 394105',
     phones: [],
     mapUrl: 'https://maps.app.goo.gl/2y4Ph8Xg4MzjrHH49',
+    /* Resolves to the "Healthcare Labs VIP Circle" place. */
+    coords: { lat: 21.2314069, lng: 72.8665803 },
   },
   {
     id: 'parvat-patiya',
@@ -76,12 +87,19 @@ export const BRANCHES: Branch[] = [
       'G-37, Ground Floor, La Citadel Complex, Kangaroo Circle, Near CNG Pump, Parvat Patiya, Surat - 395010',
     phones: ['8511009400'],
     mapUrl: 'https://maps.app.goo.gl/eRhfrrQXLeCYrHfh8',
+    /* Resolves to the "LA Citadel Complex" place named in the address. */
+    coords: { lat: 21.1906087, lng: 72.869018 },
   },
   {
     id: 'sachin',
     name: 'Sachin',
     address: '1st Floor, Samarpan Hospital, Near Khetla Aapa, Sachin Navsari Road, Sachin, Surat',
     phones: ['9664911143'],
+    /*
+      A Google search link, not a map place — it does not resolve to a pin, so
+      this branch has no coordinate and no marker. Send a dropped pin for it and
+      it joins the others.
+    */
     mapUrl: 'https://share.google/LMQ8qigWE8tt9Dkcd',
   },
   {
@@ -96,6 +114,8 @@ export const BRANCHES: Branch[] = [
     */
     phones: ['9979651035'],
     mapUrl: 'https://maps.app.goo.gl/uLJ84w65byGE35ct5',
+    /* Resolves to the "HEALTHCARE LABS" place at Yogi Chowk. */
+    coords: { lat: 21.21359, lng: 72.8856566 },
   },
 ];
 
@@ -114,9 +134,14 @@ export function formatBranchPhone(phone: string): string {
 /**
  * What the embedded map should be queried with.
  *
- * Coordinates where the lab's link carried them, the street address
- * otherwise. Never a guessed coordinate.
+ * Coordinates where the lab published a pin, the street address otherwise.
+ * Never a guessed coordinate.
  */
 export function branchMapQuery(branch: Branch): string {
   return branch.coords ? `${branch.coords.lat},${branch.coords.lng}` : branch.address;
 }
+
+/** The branches that can be drawn on a map, in listed order. */
+export const MAPPED_BRANCHES = BRANCHES.filter(
+  (b): b is Branch & { coords: NonNullable<Branch['coords']> } => b.coords !== undefined,
+);
