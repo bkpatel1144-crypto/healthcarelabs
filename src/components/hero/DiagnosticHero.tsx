@@ -142,9 +142,14 @@ export function DiagnosticHero() {
                 to="/contact-us#home-collection"
                 variant="secondary"
                 size="lg"
-                className="!rounded-full whitespace-nowrap"
+                className="group/home !rounded-full !border-mint-200 !pl-2.5 whitespace-nowrap hover:!border-mint-400 hover:!text-mint-700 hover:shadow-[0_18px_38px_-18px_rgba(6,122,104,0.55)]"
               >
-                <Home className="h-[18px] w-[18px]" strokeWidth={2.1} aria-hidden="true" />
+                <span
+                  aria-hidden="true"
+                  className="mr-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-mint-400 to-mint-600 text-white shadow-[0_8px_18px_-8px_rgba(6,122,104,0.9)] transition-transform duration-200 group-hover/home:scale-105"
+                >
+                  <Home className="h-[17px] w-[17px]" strokeWidth={2.4} />
+                </span>
                 Book Home Collection
               </Button>
             </motion.div>

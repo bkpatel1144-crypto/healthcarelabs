@@ -185,7 +185,7 @@ export function Badge({
   className,
 }: {
   children: ReactNode;
-  tone?: 'brand' | 'neutral' | 'dark' | 'success' | 'warn';
+  tone?: 'brand' | 'neutral' | 'dark' | 'success' | 'warn' | 'home';
   className?: string;
 }) {
   const tones = {
@@ -193,6 +193,8 @@ export function Badge({
     neutral: 'bg-slate-100 text-ink-muted ring-slate-200',
     dark: 'bg-white/10 text-brand-100 ring-white/20',
     success: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+    /* Home collection has its own colour across the site. */
+    home: 'bg-mint-50 text-mint-700 ring-mint-200',
     warn: 'bg-amber-50 text-amber-700 ring-amber-200',
   } as const;
   return (

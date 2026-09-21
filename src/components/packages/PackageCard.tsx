@@ -47,7 +47,7 @@ export function PackageCard({
             {isFeature && <Badge tone="brand">Popular</Badge>}
             {pct !== null && <Badge tone="success">Save {pct}%</Badge>}
             {pkg.homeCollection && (
-              <Badge tone="neutral">
+              <Badge tone="home">
                 <Home className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" />
                 Home visit
               </Badge>
