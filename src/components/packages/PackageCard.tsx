@@ -65,16 +65,22 @@ export function PackageCard({
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-wrap items-center gap-1.5">
             {/*
-              The discount is the loudest thing on the card and it is solid,
-              not another pale outline. coral-600 rather than coral-500 so
-              white text on it clears 4.5:1 — measured, not assumed.
+              The discount is the loudest thing on the card and it is solid
+              rather than another pale outline. coral-600 rather than
+              coral-500, because white text clears 4.5:1 on 600 and does not
+              on 500 — measured, not assumed.
+
+              No "Popular" badge: it was set on seven of the seventeen
+              packages, and a badge carried by most of a catalogue tells a
+              visitor nothing. A featured package still reads differently
+              through the head tint and the ring, which is the right weight
+              for it.
             */}
             {pct !== null && (
               <span className="inline-flex items-center gap-1 rounded-full bg-coral-600 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_-12px_rgba(206,68,19,0.9)]">
                 <span className="tabular-nums">{pct}%</span> off
               </span>
             )}
-            {isFeature && <Badge tone="brand">Popular</Badge>}
             {pkg.homeCollection && (
               <Badge tone="home">
                 <Home className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" />

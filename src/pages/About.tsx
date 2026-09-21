@@ -11,7 +11,6 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { Container, Reveal, SectionHeading } from '@/components/common/Primitives';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { FinalCTA } from '@/components/home/FinalCTA';
-import { AccreditationBadge } from '@/components/common/AccreditationBadge';
 import { AccreditationSection } from '@/components/common/AccreditationSection';
 import { CARE_COMMITMENTS } from '@/data/testimonials';
 import { PACKAGES } from '@/data/packages';
@@ -233,29 +232,6 @@ export default function About() {
               </Reveal>
             ))}
           </ul>
-
-          <div className="mt-12 grid max-w-4xl gap-6 rounded-2xl border border-ink-line bg-mist p-7 sm:grid-cols-[auto_1fr] sm:items-start sm:gap-8 sm:p-8">
-            <AccreditationBadge variant="light" className="shrink-0" />
-            <div className="text-[14px] leading-relaxed text-ink-muted">
-              <p>
-                <strong className="font-semibold text-ink">Accreditation.</strong> Healthcare Labs is
-                NABL accredited for medical testing —{' '}
-                <a
-                  href="#accreditation"
-                  className="font-semibold text-brand-600 underline-offset-2 hover:underline"
-                >
-                  see the certificate and ceremony
-                </a>
-                .
-              </p>
-              <p className="mt-4">
-                <strong className="font-semibold text-ink">A note on other claims.</strong> This site
-                still does not publish patient counts, accuracy percentages or turnaround guarantees,
-                because those cannot be evidenced the way an accreditation number can. Where a figure
-                appears — package and test counts — it is computed from the published catalogue.
-              </p>
-            </div>
-          </div>
         </Container>
       </section>
 
