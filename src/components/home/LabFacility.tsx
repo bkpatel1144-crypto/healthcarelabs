@@ -1,9 +1,15 @@
 import { useState } from 'react';
-import { Cpu } from 'lucide-react';
+import { Cpu, FlaskConical } from 'lucide-react';
 import { Container, Reveal, SectionHeading } from '@/components/common/Primitives';
 import { PhotoTile } from '@/components/common/PhotoTile';
+import { InstrumentArt } from '@/components/common/InstrumentArt';
 import { PhotoLightbox } from '@/components/common/PhotoLightbox';
-import { DEPARTMENTS, INSTRUMENTS } from '@/data/labFacility';
+import {
+  ANALYSER_COUNT,
+  INSTRUMENTS,
+  INSTRUMENTS_BY_DEPARTMENT,
+} from '@/data/labFacility';
+import type { Instrument } from '@/data/labFacility';
 import { LAB_PHOTOS } from '@/data/labPhotos';
 import { cn } from '@/lib/cn';
 
@@ -46,7 +52,7 @@ export function LabFacility() {
         <SectionHeading
           eyebrow="Inside the laboratory"
                     title={<span id="facility-heading">The equipment behind the report</span>}
-          description="Three departments under one roof in Utran, and the analysers each one runs. Named, because a named instrument is a claim you can check."
+          description={`${INSTRUMENTS_BY_DEPARTMENT.length} departments under one roof in Utran, and the analysers each one runs. Named, because a named instrument is a claim you can check.`}
         />
 
         {/* ---------- Photographs ---------- */}
@@ -93,90 +99,76 @@ export function LabFacility() {
           </div>
         )}
 
-        {/* ---------- Departments ---------- */}
-        <ul
-          className={cn(
-            'grid gap-px overflow-hidden rounded-4xl bg-brand-50 shadow-card',
-            hasPhotos ? 'mt-16' : 'mt-14',
-            'lg:grid-cols-3',
-          )}
-        >
-          {DEPARTMENTS.map((d, i) => (
-            <Reveal
-              as="li"
-              key={d.id}
-              delay={i}
-              className="bg-white p-7 transition-colors duration-300 hover:bg-surface-soft sm:p-8"
-            >
-              <p className="font-mono text-[12px] tabular-nums text-brand-500">
-                {String(i + 1).padStart(2, '0')}
-              </p>
-              <h3 className="mt-4 text-[20px] font-bold tracking-[-0.02em] text-ink">{d.name}</h3>
-              <p className="mt-3 text-[14.5px] leading-relaxed text-ink-muted">{d.description}</p>
-            </Reveal>
-          ))}
-        </ul>
-
         {/* ---------- Instruments ---------- */}
         {/*
-          Cards, not a two-column list.
+          Eighteen entries grouped under the department that runs them.
 
-          As a list this read as unfinished: the name sat far left, the
-          capability chips far right, and between them was 330px of empty
-          page at 1440 with dividers too faint to bridge it. Named equipment
-          is the strongest evidence on this page, so it gets the same card
-          treatment as everything else rather than looking like raw data.
+          As one flat grid this was four cards; at eighteen it would be a wall
+          of identical tiles with no way in. Grouping gives a reader the same
+          route a sample takes, and it is the grouping that makes the breadth
+          legible — four chemistry analysers under one heading says something a
+          list of eighteen names does not.
+
+          Every card carries the same plate rather than a photograph, and that
+          is deliberate. Manufacturer product shots are copyrighted and putting
+          them on a commercial site would hand the lab the risk; a photograph of
+          the lab's own machine is both lawful and better evidence, and drops
+          into this exact slot through `photoId` — two of them already do.
+          Mixing a handful of real photographs with fourteen blanks would look
+          half-finished, which is the opposite of what was asked for, so the
+          plate is used consistently until a full set of photographs exists.
         */}
-        <div className="mt-14">
+        <div className={hasPhotos ? 'mt-16' : 'mt-14'}>
           <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
             <h3 className="flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-ink-soft">
               <Cpu className="h-4 w-4 text-brand-500" strokeWidth={2.2} aria-hidden="true" />
-              Installed analysers
+              Installed analysers and procedures
             </h3>
             <p className="text-[12.5px] tabular-nums text-ink-soft">
-              {INSTRUMENTS.length} named instruments
+              {ANALYSER_COUNT} named instruments across {INSTRUMENTS_BY_DEPARTMENT.length}{' '}
+              departments
             </p>
           </div>
 
-          <ul className="mt-5 grid gap-5 sm:grid-cols-2">
-            {INSTRUMENTS.map((inst, i) => (
-              <Reveal
-                as="li"
-                key={`${inst.make}-${inst.model}`}
-                delay={i}
-                className="group flex h-full flex-col rounded-3xl bg-white p-6 shadow-card ring-1 ring-brand-50 transition-transform duration-300 hover:-translate-y-1"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="text-[17px] font-bold leading-tight tracking-[-0.02em] text-ink">
-                      {inst.make} <span className="text-brand-600">{inst.model}</span>
-                    </p>
-                    <p className="mt-1.5 text-[13px] text-ink-muted">{inst.role}</p>
+          <div className="mt-8 space-y-12">
+            {INSTRUMENTS_BY_DEPARTMENT.map(({ department, instruments }) => (
+              <section key={department.id} aria-labelledby={`dept-${department.id}`}>
+                {/*
+                  The department's description lives here rather than in a
+                  separate grid above. It used to have one, which was fine for
+                  three departments and became a duplicate set of headings at
+                  seven — and seven cards do not divide into three columns
+                  without leaving a hole.
+                */}
+                <div className="border-b border-brand-50 pb-4">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                    <h4
+                      id={`dept-${department.id}`}
+                      className="text-[19px] font-bold tracking-[-0.02em] text-ink"
+                    >
+                      {department.name}
+                    </h4>
+                    <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold tabular-nums text-brand-700">
+                      {instruments.length}
+                    </span>
                   </div>
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 transition-colors duration-300 group-hover:bg-brand-500 group-hover:text-white">
-                    <Cpu className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
-                  </span>
+                  <p className="mt-2 max-w-3xl text-[14px] leading-relaxed text-ink-muted">
+                    {department.description}
+                  </p>
                 </div>
 
-                <p className="mt-4 inline-flex w-fit items-center rounded-full bg-mint-50 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-mint-600 ring-1 ring-inset ring-mint-100">
-                  {inst.department}
-                </p>
-
-                <ul className="mt-auto flex flex-wrap gap-2 border-t border-brand-50 pt-5">
-                  {inst.covers.map((c) => (
-                    <li
-                      key={c}
-                      className="rounded-lg bg-surface-soft px-2.5 py-1.5 text-[12.5px] text-ink-muted ring-1 ring-brand-50"
-                    >
-                      {c}
-                    </li>
+                <ul className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {instruments.map((inst, i) => (
+                    <Reveal as="li" key={inst.model} delay={i % 3}>
+                      <InstrumentCard instrument={inst} />
+                    </Reveal>
                   ))}
                 </ul>
-              </Reveal>
+              </section>
             ))}
-          </ul>
+          </div>
 
-          <p className="mt-7 max-w-2xl text-[13px] leading-relaxed text-ink-soft">
+          <p className="mt-9 max-w-2xl text-[13px] leading-relaxed text-ink-soft">
             Instrument capability, not test routing — which analyser handles a given sample is
             decided by the lab on the day. Ask the lab if you need to know the method used for a
             specific parameter.
@@ -195,3 +187,117 @@ export function LabFacility() {
     </section>
   );
 }
+
+/* -------------------------------------------------------- Instrument card */
+
+/**
+ * Photographs are all or nothing.
+ *
+ * The lab has its own pictures of three of these eighteen machines. Using them
+ * and leaving the other fifteen as plates looked exactly like an unfinished
+ * job — which is the thing the redesign was asked to fix. So the cards use
+ * photographs only once every instrument has one, and the plate until then.
+ *
+ * The real facility photographs are not lost: they are in the gallery at the
+ * top of this same section, at a size that does them more justice than a
+ * 16:9 card thumbnail.
+ *
+ * To switch the whole set over, photograph the remaining machines, add them to
+ * assets-src/lab/, run `npm run images`, and set `photoId` on each instrument.
+ * This flips on its own. Manufacturer product shots are not an option — they
+ * are copyrighted, and the liability for using them would sit with the lab.
+ */
+const PHOTOGRAPH_EVERY_INSTRUMENT = INSTRUMENTS.every((i) => i.photoId !== undefined);
+
+/**
+ * One card per instrument or procedure, identical in shape whichever it is, so
+ * eighteen of them read as a set rather than as a pile.
+ *
+ * Where the lab has photographed its own machine, `photoId` names it and the
+ * photograph fills the plate. Everything else gets the same tinted plate with
+ * the maker's initials — not a placeholder for a manufacturer image we cannot
+ * licence, but a treatment that holds on its own until the lab sends its own
+ * photographs.
+ */
+function InstrumentCard({ instrument }: { instrument: Instrument }) {
+  const photo = PHOTOGRAPH_EVERY_INSTRUMENT
+    ? LAB_PHOTOS.find((p) => p.id === instrument.photoId)
+    : undefined;
+  const isProcedure = instrument.kind === 'procedure';
+  const sizes = '(min-width: 1280px) 30vw, (min-width: 640px) 46vw, 92vw';
+
+  return (
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-brand-50 transition-all duration-300 ease-premium hover:-translate-y-1 hover:shadow-liftLg hover:ring-brand-200">
+      <div className="relative aspect-[5/2] overflow-hidden bg-gradient-to-br from-brand-50 via-surface-soft to-surface-tint">
+        {photo ? (
+          <picture>
+            <source type="image/avif" srcSet={photo.avif} sizes={sizes} />
+            <source type="image/webp" srcSet={photo.webp} sizes={sizes} />
+            <img
+              src={photo.src}
+              srcSet={photo.jpeg}
+              sizes={sizes}
+              alt={`${instrument.make ? instrument.make + ' ' : ''}${instrument.model} at Healthcare Labs`}
+              width={photo.width}
+              height={photo.height}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover transition-transform duration-500 ease-premium group-hover:scale-[1.04]"
+            />
+          </picture>
+        ) : (
+          <>
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 bg-grid-light [background-size:24px_24px] opacity-60"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute -right-8 -top-12 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(53,199,244,0.20),transparent_70%)]"
+            />
+            <InstrumentArt
+              art={instrument.art}
+              className="absolute inset-0 h-full w-full p-3 transition-transform duration-500 ease-premium group-hover:scale-[1.04]"
+            />
+          </>
+        )}
+
+        <span
+          className={cn(
+            'absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ring-1 ring-inset',
+            isProcedure
+              ? 'bg-mint-50 text-mint-700 ring-mint-200'
+              : 'bg-white/90 text-brand-700 ring-brand-100',
+          )}
+        >
+          {isProcedure ? (
+            <FlaskConical className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" />
+          ) : (
+            <Cpu className="h-3 w-3" strokeWidth={2.4} aria-hidden="true" />
+          )}
+          {isProcedure ? 'Procedure' : 'Analyser'}
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col p-5">
+        <h5 className="text-balance text-[15.5px] font-bold leading-snug tracking-[-0.02em] text-ink">
+          {instrument.make && <span className="text-ink-muted">{instrument.make} </span>}
+          <span className="text-brand-700">{instrument.model}</span>
+        </h5>
+        <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">{instrument.role}</p>
+
+        <ul className="mt-auto flex flex-wrap gap-1.5 pt-4">
+          {instrument.covers.map((c) => (
+            <li
+              key={c}
+              className="rounded-lg bg-surface-soft px-2 py-1 text-[11.5px] leading-snug text-ink-muted ring-1 ring-inset ring-brand-50"
+            >
+              {c}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </article>
+  );
+}
+
