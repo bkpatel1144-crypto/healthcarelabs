@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Bookmark, Clock, Home, ListChecks } from 'lucide-react';
+import { useId, useState } from 'react';
+import { ArrowRight, Bookmark, ChevronDown, Clock, Home, ListChecks } from 'lucide-react';
 import { CompareToggle } from '@/components/packages/ComparePackages';
 import { AddToVisit } from '@/components/packages/VisitPlanner';
 import { Badge } from '@/components/common/Primitives';
@@ -107,6 +108,17 @@ export function PackageCard({
           </div>
         </dl>
 
+        {/*
+          What is actually in the panel, on the card.
+
+          The card said "26 tests" and nothing else, so the only way to learn
+          what a body check-up covers was to open its page — which is the one
+          question every visitor has before they will consider the price. The
+          first six are always visible as chips, and the rest expand in place
+          rather than sending anyone away.
+        */}
+        {pkg.tests.length > 0 && <TestList tests={pkg.tests} name={pkg.name} />}
+
         {pkg.suitableFor.length > 0 && (
           <p className="mt-4 text-[12.5px] text-ink-soft">
             <span className="font-semibold text-ink-muted">For:</span>{' '}
@@ -159,5 +171,65 @@ export function PackageCard({
         </div>
       </div>
     </article>
+  );
+}
+
+/* ------------------------------------------------------------- Test list */
+
+const PREVIEW_COUNT = 6;
+
+function TestList({ tests, name }: { tests: string[]; name: string }) {
+  const [open, setOpen] = useState(false);
+  const listId = useId();
+  const hidden = tests.length - PREVIEW_COUNT;
+  const shown = open ? tests : tests.slice(0, PREVIEW_COUNT);
+
+  return (
+    <div className="relative z-10 mt-5 border-t border-ink-line pt-4">
+      <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft">
+        What is included
+      </p>
+
+      {/*
+        Bounded growth. A 26-test panel expands to about nine rows of chips,
+        which doubled the height of its grid row and left the cards beside it
+        hollow. Capped and scrollable, the row grows by a predictable amount
+        whatever the package size.
+      */}
+      <ul
+        id={listId}
+        className={cn(
+          'mt-2.5 flex flex-wrap gap-1.5',
+          open && 'scroll-row max-h-[190px] overflow-y-auto pr-1',
+        )}
+      >
+        {shown.map((test) => (
+          <li
+            key={test}
+            className="rounded-lg bg-surface-soft px-2 py-1 text-[12px] leading-snug text-ink-muted ring-1 ring-brand-50"
+          >
+            {test}
+          </li>
+        ))}
+      </ul>
+
+      {hidden > 0 && (
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls={listId}
+          className="mt-2.5 inline-flex items-center gap-1 text-[12.5px] font-semibold text-brand-600 transition-colors hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+        >
+          {open ? 'Show fewer' : `Show all ${tests.length} tests`}
+          <ChevronDown
+            className={cn('h-3.5 w-3.5 transition-transform duration-200', open && 'rotate-180')}
+            strokeWidth={2.4}
+            aria-hidden="true"
+          />
+          <span className="sr-only"> in {name}</span>
+        </button>
+      )}
+    </div>
   );
 }
