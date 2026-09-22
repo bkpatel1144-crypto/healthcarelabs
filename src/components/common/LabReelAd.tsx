@@ -39,6 +39,9 @@ import { ACCREDITATION } from '@/data/accreditation';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/* How long a dismissal lasts before the reel is offered again. */
+const DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
+
 export function LabReelAd() {
   const location = useLocation();
   const reduced = usePrefersReducedMotion();
@@ -46,9 +49,29 @@ export function LabReelAd() {
   const [dismissed, setDismissed] = useState(true);
   const [pastHero, setPastHero] = useState(false);
 
-  // Read the stored dismissal once, on mount.
+  /*
+    Read the stored dismissal once, on mount.
+
+    This used to be a permanent `true`: one click on the X hid the reel for
+    good, with no way back short of clearing site data. That is how the client
+    ended up reporting the reel missing on a build where it renders at every
+    width from 360 to 1920 — the code was right and their browser was holding a
+    flag they could not see or clear.
+
+    It is a timestamp now and lapses after a week. A legacy `true` counts as
+    already lapsed and is cleared, so a browser stuck on the old permanent flag
+    recovers on its next visit instead of staying hidden forever.
+  */
   useEffect(() => {
-    setDismissed(storage.get<boolean>(STORAGE_KEYS.reelDismissed, false));
+    const stored = storage.get<number | boolean | null>(STORAGE_KEYS.reelDismissed, null);
+    if (typeof stored !== 'number') {
+      if (stored !== null) storage.remove(STORAGE_KEYS.reelDismissed);
+      setDismissed(false);
+      return;
+    }
+    const lapsed = Date.now() - stored >= DISMISS_MS;
+    if (lapsed) storage.remove(STORAGE_KEYS.reelDismissed);
+    setDismissed(!lapsed);
   }, []);
 
   /*
@@ -67,7 +90,7 @@ export function LabReelAd() {
 
   const close = () => {
     setDismissed(true);
-    storage.set(STORAGE_KEYS.reelDismissed, true);
+    storage.set(STORAGE_KEYS.reelDismissed, Date.now());
   };
 
   /*
