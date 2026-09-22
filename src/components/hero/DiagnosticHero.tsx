@@ -128,11 +128,28 @@ export function DiagnosticHero() {
               {...rise(0.24)}
               className="mt-7 flex flex-col items-stretch gap-3.5 sm:flex-row sm:flex-wrap sm:items-center lg:short:mt-6"
             >
-              <Magnetic>
+              {/*
+                w-full below sm, to match the button beneath it.
+
+                The row is items-stretch, so the secondary button — a direct
+                flex child — blockifies and fills the column. This one sits
+                inside Magnetic's span, which stretches, but the button itself
+                stays inline-flex and sized to its text. Measured stacked, that
+                left them at 254px against 320–390px: two stacked calls to
+                action of visibly different widths.
+
+                They stack in two places, not one. Below sm the row is a
+                column; and from lg the hero splits into two columns, which
+                drops this one from 896px to 438px while the pair needs 514px,
+                so they wrap again until about 1216. The rule is the same in
+                both: stacked means equal full width, side by side means sized
+                to the text.
+              */}
+              <Magnetic className="w-full sm:w-auto lg:w-full xl:w-auto">
                 <Button
                   to="/health-package"
                   size="lg"
-                  className="!rounded-full whitespace-nowrap shadow-glow"
+                  className="w-full whitespace-nowrap !rounded-full shadow-glow sm:w-auto lg:w-full xl:w-auto"
                 >
                   Explore Health Packages
                   <ButtonArrow />
@@ -142,7 +159,7 @@ export function DiagnosticHero() {
                 to="/contact-us#home-collection"
                 variant="secondary"
                 size="lg"
-                className="group/home !rounded-full !border-mint-200 !pl-2.5 whitespace-nowrap hover:!border-mint-400 hover:!text-mint-700 hover:shadow-[0_18px_38px_-18px_rgba(6,122,104,0.55)]"
+                className="group/home w-full whitespace-nowrap !rounded-full !border-mint-200 !pl-2.5 sm:w-auto lg:w-full xl:w-auto hover:!border-mint-400 hover:!text-mint-700 hover:shadow-[0_18px_38px_-18px_rgba(6,122,104,0.55)]"
               >
                 <span
                   aria-hidden="true"
