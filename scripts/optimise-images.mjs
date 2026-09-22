@@ -145,6 +145,91 @@ const COLLECTIONS = [
       },
     },
   },
+{
+    name: 'instruments',
+    manifest: 'instrumentPhotos.ts',
+    exportName: 'INSTRUMENT_PHOTOS',
+    /*
+      Rendered on flat white with fine edges and screen detail, which is what
+      low-quality AVIF turns to mush. They encode at the artwork settings.
+    */
+    quality: ARTWORK_QUALITY,
+    order: ['chemistry', 'dry-chemistry', 'hplc', 'hplc-large', 'immunoassay', 'immunoassay-large', 'clia', 'clia-large', 'haematology', 'plate-reader', 'allergy-panel', 'gel-card', 'semen-analyser', 'centrifuge', 'iui-prep', 'histology', 'cytology', 'skin-prick'],
+    captions: {
+      'chemistry': {
+        alt: 'A clinical chemistry analyser with a sample carousel and control screen.',
+        caption: 'Clinical chemistry analyser',
+      },
+      'dry-chemistry': {
+        alt: 'A dry-slide chemistry analyser with a slide cartridge slot and a stack of test slides.',
+        caption: 'Dry chemistry analyser',
+      },
+      'hplc': {
+        alt: 'A compact HPLC analyser showing a chromatogram trace, with its separation column alongside.',
+        caption: 'HPLC haemoglobin analyser',
+      },
+      'hplc-large': {
+        alt: 'A larger HPLC system with a wide chromatogram display and paired separation columns.',
+        caption: 'HPLC haemoglobin system',
+      },
+      'immunoassay': {
+        alt: 'A bench-top immunoassay analyser with a reagent carousel under a clear lid.',
+        caption: 'Immunoassay analyser',
+      },
+      'immunoassay-large': {
+        alt: 'A floor-standing immunoassay analyser with an upper reagent bay and a sample track.',
+        caption: 'Immunoassay analyser',
+      },
+      'clia': {
+        alt: 'A compact chemiluminescence immunoassay analyser with a reaction wheel and reagent bottles.',
+        caption: 'Chemiluminescence analyser',
+      },
+      'clia-large': {
+        alt: 'A large chemiluminescence immunoassay analyser with a loading arm over a reagent carousel.',
+        caption: 'Chemiluminescence analyser',
+      },
+      'haematology': {
+        alt: 'A haematology analyser with a rack of blood tubes and a cell distribution histogram on screen.',
+        caption: 'Haematology analyser',
+      },
+      'plate-reader': {
+        alt: 'A microplate ELISA reader with a 96-well plate on its ejected tray.',
+        caption: 'Microplate ELISA reader',
+      },
+      'allergy-panel': {
+        alt: 'An allergen strip panel tray with a reading head above it.',
+        caption: 'Allergen strip panel',
+      },
+      'gel-card': {
+        alt: 'Blood grouping gel cards standing in a rack, their columns showing separated bands.',
+        caption: 'Gel card system',
+      },
+      'semen-analyser': {
+        alt: 'An automated semen analyser with a capillary slot and an analysis display.',
+        caption: 'Semen analyser',
+      },
+      'centrifuge': {
+        alt: 'A bench-top laboratory centrifuge with sample tubes under a domed lid.',
+        caption: 'Laboratory centrifuge',
+      },
+      'iui-prep': {
+        alt: 'A rack of conical tubes with separated layers, beside a micropipette.',
+        caption: 'Sample preparation',
+      },
+      'histology': {
+        alt: 'An automated histology tissue processor with its retort chamber and a cassette basket.',
+        caption: 'Histology tissue processor',
+      },
+      'cytology': {
+        alt: 'A liquid-based cytology vial beside a prepared slide with a thin-layer cell deposit.',
+        caption: 'Liquid-based cytology',
+      },
+      'skin-prick': {
+        alt: 'Allergy skin prick lancets beside a row of allergen extract dropper bottles.',
+        caption: 'Skin prick testing',
+      },
+    },
+  },
 ];
 
 function slugOf(file) {

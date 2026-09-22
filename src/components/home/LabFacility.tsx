@@ -4,13 +4,10 @@ import { Container, Reveal, SectionHeading } from '@/components/common/Primitive
 import { PhotoTile } from '@/components/common/PhotoTile';
 import { InstrumentArt } from '@/components/common/InstrumentArt';
 import { PhotoLightbox } from '@/components/common/PhotoLightbox';
-import {
-  ANALYSER_COUNT,
-  INSTRUMENTS,
-  INSTRUMENTS_BY_DEPARTMENT,
-} from '@/data/labFacility';
+import { ANALYSER_COUNT, INSTRUMENTS_BY_DEPARTMENT } from '@/data/labFacility';
 import type { Instrument } from '@/data/labFacility';
 import { LAB_PHOTOS } from '@/data/labPhotos';
+import { INSTRUMENT_PHOTOS } from '@/data/instrumentPhotos';
 import { cn } from '@/lib/cn';
 
 /**
@@ -191,23 +188,20 @@ export function LabFacility() {
 /* -------------------------------------------------------- Instrument card */
 
 /**
- * Photographs are all or nothing.
+ * Every instrument has a render, so the cards show renders.
  *
- * The lab has its own pictures of three of these eighteen machines. Using them
- * and leaving the other fifteen as plates looked exactly like an unfinished
- * job — which is the thing the redesign was asked to fix. So the cards use
- * photographs only once every instrument has one, and the plate until then.
+ * These are generated images of the *class* of instrument, not photographs of
+ * this lab's machines and not manufacturer product shots — the latter are
+ * copyrighted, and using them would put the liability on the lab. They are
+ * consistent by construction: one prompt style, flat white, no text, no logos,
+ * nothing fetched from a third party at runtime.
  *
- * The real facility photographs are not lost: they are in the gallery at the
- * top of this same section, at a size that does them more justice than a
- * 16:9 card thumbnail.
- *
- * To switch the whole set over, photograph the remaining machines, add them to
- * assets-src/lab/, run `npm run images`, and set `photoId` on each instrument.
- * This flips on its own. Manufacturer product shots are not an option — they
- * are copyrighted, and the liability for using them would sit with the lab.
+ * The drawn SVGs remain as the fallback. If a render is ever missing for an
+ * entry, that card falls back to its drawing rather than to a hole, so the
+ * section cannot end up half-rendered.
  */
-const PHOTOGRAPH_EVERY_INSTRUMENT = INSTRUMENTS.every((i) => i.photoId !== undefined);
+const renderFor = (instrument: Instrument) =>
+  INSTRUMENT_PHOTOS.find((p) => p.id === instrument.art);
 
 /**
  * One card per instrument or procedure, identical in shape whichever it is, so
@@ -220,15 +214,18 @@ const PHOTOGRAPH_EVERY_INSTRUMENT = INSTRUMENTS.every((i) => i.photoId !== undef
  * photographs.
  */
 function InstrumentCard({ instrument }: { instrument: Instrument }) {
-  const photo = PHOTOGRAPH_EVERY_INSTRUMENT
-    ? LAB_PHOTOS.find((p) => p.id === instrument.photoId)
-    : undefined;
+  const photo = renderFor(instrument);
   const isProcedure = instrument.kind === 'procedure';
   const sizes = '(min-width: 1280px) 30vw, (min-width: 640px) 46vw, 92vw';
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-brand-50 transition-all duration-300 ease-premium hover:-translate-y-1 hover:shadow-liftLg hover:ring-brand-200">
-      <div className="relative aspect-[5/2] overflow-hidden bg-gradient-to-br from-brand-50 via-surface-soft to-surface-tint">
+      <div
+        className={cn(
+          'relative aspect-[16/9] overflow-hidden',
+          photo ? 'bg-white' : 'bg-gradient-to-br from-brand-50 via-surface-soft to-surface-tint',
+        )}
+      >
         {photo ? (
           <picture>
             <source type="image/avif" srcSet={photo.avif} sizes={sizes} />
@@ -237,12 +234,12 @@ function InstrumentCard({ instrument }: { instrument: Instrument }) {
               src={photo.src}
               srcSet={photo.jpeg}
               sizes={sizes}
-              alt={`${instrument.make ? instrument.make + ' ' : ''}${instrument.model} at Healthcare Labs`}
+              alt={photo.alt}
               width={photo.width}
               height={photo.height}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover transition-transform duration-500 ease-premium group-hover:scale-[1.04]"
+              className="h-full w-full object-contain transition-transform duration-500 ease-premium group-hover:scale-[1.04]"
             />
           </picture>
         ) : (
