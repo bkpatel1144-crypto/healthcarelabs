@@ -186,7 +186,10 @@ export function HealthConcerns() {
                 a heading and a bullet list on the same white as everything
                 else, which left the left third of the panel looking empty. A
                 saturated block gives the section a centre of gravity and makes
-                the selected concern unmistakable.
+                the selected concern unmistakable. Its text is fully opaque
+                because translucent white does not survive this gradient: at
+                85% it blends to 3.9:1 against the brand-600 stop, so hierarchy
+                comes from size and weight instead.
               */}
               <div className="relative flex h-full flex-col overflow-hidden rounded-4xl bg-gradient-to-br from-brand-700 via-brand-600 to-mint-600 p-7 text-white shadow-card sm:p-8">
                 <div
@@ -204,11 +207,11 @@ export function HealthConcerns() {
                 <h3 className="relative mt-6 text-balance text-[26px] font-extrabold leading-[1.1] tracking-editorial">
                   {concern.label}
                 </h3>
-                <p className="relative mt-3 text-[14.5px] leading-relaxed text-white/85">
+                <p className="relative mt-3 text-[14.5px] leading-relaxed text-white">
                   {concern.description}
                 </p>
 
-                <p className="relative mt-7 text-[10.5px] font-bold uppercase tracking-[0.16em] text-white/70">
+                <p className="relative mt-7 text-[10.5px] font-bold uppercase tracking-[0.16em] text-white">
                   People usually test when
                 </p>
                 <ul className="relative mt-3 flex flex-wrap gap-2">
