@@ -105,8 +105,18 @@ export function HeroFinder() {
           {...sheen}
           className="glass-flat glass-sheen rounded-4xl p-5 sm:p-7"
         >
-          {/* ---------- Search row ---------- */}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
+          {/*
+            The field is the band now.
+
+            It used to be a pale grey slot stretched between a short label and
+            a saturated blue "Browse all" button, on a card that is itself
+            near-white. The one control this section exists for had the least
+            contrast on it and the secondary action had the most, so the band
+            read as an empty form. The field is white with its own ring and
+            shadow, it carries the submit inside it, and browsing the full
+            catalogue steps down to a link beside the examples.
+          */}
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
             <p className="flex shrink-0 items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">
               <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
                 <span className="absolute inset-0 rounded-full bg-mint-400" />
@@ -116,75 +126,87 @@ export function HeroFinder() {
               </span>
               Find your test
             </p>
+            <p className="flex items-center gap-2 text-[12px] text-ink-soft">
+              <ShieldCheck className="h-4 w-4 shrink-0 text-mint-500" strokeWidth={2} aria-hidden="true" />
+              Prices and full test lists published on every package
+            </p>
+          </div>
 
-            <form onSubmit={onSubmit} className="min-w-0 flex-1" role="search">
-              <label htmlFor={inputId} className="sr-only">
-                Search health packages and tests
-              </label>
-              <div className="relative">
-                <Search
-                  className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-soft"
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
-                <input
-                  id={inputId}
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="HbA1c, thyroid, lipid profile…"
-                  className="h-[54px] w-full rounded-2xl border border-brand-100 bg-surface-soft pl-12 pr-4 text-[15px] text-ink transition-colors placeholder:text-ink-soft/70 focus:border-brand-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-100"
-                />
-              </div>
-            </form>
-
-            <Link
-              to="/health-package"
-              className={cn(
-                'group flex h-[54px] shrink-0 items-center justify-center gap-2 rounded-2xl bg-brand-500 px-6',
-                'text-[14px] font-semibold text-white shadow-glow transition-all duration-200',
-                'hover:-translate-y-0.5 hover:bg-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-              )}
-            >
-              <span className="whitespace-nowrap">Browse all {livePackages.length} packages</span>
-              <ArrowRight
-                className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+          <form onSubmit={onSubmit} className="mt-4" role="search">
+            <label htmlFor={inputId} className="sr-only">
+              Search health packages and tests
+            </label>
+            <div className="group relative flex items-center gap-2 rounded-2xl bg-white p-2 shadow-card ring-1 ring-brand-100 transition-all duration-200 focus-within:shadow-liftLg focus-within:ring-2 focus-within:ring-brand-400">
+              <Search
+                className="pointer-events-none ml-3 h-[20px] w-[20px] shrink-0 text-brand-500"
                 strokeWidth={2.2}
                 aria-hidden="true"
               />
-            </Link>
-          </div>
-
-          {/* ---------- Results ---------- */}
-          <div className="mt-6 border-t border-brand-50 pt-5">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-              <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft">
-                {trimmed ? `${results.length === 0 ? 'No' : 'Top'} matches` : 'Try one of these'}
-              </p>
-              <p className="flex items-center gap-2 text-[12px] text-ink-soft">
-                <ShieldCheck
-                  className="h-4 w-4 shrink-0 text-mint-500"
-                  strokeWidth={2}
+              <input
+                id={inputId}
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="HbA1c, thyroid, lipid profile…"
+                className="h-[48px] min-w-0 flex-1 bg-transparent text-[16px] text-ink outline-none placeholder:text-ink-soft/70"
+              />
+              <button
+                type="submit"
+                className={cn(
+                  'group/go flex h-[48px] shrink-0 items-center gap-2 rounded-xl px-5',
+                  'bg-gradient-to-r from-brand-600 to-brand-500 text-[14px] font-bold text-white',
+                  'shadow-[0_14px_30px_-16px_rgba(15,122,172,0.95)] transition-all duration-200',
+                  'hover:from-brand-700 hover:to-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+                )}
+              >
+                <span className="hidden sm:inline">Search</span>
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-200 group-hover/go:translate-x-0.5"
+                  strokeWidth={2.4}
                   aria-hidden="true"
                 />
-                Prices and full test lists published on every package
-              </p>
+              </button>
             </div>
+          </form>
 
+          {/* ---------- Results ---------- */}
+          <div className="mt-4">
             {!trimmed && (
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {EXAMPLE_SEARCHES.map((term) => (
-                  <li key={term}>
-                    <button
-                      type="button"
-                      onClick={() => setQuery(term)}
-                      className="inline-flex items-center rounded-full bg-surface-soft px-3.5 py-2 text-[13px] font-semibold text-ink-muted ring-1 ring-brand-50 transition-colors hover:bg-white hover:text-brand-700 hover:ring-brand-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
-                    >
-                      {term}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft">
+                  Try
+                </p>
+                <ul className="flex min-w-0 flex-wrap gap-2">
+                  {EXAMPLE_SEARCHES.map((term) => (
+                    <li key={term}>
+                      <button
+                        type="button"
+                        onClick={() => setQuery(term)}
+                        className="inline-flex items-center rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-muted shadow-soft ring-1 ring-brand-100 transition-all duration-200 hover:-translate-y-0.5 hover:text-brand-700 hover:ring-brand-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+                      >
+                        {term}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/health-package"
+                  className="group ml-auto inline-flex shrink-0 items-center gap-1.5 text-[13.5px] font-bold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
+                >
+                  Browse all {livePackages.length} packages
+                  <ArrowRight
+                    className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                    strokeWidth={2.4}
+                    aria-hidden="true"
+                  />
+                </Link>
+              </div>
+            )}
+
+            {trimmed && (
+              <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-ink-soft">
+                {results.length === 0 ? 'No' : 'Top'} matches
+              </p>
             )}
 
             <ul
@@ -203,7 +225,7 @@ export function HeroFinder() {
                   <li key={p.id}>
                     <Link
                       to={`/health-package/${p.slug}`}
-                      className="group flex h-full items-center justify-between gap-4 rounded-2xl bg-surface-soft px-4 py-3.5 ring-1 ring-transparent transition-all duration-200 hover:bg-white hover:ring-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-400"
+                      className="group flex h-full items-center justify-between gap-4 rounded-2xl bg-white px-4 py-3.5 shadow-soft ring-1 ring-brand-50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card hover:ring-brand-200 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-400"
                     >
                       <span className="min-w-0">
                         <span className="block truncate text-[14.5px] font-semibold text-ink transition-colors group-hover:text-brand-600">
