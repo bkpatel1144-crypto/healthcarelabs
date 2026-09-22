@@ -150,6 +150,18 @@
     display: none;
   }
 
+  /* The same, horizontally. ScrollRail axis="x" draws the indicator. */
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scroll-x::-webkit-scrollbar {
+    display: none;
+  }
+
   .scroll-row {
     overflow-x: auto;
     overflow-y: hidden;

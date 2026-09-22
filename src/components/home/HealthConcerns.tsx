@@ -1,9 +1,10 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Clock } from 'lucide-react';
 import { Container, SectionHeading } from '@/components/common/Primitives';
 import { ConcernIcon } from '@/components/common/ConcernIcon';
+import { ScrollRail } from '@/components/common/ScrollRail';
 import { HEALTH_CONCERNS } from '@/data/healthConcerns';
 import { useContent } from '@/store/content';
 import { cn } from '@/lib/cn';
@@ -25,14 +26,19 @@ export function HealthConcerns() {
 
   const concern = HEALTH_CONCERNS.find((c) => c.id === active) ?? HEALTH_CONCERNS[0];
 
-  const matches = useMemo(
+  const forConcern = useMemo(
     () =>
       livePackages
         .filter((p) => p.concerns.includes(active))
-        .sort((a, b) => (a.offerPrice ?? a.price ?? 0) - (b.offerPrice ?? b.price ?? 0))
-        .slice(0, 4),
+        .sort((a, b) => (a.offerPrice ?? a.price ?? 0) - (b.offerPrice ?? b.price ?? 0)),
     [livePackages, active],
   );
+  /*
+    Four tiles fit the panel; the total is shown beside them so "4 of 7" is
+    honest about there being more, rather than implying four is all there is.
+  */
+  const matchCount = forConcern.length;
+  const matches = useMemo(() => forConcern.slice(0, 4), [forConcern]);
 
   const select = (id: ConcernId) => {
     setActive(id);
@@ -95,7 +101,7 @@ export function HealthConcerns() {
             aria-label="Health concerns"
             aria-orientation="horizontal"
             ref={tablistRef}
-            className="scroll-row -mx-5 flex snap-x gap-2.5 px-5 pb-3 sm:-mx-8 sm:px-8 lg:-mx-2 lg:px-2"
+            className="scroll-x -mx-5 flex snap-x gap-2.5 px-5 pb-1 sm:-mx-8 sm:px-8 lg:-mx-2 lg:px-2"
           >
             {HEALTH_CONCERNS.map((c, i) => {
               const isActive = c.id === active;
@@ -132,10 +138,20 @@ export function HealthConcerns() {
             })}
           </div>
 
+          {/*
+            A 2px indicator instead of the native bar. `scroll-row` painted a
+            thick pale scrollbar with stepper arrows directly under the tabs,
+            which was the loudest thing in the section and looked like a 2010
+            widget. The rail says "there is more" without being furniture.
+          */}
+          <div className="relative mt-3 h-[2px]">
+            <ScrollRail targetRef={tablistRef} axis="x" />
+          </div>
+
           {/* Edge fade so it reads as scrollable rather than clipped. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-5 bottom-3 top-0 w-14 bg-gradient-to-l from-surface-soft to-transparent sm:-right-8 lg:hidden"
+            className="pointer-events-none absolute -right-5 bottom-5 top-0 w-16 bg-gradient-to-l from-surface-soft via-surface-soft/70 to-transparent sm:-right-8"
           />
         </div>
 
@@ -144,73 +160,90 @@ export function HealthConcerns() {
           id="concern-panel"
           role="tabpanel"
           aria-labelledby={`concern-tab-${active}`}
-          className="mt-10 grid gap-8 rounded-4xl bg-white p-6 shadow-card ring-1 ring-brand-50 sm:p-9 lg:grid-cols-12 lg:gap-12"
+          className="mt-10 grid gap-5 lg:grid-cols-12 lg:gap-6"
         >
-          <AnimatePresence mode="wait">
+          {/*
+            No AnimatePresence here, and no exit.
+
+            With mode="wait" the panel played the old content out before
+            playing the new content in, and waited on completion callbacks for
+            both blocks: measured with a MutationObserver in the page, the
+            heading took 2359ms to change after a tab click. On a control that
+            should feel instant that reads as lag rather than as animation.
+            Keying the element on the concern replaces it immediately and the
+            new content fades in on its own.
+          */}
+          <div className="lg:col-span-4">
             <motion.div
               key={active}
-              initial={reduced ? false : { opacity: 0, y: 12 }}
+              initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? undefined : { opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="lg:col-span-4"
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="h-full"
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100">
-                <ConcernIcon name={concern.icon} className="h-6 w-6" />
-              </span>
-              <h3 className="mt-5 text-[24px] font-bold tracking-editorial text-ink">
-                {concern.label}
-              </h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-                {concern.description}
-              </p>
+              {/*
+                The identity block is the anchor now. It was a small pale icon,
+                a heading and a bullet list on the same white as everything
+                else, which left the left third of the panel looking empty. A
+                saturated block gives the section a centre of gravity and makes
+                the selected concern unmistakable.
+              */}
+              <div className="relative flex h-full flex-col overflow-hidden rounded-4xl bg-gradient-to-br from-brand-700 via-brand-600 to-mint-600 p-7 text-white shadow-card sm:p-8">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-grid-dark [background-size:44px_44px] opacity-40"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full bg-white/10"
+                />
 
-              <p className="mt-7 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
-                People usually test when
-              </p>
-              <ul className="mt-3 space-y-2.5">
-                {concern.signals.map((s) => (
-                  <li key={s} className="flex gap-2.5 text-[14px] text-ink-muted">
-                    <span
-                      aria-hidden="true"
-                      className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-mint-400"
-                    />
-                    {s}
-                  </li>
-                ))}
-              </ul>
+                <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-inset ring-white/25 backdrop-blur-sm">
+                  <ConcernIcon name={concern.icon} className="h-7 w-7" />
+                </span>
+                <h3 className="relative mt-6 text-balance text-[26px] font-extrabold leading-[1.1] tracking-editorial">
+                  {concern.label}
+                </h3>
+                <p className="relative mt-3 text-[14.5px] leading-relaxed text-white/85">
+                  {concern.description}
+                </p>
+
+                <p className="relative mt-7 text-[10.5px] font-bold uppercase tracking-[0.16em] text-white/70">
+                  People usually test when
+                </p>
+                <ul className="relative mt-3 flex flex-wrap gap-2">
+                  {concern.signals.map((s) => (
+                    <li
+                      key={s}
+                      className="rounded-full bg-white/12 px-3 py-1.5 text-[12.5px] font-medium leading-snug text-white ring-1 ring-inset ring-white/20"
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
-          </AnimatePresence>
+          </div>
 
-          <div className="lg:col-span-8">
+          <div className="flex flex-col rounded-4xl bg-white p-6 shadow-card ring-1 ring-brand-50 sm:p-7 lg:col-span-8">
             <div className="flex items-baseline justify-between gap-4">
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
                 Matching packages
               </p>
-              <Link
-                to={`/health-package?concern=${active}`}
-                className="group inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-brand-600 transition-colors hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
-              >
-                View all
-                <ArrowRight
-                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
-                  strokeWidth={2.2}
-                  aria-hidden="true"
-                />
-              </Link>
+              <p className="text-[12.5px] tabular-nums text-ink-soft">
+                {matches.length} of {matchCount}
+              </p>
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.ul
+            <motion.ul
                 key={active}
                 initial={reduced ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={reduced ? undefined : { opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="mt-4 divide-y divide-brand-50 border-t border-brand-50"
+                transition={{ duration: 0.2 }}
+                className="mt-5 grid gap-3 sm:grid-cols-2"
               >
                 {matches.length === 0 && (
-                  <li className="py-8 text-[15px] text-ink-muted">
+                  <li className="py-8 text-[15px] text-ink-muted sm:col-span-2">
                     No package is filed under this concern yet. Call the lab and a panel can be put
                     together for you.
                   </li>
@@ -226,35 +259,64 @@ export function HealthConcerns() {
                   whether the panel answers your question: its name, how many
                   parameters it covers, and when the report lands.
                 */}
-                {matches.map((p) => {
-                  return (
-                    <li key={p.id}>
-                      <Link
-                        to={`/health-package/${p.slug}`}
-                        className="group -mx-3 flex items-center justify-between gap-6 rounded-2xl px-3 py-5 transition-colors hover:bg-surface-soft focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-400"
-                      >
-                        <div className="min-w-0">
-                          <h4 className="truncate text-[16px] font-semibold text-ink transition-colors group-hover:text-brand-600">
-                            {p.name}
-                          </h4>
-                          <p className="mt-1 text-[13px] text-ink-soft">
-                            {p.tests.length} tests · Report {p.reportTime.toLowerCase()}
-                          </p>
-                        </div>
-                        <span className="flex shrink-0 items-center gap-1.5 text-[13.5px] font-semibold text-brand-600">
-                          View panel
-                          <ArrowRight
-                            className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
-                            strokeWidth={2.4}
-                            aria-hidden="true"
-                          />
+                {/*
+                  Tiles, not rows. Four identical text lines each ending in
+                  "View panel →" read as a table and repeated the same call to
+                  action four times. The parameter count carries the visual
+                  weight instead, because it is the one number that differs
+                  between panels and the one a visitor is actually comparing.
+                */}
+                {matches.map((p) => (
+                  <li key={p.id}>
+                    <Link
+                      to={`/health-package/${p.slug}`}
+                      className="group flex h-full items-start gap-4 rounded-3xl bg-surface-soft p-4 ring-1 ring-inset ring-brand-50 transition-all duration-300 ease-premium hover:-translate-y-0.5 hover:bg-white hover:shadow-card hover:ring-brand-200 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-400"
+                    >
+                      <span className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-white text-brand-700 ring-1 ring-inset ring-brand-100 transition-colors duration-300 group-hover:bg-brand-500 group-hover:text-white group-hover:ring-brand-500">
+                        <span className="text-[18px] font-extrabold leading-none tabular-nums">
+                          {p.tests.length}
                         </span>
-                      </Link>
-                    </li>
-                  );
-                })}
+                        <span className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.1em] opacity-70">
+                          tests
+                        </span>
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-balance text-[15px] font-bold leading-snug text-ink transition-colors group-hover:text-brand-700">
+                          {p.name}
+                        </span>
+                        <span className="mt-1.5 flex items-center gap-1.5 text-[12.5px] text-ink-soft">
+                          <Clock className="h-3.5 w-3.5 shrink-0 text-mint-500" strokeWidth={2.2} aria-hidden="true" />
+                          {p.reportTime}
+                        </span>
+                      </span>
+                      <ArrowRight
+                        className="mt-1 h-4 w-4 shrink-0 text-brand-500 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100"
+                        strokeWidth={2.4}
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  </li>
+                ))}
               </motion.ul>
-            </AnimatePresence>
+
+            {/*
+              The action sits at the foot rather than as a small link in the
+              corner. The card stretches to match the identity block beside it,
+              which left dead space under four tiles; this fills it with the one
+              thing a visitor wants next.
+            */}
+            <Link
+              to={`/health-package?concern=${active}`}
+              className="group mt-auto flex items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-200 pt-0 text-[13.5px] font-bold text-brand-700 transition-all duration-200 hover:border-brand-400 hover:bg-surface-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+              style={{ minHeight: 56, marginTop: 20 }}
+            >
+              See every {concern.label.toLowerCase()} panel
+              <ArrowRight
+                className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                strokeWidth={2.4}
+                aria-hidden="true"
+              />
+            </Link>
           </div>
         </div>
       </Container>

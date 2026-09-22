@@ -132,7 +132,18 @@ function PinnedJourney() {
           <div className="max-w-2xl">{HEADING}</div>
         </Container>
 
-        <div className="relative mt-12 overflow-hidden">
+        {/*
+          Bottom padding inside the clip, not decoration.
+
+          This box hides the cards as they translate sideways, so it has to
+          clip horizontally — but its height was exactly the card's height, and
+          shadow-card is a downward shadow (0 20px 48px -20px). The shadow was
+          being sliced off flat at the card's bottom edge, which is what took
+          the definition out of the bottom corners and made a rounded card look
+          cut off square. The top never showed it because that shadow barely
+          reaches upward.
+        */}
+        <div className="relative mt-10 overflow-hidden pb-10">
           <Container>
             <motion.ol ref={trackRef} style={{ x }} className="flex gap-6 will-change-transform">
               {STAGES.map(({ index, title, Icon, body, detail }) => (
@@ -158,7 +169,7 @@ function PinnedJourney() {
           </Container>
         </div>
 
-        <Container className="relative mt-10">
+        <Container className="relative mt-2">
           <div
             aria-hidden="true"
             className="h-1 w-full max-w-md overflow-hidden rounded-full bg-brand-100"

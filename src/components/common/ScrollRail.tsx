@@ -20,9 +20,12 @@ import { cn } from '@/lib/cn';
  */
 export function ScrollRail({
   targetRef,
+  axis = 'y',
   className,
 }: {
   targetRef: React.RefObject<HTMLElement>;
+  /** Which overflow the rail describes. */
+  axis?: 'x' | 'y';
   className?: string;
 }) {
   const [thumb, setThumb] = useState<{ top: number; height: number } | null>(null);
@@ -30,18 +33,20 @@ export function ScrollRail({
   const measure = useCallback(() => {
     const el = targetRef.current;
     if (!el) return;
-    const { scrollHeight, clientHeight, scrollTop } = el;
+    const total = axis === 'x' ? el.scrollWidth : el.scrollHeight;
+    const visible = axis === 'x' ? el.clientWidth : el.clientHeight;
+    const offset = axis === 'x' ? el.scrollLeft : el.scrollTop;
     // Nothing to indicate when everything already fits.
-    if (scrollHeight - clientHeight < 2) {
+    if (total - visible < 2) {
       setThumb(null);
       return;
     }
-    const ratio = clientHeight / scrollHeight;
+    const ratio = visible / total;
     // A floor, so a long list does not reduce the thumb to an invisible speck.
     const height = Math.max(ratio * 100, 8);
-    const top = (scrollTop / scrollHeight) * 100;
+    const top = (offset / total) * 100;
     setThumb({ top: Math.min(top, 100 - height), height });
-  }, [targetRef]);
+  }, [targetRef, axis]);
 
   useEffect(() => {
     const el = targetRef.current;
@@ -65,14 +70,24 @@ export function ScrollRail({
       aria-hidden="true"
       data-scroll-rail
       className={cn(
-        'pointer-events-none absolute right-0 top-0 h-full w-[2px] overflow-hidden rounded-full bg-brand-50',
+        'pointer-events-none absolute overflow-hidden rounded-full bg-brand-50',
+        axis === 'x' ? 'inset-x-0 bottom-0 h-[2px] w-full' : 'right-0 top-0 h-full w-[2px]',
         className,
       )}
     >
       <span
         data-scroll-thumb
-        className="absolute left-0 w-full rounded-full bg-gradient-to-b from-brand-400 to-mint-400 transition-[top] duration-75 ease-linear"
-        style={{ top: `${thumb.top}%`, height: `${thumb.height}%` }}
+        className={cn(
+          'absolute rounded-full transition-[top,left] duration-75 ease-linear',
+          axis === 'x'
+            ? 'top-0 h-full bg-gradient-to-r from-brand-400 to-mint-400'
+            : 'left-0 w-full bg-gradient-to-b from-brand-400 to-mint-400',
+        )}
+        style={
+          axis === 'x'
+            ? { left: `${thumb.top}%`, width: `${thumb.height}%` }
+            : { top: `${thumb.top}%`, height: `${thumb.height}%` }
+        }
       />
     </span>
   );
