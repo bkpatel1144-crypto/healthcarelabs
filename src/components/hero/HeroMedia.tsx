@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, FileCheck2, Home } from 'lucide-react';
 import { LAB_PHOTOS } from '@/data/labPhotos';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import { useAutoplayVideo } from '@/hooks/useAutoplayVideo';
 import { cn } from '@/lib/cn';
 import { useSheen } from '@/hooks/useSheen';
 
@@ -13,11 +14,24 @@ import { useSheen } from '@/hooks/useSheen';
  * photograph of smiling faces, and their reception shot is the one asset with
  * real people in it.
  *
- * The small video inset that used to sit on this photograph is gone. It said
- * the same thing as the floating lab reel — "inside the lab" — and two videos
- * playing at once was the largest remaining cost on the homepage: a 3-second
- * scroll measured 33.4ms median frames with them and 16.7ms without, 56
- * rendered frames against 108.
+ * The small video inset sits back on the photograph. It was removed in 61c2011
+ * on performance grounds — two videos playing at once was the largest cost on
+ * the homepage, a 3-second scroll measuring 33.4ms median frames with them and
+ * 16.7ms without, 56 rendered frames against 108 — and the client has since
+ * asked for it back twice. That is their call to make, so it is back, with the
+ * two things that made it expensive addressed rather than accepted:
+ *
+ *   1. It plays only while on screen. `useAutoplayVideo` pauses on an
+ *      IntersectionObserver miss, and the floating reel does not appear until
+ *      the visitor is three quarters of a screen down, so the window in which
+ *      both are actually decoding is a fraction of the hero's height rather
+ *      than the whole page.
+ *   2. The card is `glass-flat`, not `glass`. The original inset carried a
+ *      backdrop-filter; that tier was removed from small surfaces in the
+ *      performance pass and there is no reason to buy it back for this one.
+ *
+ * It is the 720p encode at 451KB, not the 1MB master, and it is decorative:
+ * `aria-hidden`, muted, `tabIndex={-1}`, and out of the tab order entirely.
  */
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -43,6 +57,7 @@ const BADGES = [
 
 export function HeroMedia() {
   const reduced = usePrefersReducedMotion();
+  const videoRef = useAutoplayVideo();
   const sheen = useSheen<HTMLDivElement>();
 
   // Reception is the lead photo in the lab collection; fall back to whatever is
@@ -102,6 +117,31 @@ export function HeroMedia() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-brand-600/10 via-transparent to-coral-400/10"
           />
         </div>
+
+        {/* ---------- "Inside the lab" video inset ---------- */}
+        <motion.div
+          {...float(0.8)}
+          className="glass-flat absolute -bottom-8 left-4 w-[42%] max-w-[220px] overflow-hidden rounded-2xl p-1.5 sm:left-8"
+        >
+          <video
+            ref={videoRef}
+            aria-hidden="true"
+            poster="/media/hero-lab-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            tabIndex={-1}
+            className="aspect-[4/3] w-full rounded-xl object-cover"
+          >
+            <source src="/media/hero-lab-720.mp4" type="video/mp4" />
+          </video>
+          <p className="px-1.5 pb-1 pt-2 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-700">
+            Inside the lab
+          </p>
+        </motion.div>
 
         {/* ---------- Floating proof badges ---------- */}
         {BADGES.map(({ Icon, title, detail, tone, position, float: d }) => (

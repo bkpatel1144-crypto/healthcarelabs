@@ -13,6 +13,14 @@ import { useEffect, useRef } from 'react';
  * Reduced motion is deliberately ignored. The client asked for the video to
  * start on its own, without a button, and Windows' "show animations off"
  * setting reports as reduced motion, which had been silently withholding it.
+ *
+ * Every retry is gated on the element being on screen. Without that gate the
+ * retries fought the IntersectionObserver rather than complementing it: the
+ * observer pauses on the way off screen and then never fires again, so a single
+ * tab switch back — or any of the gesture triggers — restarted an off-screen
+ * video that nothing would pause again, and it decoded for the rest of the
+ * page. That is the whole basis on which the hero inset is affordable, so the
+ * gate is load-bearing rather than tidy.
  */
 export function useAutoplayVideo() {
   const ref = useRef<HTMLVideoElement>(null);
@@ -28,8 +36,10 @@ export function useAutoplayVideo() {
       together and measured worse than doing nothing.
     */
     let pending = false;
+    // Kept in step with the observer below; see the note in the docblock.
+    let onScreen = true;
     const attempt = () => {
-      if (!video.paused || pending) return;
+      if (!onScreen || !video.paused || pending) return;
       pending = true;
       video
         .play()
@@ -54,6 +64,7 @@ export function useAutoplayVideo() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
+          onScreen = entry.isIntersecting;
           if (entry.isIntersecting) attempt();
           else if (!video.paused) video.pause();
         }
