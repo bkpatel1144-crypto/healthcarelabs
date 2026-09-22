@@ -104,7 +104,25 @@ export function LabReelAd() {
             ...(reduced ? {} : { x: -20, scale: 0.96 }),
             transition: { duration: 0.26, ease: EASE },
           }}
-          className="glass-flat glass-sheen glass-sheen-dark fixed bottom-5 left-5 z-40 hidden w-[164px] rounded-3xl p-1.5 sm:block lg:bottom-6 lg:left-6 lg:w-[186px] xl:w-[200px]"
+          /*
+            Shown on phones too. This carried `hidden sm:block`, so the one
+            place the lab most wanted it seen — a phone — was the one place it
+            never appeared.
+
+            Two things had to be sized for that, and a screenshot showed both
+            after the first attempt at 112px: the overlay is built for a
+            164–200px card and its badge and button overflowed, and the
+            accessibility control sits in this exact corner and covered the
+            reel's lower edge. So the phone size is 132px, it sits above that
+            control rather than under it, and the overlay drops to the caption
+            and the dismiss button until there is room for the rest.
+
+            120px, not 132: at 132 this took 37% of a 360px screen, which is a
+            lot of somebody's phone for a panel they did not ask for. 120 keeps
+            it within a third on the smallest screens worth supporting and the
+            caption still fits on one line.
+          */
+          className="glass-flat glass-sheen glass-sheen-dark fixed bottom-[76px] left-4 z-40 w-[120px] rounded-3xl p-1.5 sm:bottom-5 sm:left-5 sm:w-[164px] lg:bottom-6 lg:left-6 lg:w-[186px] xl:w-[200px]"
         >
           <div className="relative aspect-[9/16] overflow-hidden rounded-[1.15rem] bg-navy-950">
             {/*
@@ -135,17 +153,17 @@ export function LabReelAd() {
               className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/25 to-transparent"
             />
 
-            <div className="absolute inset-x-0 bottom-0 p-3.5">
-              <p className="flex items-center gap-1.5 text-[9.5px] font-bold uppercase tracking-[0.14em] text-mint-300">
+            <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3.5">
+              <p className="hidden items-center gap-1.5 text-[9.5px] font-bold uppercase tracking-[0.14em] text-mint-300 sm:flex">
                 <ShieldCheck className="h-3 w-3 shrink-0" strokeWidth={2.6} aria-hidden="true" />
                 {ACCREDITATION.bodyShort} accredited
               </p>
-              <p className="mt-1.5 text-[13.5px] font-bold leading-snug tracking-[-0.01em] text-white">
+              <p className="text-[12px] font-bold leading-snug tracking-[-0.01em] text-white sm:mt-1.5 sm:text-[13.5px]">
                 Inside our laboratory
               </p>
               <Link
                 to="/health-package"
-                className="group mt-3 flex h-9 items-center justify-center gap-1.5 rounded-full bg-white text-[12.5px] font-semibold text-brand-700 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="group mt-3 hidden h-9 items-center justify-center gap-1.5 rounded-full bg-white text-[12.5px] font-semibold text-brand-700 sm:flex transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Book a health check
                 <ArrowRight
