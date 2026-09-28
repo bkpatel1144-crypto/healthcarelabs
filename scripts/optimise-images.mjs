@@ -125,7 +125,14 @@ const COLLECTIONS = [
     manifest: 'awarenessPosts.ts',
     exportName: 'AWARENESS_POSTS',
     quality: ARTWORK_QUALITY,
-    order: ['pcos-one-sign', 'pcos-other-signs', 'burning-urination', 'choosing-a-lab'],
+    order: [
+      'no-symptoms',
+      'risk-factors',
+      'pcos-one-sign',
+      'pcos-other-signs',
+      'burning-urination',
+      'choosing-a-lab',
+    ],
     captions: {
       'pcos-one-sign': {
         alt: 'Healthcare Labs awareness poster in Gujarati, illustrated with a calendar and a sanitary pad, asking whether an irregular period is the only sign of PCOS and answering that a change in periods is not the only sign.',
@@ -142,6 +149,42 @@ const COLLECTIONS = [
       'choosing-a-lab': {
         alt: 'Healthcare Labs poster in Gujarati carrying the NABL emblem and headed NABL Certified Lab, saying a fast report is not the only thing that matters in a laboratory because accuracy and reliability matter as much, and advising people to choose a laboratory on its reliability rather than on how near it is.',
         caption: 'Choose a laboratory on reliability, not on distance',
+      },
+      'no-symptoms': {
+        alt: 'Healthcare Labs poster in Gujarati showing a woman holding her forehead with a speech bubble reading "nothing is wrong with me", headed "the most misleading health statement?" It says many health conditions give no clear symptoms early on, and lists diabetes and prediabetes, kidney problems and liver conditions as ones that can stay silent. The footer carries the lab phone numbers and website.',
+        caption: 'The most misleading health statement',
+      },
+      'risk-factors': {
+        alt: 'Healthcare Labs poster in Gujarati showing a doctor going through a report with a patient across a desk, headed "when there are risk factors or a doctor advises it". It says appropriate health testing can help identify some problems earlier, and adds not to wait for symptoms. The footer carries the lab phone numbers and website.',
+        caption: 'When there are risk factors, or a doctor advises it',
+      },
+    },
+  },
+  {
+    /*
+      The lab's long-form health features — full newspaper-style pages in
+      Gujarati, set in columns with an expert byline, rather than the square
+      social artwork the awareness collection holds. They are 3:4 and dense
+      with small type, so they encode at the artwork settings and are meant to
+      be opened full size rather than read in a card.
+    */
+    name: 'reports',
+    manifest: 'healthReportImages.ts',
+    exportName: 'HEALTH_REPORT_IMAGES',
+    quality: ARTWORK_QUALITY,
+    order: ['obesity', 'health-checkup-by-age', 'kitchen-cancer-risk'],
+    captions: {
+      obesity: {
+        alt: 'Healthcare Labs health feature in Gujarati headed "Careful! Obesity", set in newspaper columns. It explains that obesity is not only a matter of appearance or weight, that long-standing excess body fat can affect many of the body’s processes, and covers insulin resistance and type 2 diabetes risk, high blood pressure and cholesterol, fatty liver disease, joint pain and mobility, and effects on hormonal balance and fertility. It closes with a consultant pathologist’s note advising a balanced diet, regular exercise and timely health check-ups.',
+        caption: 'Obesity: more than a matter of weight',
+      },
+      'health-checkup-by-age': {
+        alt: 'Healthcare Labs health feature in Gujarati headed "which health check-up is needed at which age?", set in newspaper columns. It sets out basic health monitoring from 20 to 35, metabolic health and preventive screening from 35 to 50, and comprehensive screening at 50 and over, notes that risk factors and family history matter as much as age, and lists what to keep in mind before a check-up such as fasting requirements and bringing previous reports.',
+        caption: 'Which check-up is needed at which age',
+      },
+      'kitchen-cancer-risk': {
+        alt: 'Healthcare Labs health feature in Gujarati headed with a warning that vegetables kept for months in the fridge and heavily salted pickles can contribute to cancer risk, set in newspaper columns. It covers five things found in a kitchen: mouldy and stored grains and the aflatoxin risk, very sweet or heavily salted preserved foods, very hot tea and coffee above 65 degrees, cold drinks and high-sugar beverages, and fried or heavily browned starchy foods and acrylamide. It closes by saying prevention is about safe storage and moderation rather than throwing food away.',
+        caption: 'Five things in the kitchen worth a second look',
       },
     },
   },

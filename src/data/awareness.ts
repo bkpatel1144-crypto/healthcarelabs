@@ -29,6 +29,20 @@ export interface AwarenessNote {
 }
 
 export const AWARENESS_NOTES: Record<string, AwarenessNote> = {
+  'no-symptoms': {
+    title: '“There’s nothing wrong with me”',
+    summary:
+      'The poster’s point is that feeling well is not the same as being well. Diabetes and prediabetes, kidney problems and liver conditions can all stay quiet for a long time before anything shows.',
+    topic: 'Silent conditions',
+    related: { label: 'Preventive health packages', href: '/health-package' },
+  },
+  'risk-factors': {
+    title: 'When there are risk factors, or a doctor advises it',
+    summary:
+      'Testing at the right time can bring some problems to light earlier than waiting would. The poster’s closing line is the whole message: do not wait for symptoms.',
+    topic: 'When to test',
+    related: { label: 'Book a home collection', href: '/contact-us#home-collection' },
+  },
   'pcos-one-sign': {
     title: 'Is an irregular period the only sign of PCOS?',
     summary:

@@ -4,6 +4,7 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { Container, Reveal } from '@/components/common/Primitives';
 import { Button } from '@/components/common/Button';
 import { BlogCard } from '@/components/blog/BlogCard';
+import { HealthReports } from '@/components/common/HealthReports';
 import { useContent } from '@/store/content';
 import { useSeo } from '@/lib/seo';
 import { BLOG_CATEGORIES } from '@/data/blogs';
@@ -175,6 +176,14 @@ export default function Blog() {
           )}
         </Container>
       </section>
+
+      {/*
+        Outside the Articles section, and after it. These are a fixed band of
+        the lab's own published pages, not part of the filterable list — if
+        they sat inside it they would contradict the "N articles" count above
+        and would still be showing when a search matched nothing.
+      */}
+      <HealthReports />
     </>
   );
 }

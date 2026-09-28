@@ -19,10 +19,16 @@ entry in both, or the card falls back to a generic caption with no summary.
 
 | Filename                 | Poster                                              |
 | ------------------------ | --------------------------------------------------- |
+| `no-symptoms.jpg`        | "There's nothing wrong with me"                      |
+| `risk-factors.jpg`       | When there are risk factors, or a doctor advises it  |
 | `pcos-one-sign.jpg`      | Is an irregular period the only sign of PCOS?        |
 | `pcos-other-signs.jpg`   | The other signs that can come with PCOS              |
 | `burning-urination.jpg`  | Burning when you urinate — is more water enough?     |
 | `choosing-a-lab.jpg`     | Choose a laboratory on reliability, not on distance  |
+
+**This folder is for the square social artwork only.** The lab's full-page
+newspaper-style features are a different thing and live in
+`assets-src/reports/` — see the README there.
 
 Display order is set by the `order` array for this collection in
 `scripts/optimise-images.mjs`, not by filename.

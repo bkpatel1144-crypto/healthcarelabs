@@ -4,6 +4,28 @@ import type { SitePhoto } from '@/types';
 
 export const AWARENESS_POSTS: SitePhoto[] = [
   {
+    "id": "no-symptoms",
+    "width": 1080,
+    "height": 1350,
+    "src": "/media/awareness/no-symptoms-92c8c43c-1024.jpg",
+    "avif": "/media/awareness/no-symptoms-92c8c43c-640.avif 640w, /media/awareness/no-symptoms-92c8c43c-1024.avif 1024w",
+    "webp": "/media/awareness/no-symptoms-92c8c43c-640.webp 640w, /media/awareness/no-symptoms-92c8c43c-1024.webp 1024w",
+    "jpeg": "/media/awareness/no-symptoms-92c8c43c-640.jpg 640w, /media/awareness/no-symptoms-92c8c43c-1024.jpg 1024w",
+    "alt": "Healthcare Labs poster in Gujarati showing a woman holding her forehead with a speech bubble reading \"nothing is wrong with me\", headed \"the most misleading health statement?\" It says many health conditions give no clear symptoms early on, and lists diabetes and prediabetes, kidney problems and liver conditions as ones that can stay silent. The footer carries the lab phone numbers and website.",
+    "caption": "The most misleading health statement"
+  },
+  {
+    "id": "risk-factors",
+    "width": 1080,
+    "height": 1350,
+    "src": "/media/awareness/risk-factors-7e746e28-1024.jpg",
+    "avif": "/media/awareness/risk-factors-7e746e28-640.avif 640w, /media/awareness/risk-factors-7e746e28-1024.avif 1024w",
+    "webp": "/media/awareness/risk-factors-7e746e28-640.webp 640w, /media/awareness/risk-factors-7e746e28-1024.webp 1024w",
+    "jpeg": "/media/awareness/risk-factors-7e746e28-640.jpg 640w, /media/awareness/risk-factors-7e746e28-1024.jpg 1024w",
+    "alt": "Healthcare Labs poster in Gujarati showing a doctor going through a report with a patient across a desk, headed \"when there are risk factors or a doctor advises it\". It says appropriate health testing can help identify some problems earlier, and adds not to wait for symptoms. The footer carries the lab phone numbers and website.",
+    "caption": "When there are risk factors, or a doctor advises it"
+  },
+  {
     "id": "pcos-one-sign",
     "width": 1080,
     "height": 1350,

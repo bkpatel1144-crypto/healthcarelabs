@@ -1,5 +1,5 @@
 /**
- * The seven Healthcare Labs collection centres.
+ * The eight Healthcare Labs collection centres.
  *
  * Transcribed verbatim from the list the lab supplied. Nothing here is
  * inferred: where a branch has no published landline, `phones` simply has one
@@ -10,7 +10,7 @@
  * "Directions" button opens, so a visitor always lands on the pin the lab
  * itself chose.
  *
- * `coords` is the pin the lab itself published, never a geocode. Two of their
+ * `coords` is the pin the lab itself published, never a geocode. Three of their
  * links carried a latitude and longitude outright; four more were short links
  * that resolve to a Google place, and the coordinate was read out of the
  * resolved place rather than out of a search for the lab's name.
@@ -89,6 +89,16 @@ export const BRANCHES: Branch[] = [
     mapUrl: 'https://maps.app.goo.gl/eRhfrrQXLeCYrHfh8',
     /* Resolves to the "LA Citadel Complex" place named in the address. */
     coords: { lat: 21.1906087, lng: 72.869018 },
+  },
+  {
+    id: 'amroli',
+    name: 'Amroli',
+    address:
+      '6-7-8, 1st Floor, Sahyog Complex, Near Vegetable Market, Man Sarovar Circle, Amroli, Surat - 394107',
+    phones: ['8849979120', '9409085657'],
+    mapUrl: 'https://maps.google.com/?q=21.238716,72.849823',
+    /* The lab published this pin as a coordinate link outright. */
+    coords: { lat: 21.238716, lng: 72.849823 },
   },
   {
     id: 'sachin',

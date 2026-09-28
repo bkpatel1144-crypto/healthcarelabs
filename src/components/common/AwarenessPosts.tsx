@@ -50,14 +50,19 @@ export function AwarenessPosts() {
           )}
         </div>
 
-        <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/*
+          Three up, not four. The lab published two more posters, and six in a
+          four-column grid leaves a ragged row of two; six in three columns is
+          two full rows. The sizes attribute below is set to match.
+        */}
+        <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, i) => {
             const note = AWARENESS_NOTES[post.id];
             return (
               <Reveal
                 as="li"
                 key={post.id}
-                delay={i % 4}
+                delay={i % 3}
                 className="group flex flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-brand-50 transition-shadow duration-300 hover:shadow-lift"
               >
                 <PosterTile post={post} label={note?.title} onOpen={() => setLightbox(i)} />
@@ -134,12 +139,12 @@ function PosterTile({
       className="relative block w-full overflow-hidden bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500"
     >
       <picture>
-        <source type="image/avif" srcSet={post.avif} sizes="(min-width: 1024px) 24vw, (min-width: 640px) 46vw, 92vw" />
-        <source type="image/webp" srcSet={post.webp} sizes="(min-width: 1024px) 24vw, (min-width: 640px) 46vw, 92vw" />
+        <source type="image/avif" srcSet={post.avif} sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw" />
+        <source type="image/webp" srcSet={post.webp} sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw" />
         <img
           src={post.src}
           srcSet={post.jpeg}
-          sizes="(min-width: 1024px) 24vw, (min-width: 640px) 46vw, 92vw"
+          sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw"
           alt={post.alt}
           width={post.width}
           height={post.height}
