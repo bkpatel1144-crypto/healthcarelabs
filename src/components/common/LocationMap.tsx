@@ -8,7 +8,6 @@ import { SITE_CONFIG } from '@/config/site';
 import {
   BRANCHES,
   HEAD_OFFICE,
-  MAPPED_BRANCHES,
   branchTelHref,
   formatBranchPhone,
 } from '@/data/branches';
@@ -48,20 +47,30 @@ export function LocationMap() {
         <div className="max-w-2xl">
           <p className="flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">
             <Navigation className="h-4 w-4" strokeWidth={2.4} aria-hidden="true" />
-            Our centres
+            Our branches
           </p>
           <h2
             id="location-heading"
             className="mt-5 text-balance text-[clamp(1.8rem,3.2vw,2.6rem)] font-extrabold leading-[1.1] tracking-editorial text-ink"
           >
-            {BRANCHES.length} collection centres across{' '}
+            {BRANCHES.length} branches across{' '}
             <span className="bg-gradient-to-r from-brand-700 to-mint-600 bg-clip-text text-transparent">
               Surat
             </span>
           </h2>
+          {/*
+            This used to print the mapped-pin count directly under a heading
+            that counts every branch.
+            With eight branches and seven pins it printed "8 branches" above
+            "All 7 published pins", which reads as a contradiction the sentence
+            never explains — the client reported it as a mistake, and it was
+            one. The map still shows every pin the lab has published; the line
+            simply stops quoting a second number that appears to disagree with
+            the first.
+          */}
           <p className="mt-5 text-[16px] leading-relaxed text-ink-muted">
-            All {MAPPED_BRANCHES.length} published pins are on the map from the start. Pick a
-            centre to zoom to it, or open Directions for the lab&rsquo;s own pin.
+            All our map pins are shown from the start. Pick a branch to zoom to it, or open
+            Directions to go straight there.
           </p>
         </div>
 
@@ -72,7 +81,7 @@ export function LocationMap() {
               <ul
                 ref={listRef}
                 className="scroll-col max-h-[560px] divide-y divide-brand-50"
-                aria-label="Healthcare Labs collection centres"
+                aria-label="Healthcare Labs branches"
               >
                 {BRANCHES.map((branch) => {
                   const selected = branch.id === active.id;
@@ -108,7 +117,7 @@ export function LocationMap() {
                             </span>
                             {branch.head && (
                               <span className="rounded-full bg-mint-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-mint-600 ring-1 ring-inset ring-mint-100">
-                                Main centre
+                                Main branch
                               </span>
                             )}
                           </span>

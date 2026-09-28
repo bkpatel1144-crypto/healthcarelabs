@@ -77,7 +77,7 @@ export function Footer() {
                 >
                   <Navigation className="mt-0.5 h-[18px] w-[18px] shrink-0" strokeWidth={2} aria-hidden="true" />
                   <span className="font-semibold underline-offset-4 group-hover:underline">
-                    All {BRANCHES.length} collection centres
+                    All {BRANCHES.length} branches
                   </span>
                 </Link>
                 <FooterContact href={telHref()} Icon={Phone}>

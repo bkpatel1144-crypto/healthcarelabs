@@ -76,9 +76,9 @@ export default function Contact() {
             />
             <Channel
               Icon={MapPin}
-              label="Visit the centre"
-              value={`${BRANCHES.length} centres across ${SITE_CONFIG.address.city}`}
-              secondary={`Main centre — ${SITE_CONFIG.address.line1}`}
+              label="Visit a branch"
+              value={`${BRANCHES.length} branches across ${SITE_CONFIG.address.city}`}
+              secondary={`Main branch — ${SITE_CONFIG.address.line1}`}
               href={mapHref()}
               external
             />

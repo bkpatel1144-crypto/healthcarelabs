@@ -109,7 +109,7 @@ export function BranchMap({
       ref={hostRef}
       className={className}
       role="application"
-      aria-label={`Map of all ${MAPPED_BRANCHES.length} Healthcare Labs collection centres in Surat`}
+      aria-label={`Map of all ${MAPPED_BRANCHES.length} Healthcare Labs branches in Surat`}
     />
   );
 }
