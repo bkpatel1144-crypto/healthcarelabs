@@ -19,6 +19,19 @@ const NO_FASTING = [
   'Carry a list of any medication you take regularly.',
 ];
 
+/*
+  Skin prick preparation. The forearm detail and the fifteen-minute read come
+  from the lab's own facility note, not from us. The antihistamine line names
+  the interference without prescribing a stop interval — how long to stop for
+  is a clinical decision and belongs to the lab and the patient's doctor.
+*/
+const ALLERGY_SKIN_PRICK = [
+  'No fasting is required.',
+  'Antihistamines can suppress the skin reaction. Ask the lab how long before the test to stop yours, and do not stop prescribed medication without your doctor’s advice.',
+  'The test is done on the forearm and read after about fifteen minutes, so allow time at the centre.',
+  'Bring a note of the reactions and suspected triggers you want investigated.',
+];
+
 export const PACKAGES: HealthPackage[] = [
   {
     id: 'pkg-basic-health-check-up',
@@ -306,6 +319,68 @@ export const PACKAGES: HealthPackage[] = [
     ],
     homeCollection: true,
     reportTime: '3–5 working days',
+    featured: false,
+  },
+  {
+    /*
+      Price lives in `offerPrice` with `price` left null, and that is
+      deliberate rather than a slip. The lab quoted one MRP for each of these
+      with no discount, and every price render on the site except VisitPlanner
+      keys off `offerPrice !== null` — a package carrying only `price` shows
+      "On request" and hides the figure. This stores the payable price in the
+      field that is actually displayed, so ₹8,000 shows everywhere.
+    */
+    id: 'pkg-full-profile-skin-prick-allergy-test',
+    slug: 'full-profile-skin-prick-allergy-test',
+    name: 'Full Profile Skin Prick Allergy Test',
+    summary:
+      'Skin prick testing across food, pollens and contact allergens, with a total IgE level and a drug panel by ELISA.',
+    overview:
+      'The complete allergy work-up the lab offers in one package. Skin prick testing covers vegetarian and non-vegetarian foods, pollens and contact allergens, pricked into the forearm and read on the spot. Alongside it, a total IgE level and a drug panel run by ELISA. The skin prick result is read during the visit; the IgE level and the drug panel are laboratory tests and are reported separately — the lab will confirm when.',
+    tests: [
+      'IgE Level (total)',
+      'Skin Prick – Food Veg',
+      'Skin Prick – Food Non-Veg',
+      'Skin Prick – Pollens',
+      'Skin Prick – Contact',
+      'Drug Panel (ELISA)',
+    ],
+    price: null,
+    offerPrice: 8000,
+    concerns: ['general-wellness'],
+    suitableFor: ['Recurring allergic reactions', 'Physician-advised allergy work-up'],
+    preparation: ALLERGY_SKIN_PRICK,
+    /*
+      Skin prick testing is done on the patient at the centre and read after
+      about fifteen minutes, so it cannot be collected at home. The lab's own
+      facility note says the same: "performed on the patient".
+    */
+    homeCollection: false,
+    reportTime: 'Confirmed by the lab when you book',
+    featured: false,
+  },
+  {
+    id: 'pkg-skin-prick-allergy-test',
+    slug: 'skin-prick-allergy-test',
+    name: 'Skin Prick Allergy Test',
+    summary:
+      'Skin prick testing across food, pollens and contact allergens, with a total IgE level.',
+    overview:
+      'Skin prick testing for the four panels most work-ups start with — vegetarian and non-vegetarian foods, pollens and contact allergens — pricked into the forearm and read on the spot, together with a total IgE level. The drug panel is not included; the Full Profile adds it. The skin prick result is read during the visit; the IgE level is a laboratory test and is reported separately.',
+    tests: [
+      'IgE Level (total)',
+      'Skin Prick – Food Veg',
+      'Skin Prick – Food Non-Veg',
+      'Skin Prick – Pollens',
+      'Skin Prick – Contact',
+    ],
+    price: null,
+    offerPrice: 6000,
+    concerns: ['general-wellness'],
+    suitableFor: ['Recurring allergic reactions', 'Physician-advised allergy work-up'],
+    preparation: ALLERGY_SKIN_PRICK,
+    homeCollection: false,
+    reportTime: 'Confirmed by the lab when you book',
     featured: false,
   },
   {
