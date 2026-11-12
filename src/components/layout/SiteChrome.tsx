@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUp, MessageCircle } from 'lucide-react';
-import { SITE_CONFIG, whatsappHref } from '@/config/site';
+import { ArrowUp } from 'lucide-react';
+import { LabAgent } from '@/components/agent/LabAgent';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 /**
@@ -256,24 +256,13 @@ export function FloatingActions() {
         )}
       </AnimatePresence>
 
-      <a
-        href={whatsappHref()}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`Message ${SITE_CONFIG.brandName} on WhatsApp`}
-        className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_12px_32px_-10px_rgba(37,211,102,0.75)] transition-all duration-200 ease-premium hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-12px_rgba(37,211,102,0.9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
-      >
-        {!reduced && (
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-pulse-ring"
-          />
-        )}
-        <MessageCircle className="relative h-[26px] w-[26px]" strokeWidth={2} aria-hidden="true" />
-        <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg bg-navy-900 px-3 py-2 text-[13px] font-medium text-white opacity-0 shadow-lift transition-opacity duration-200 group-hover:opacity-100 lg:block">
-          Chat with us
-        </span>
-      </a>
+      {/*
+        The WhatsApp button used to sit here. It is replaced by the assistant,
+        which answers rather than handing the visitor off to another app — and
+        the lab's WhatsApp number is still on the contact page for anyone who
+        wants it.
+      */}
+      <LabAgent />
     </div>
   );
 }
