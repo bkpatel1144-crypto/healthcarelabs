@@ -28,7 +28,7 @@ import type {
  * the new catalogue instead of a stale copy. Content the visitor created
  * (appointments, contact messages) is never touched by a reseed.
  */
-const SEED_VERSION = '2026-10-2';
+const SEED_VERSION = '2026-11-1';
 
 const DEFAULT_PREFERENCES: Preferences = {
   lastConcern: null,
