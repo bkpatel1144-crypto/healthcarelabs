@@ -9,6 +9,7 @@ import { LabFacility } from '@/components/home/LabFacility';
 import { HomeCollectionSection } from '@/components/home/HomeCollection';
 import { Voices } from '@/components/home/Voices';
 import { BlogTeaser } from '@/components/home/BlogTeaser';
+import { EquipmentMakers } from '@/components/home/EquipmentMakers';
 import { FinalCTA } from '@/components/home/FinalCTA';
 import { useSeo } from '@/lib/seo';
 import { SITE_CONFIG } from '@/config/site';
@@ -52,7 +53,9 @@ export default function Home() {
           9  Voices        — people who already did this.
          10  Home visit    — removes the last obstacle, and takes the booking.
          11  Reading       — for the visitor who is not ready to book today.
-         12  Close         — the ask, once, at the end.
+         12  Makers        — whose instruments those are: each manufacturer's
+                             logo, name and the models the lab runs.
+         13  Close         — the ask, once, at the end.
       */}
       <DiagnosticHero />
       <LabRibbon />
@@ -65,6 +68,7 @@ export default function Home() {
       <Voices />
       <HomeCollectionSection />
       <BlogTeaser />
+      <EquipmentMakers />
       <FinalCTA />
     </>
   );

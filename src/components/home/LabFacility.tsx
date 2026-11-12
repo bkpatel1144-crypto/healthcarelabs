@@ -249,12 +249,15 @@ export function LabFacility() {
 /* -------------------------------------------------------- Instrument card */
 
 /**
- * The generated render for this instrument class, where one exists.
+ * The picture for this instrument class, where one exists.
  *
- * These are images of the *class* of instrument — not photographs of this
- * lab's bench, and not manufacturer product shots, which are copyrighted and
- * would put the liability on the lab. The drawn SVG stays as the fallback so a
- * missing render degrades to a diagram rather than to a hole.
+ * The client wants every card to read as a full-frame photograph of the exact
+ * machine standing in a lab. Those are generated on kie.ai from the client's
+ * reference photo of each make and model (Nano Banana Pro: AU480 and the three
+ * procedure scenes; Grok Imagine, described from the photo: the other
+ * fourteen). The sources live in assets-src/instruments/, one per `art` key.
+ * The drawn SVG stays as the fallback so a missing picture degrades to a
+ * diagram rather than to a hole.
  */
 const renderFor = (instrument: Instrument) =>
   INSTRUMENT_PHOTOS.find((p) => p.id === instrument.art);
