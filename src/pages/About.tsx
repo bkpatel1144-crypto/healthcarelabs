@@ -15,6 +15,8 @@ import { AccreditationSection } from '@/components/common/AccreditationSection';
 import { CARE_COMMITMENTS } from '@/data/testimonials';
 import { PACKAGES } from '@/data/packages';
 import { TEAM_PHOTOS } from '@/data/teamPhotos';
+import { PATHOLOGISTS, PATHOLOGIST_ROLE, TEAM_LEAD } from '@/data/team';
+import type { TeamMember } from '@/data/team';
 import { AwarenessPosts } from '@/components/common/AwarenessPosts';
 import { useSeo } from '@/lib/seo';
 import { SITE_CONFIG, mapHref } from '@/config/site';
@@ -247,17 +249,77 @@ export default function About() {
   );
 }
 
+/** Look a portrait up by the id the generated manifest gave it. */
+function portrait(photoId: string) {
+  return TEAM_PHOTOS.find((p) => p.id === photoId) ?? null;
+}
+
 /**
- * The one photograph on this site with people in it.
+ * One named person: portrait, name, role.
  *
- * It matters that it is the lab's own: the page above promises no stock team,
- * and until the lab supplied this there simply was not a real one to show.
- * Nothing is attached to it that the lab has not published — no names, no
- * degrees, no headcount — because a caption is the easiest place on a
- * diagnostics site to start inventing credentials.
+ * Nothing renders under the role unless the lab supplied a biography, which is
+ * why `bio` is optional rather than filled with something plausible.
+ */
+function PersonCard({ member, sizes }: { member: TeamMember; sizes: string }) {
+  const photo = portrait(member.photoId);
+  if (!photo) return null;
+
+  return (
+    <article className="group">
+      <div className="overflow-hidden rounded-3xl bg-surface-soft shadow-card ring-1 ring-brand-100">
+        <picture>
+          <source type="image/avif" srcSet={photo.avif} sizes={sizes} />
+          <source type="image/webp" srcSet={photo.webp} sizes={sizes} />
+          <img
+            src={photo.src}
+            srcSet={photo.jpeg}
+            sizes={sizes}
+            alt={photo.alt}
+            width={photo.width}
+            height={photo.height}
+            loading="lazy"
+            decoding="async"
+            className="aspect-[4/5] w-full object-cover transition-transform duration-500 ease-premium group-hover:scale-[1.02]"
+          />
+        </picture>
+      </div>
+      <h3 className="mt-4 text-balance text-[17px] font-extrabold leading-tight tracking-tightest text-ink">
+        {member.name}
+      </h3>
+      <p className="mt-1 text-[13px] font-semibold leading-snug text-brand-700">{member.role}</p>
+      {member.bio && (
+        <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-muted">{member.bio}</p>
+      )}
+    </article>
+  );
+}
+
+/**
+ * The people: the lab's own group photograph, then the four individuals it has
+ * published by name.
+ *
+ * For a long time this band carried the group photograph alone, and said in so
+ * many words that no names sat under it because those were the lab's to
+ * publish and not ours to assume. The lab has now published them, so they are
+ * here — but only what it published. Four names and four roles, no degrees, no
+ * registration numbers and no years of service, because none of those were
+ * given and a credential invented under a real doctor's photograph is the
+ * worst thing this site could print.
+ *
+ * The director leads on his own rather than making a four-across row: his
+ * photograph is a warm studio portrait and the pathologists' are cool clinical
+ * ones, so forcing them into one row reads as a mismatch rather than a team.
+ * Giving him a feature turns that difference into hierarchy, which is what it
+ * actually is.
  */
 function TeamSection() {
-  const [photo] = TEAM_PHOTOS;
+  /*
+    By id, not by position. This used to read TEAM_PHOTOS[0], which was the
+    group photograph only for as long as it was the only entry; adding the four
+    portraits ahead of it in the manifest would have silently put the
+    director's headshot in this slot.
+  */
+  const photo = portrait('laboratory-team');
   if (!photo) return null;
 
   return (
@@ -302,10 +364,51 @@ function TeamSection() {
             />
             <p className="mt-7 max-w-xl text-[15.5px] leading-relaxed text-ink-muted">
               This is the lab’s own photograph, taken at the Utran centre — the coats, the bench and
-              the signage behind them are the actual room. No names or qualifications are printed
-              under it, because those are the lab’s to publish and not ours to assume.
+              the signage behind them are the actual room. The names below are the ones Healthcare
+              Labs publishes, with the roles it gives them. No qualifications are printed under
+              them, because those are the lab’s to publish and not ours to assume.
             </p>
           </Reveal>
+        </div>
+
+        {/* ----------------------------- The director ---------------------------- */}
+        <Reveal className="mt-20 sm:mt-24">
+          <div className="grid items-center gap-10 rounded-4xl bg-surface-soft p-6 ring-1 ring-brand-100 sm:p-10 lg:grid-cols-12 lg:gap-14">
+            <div className="mx-auto w-full max-w-[280px] lg:col-span-4 lg:mx-0 lg:max-w-none">
+              <PersonCard member={TEAM_LEAD} sizes="(min-width: 1024px) 28vw, 280px" />
+            </div>
+            <div className="min-w-0 lg:col-span-8">
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand-600">
+                Who runs the laboratory
+              </p>
+              <p className="mt-5 text-balance text-[clamp(1.25rem,2.2vw,1.65rem)] font-extrabold leading-[1.18] tracking-editorial text-ink">
+                A laboratory is only as good as the standard someone holds it to.
+              </p>
+              <p className="mt-5 max-w-2xl text-[15.5px] leading-relaxed text-ink-muted">
+                {TEAM_LEAD.name} founded Healthcare Labs and directs it. Everything on this page —
+                the instruments, the departments, the centres across Surat — exists because
+                somebody decided it should, and is answerable for how it runs.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* -------------------------- The pathologists --------------------------- */}
+        <div className="mt-16 sm:mt-20">
+          <div className="max-w-2xl">
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand-600">
+              Who signs your report
+            </p>
+            <p className="mt-5 text-[15.5px] leading-relaxed text-ink-muted">{PATHOLOGIST_ROLE}</p>
+          </div>
+
+          <ul className="mt-10 grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-3">
+            {PATHOLOGISTS.map((member, index) => (
+              <Reveal as="li" key={member.photoId} delay={index * 0.06}>
+                <PersonCard member={member} sizes="(min-width: 1024px) 30vw, 46vw" />
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </Container>
     </section>

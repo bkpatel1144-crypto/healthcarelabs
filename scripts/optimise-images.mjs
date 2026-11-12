@@ -112,8 +112,35 @@ const COLLECTIONS = [
     name: 'team',
     manifest: 'teamPhotos.ts',
     exportName: 'TEAM_PHOTOS',
-    order: ['laboratory-team'],
+    /*
+      The director leads, then the three consultant pathologists in the order
+      the lab listed them, then the group photograph. src/data/team.ts reads
+      these by id, so this order is what the About page renders.
+    */
+    order: [
+      'viral-desai',
+      'dr-mayuri-thumar',
+      'dr-bhoomika-narola',
+      'dr-shruti-devani',
+      'laboratory-team',
+    ],
     captions: {
+      'viral-desai': {
+        alt: 'Viral A. Desai, Lab Director and Founder of Healthcare Labs, in a jacket and dark shirt against a warm studio background.',
+        caption: 'Viral A. Desai',
+      },
+      'dr-mayuri-thumar': {
+        alt: 'Dr Mayuri Thumar, Consultant Pathologist at Healthcare Labs, in a branded laboratory coat.',
+        caption: 'Dr Mayuri Thumar',
+      },
+      'dr-bhoomika-narola': {
+        alt: 'Dr Bhoomika Narola, Consultant Pathologist at Healthcare Labs, in a branded laboratory coat.',
+        caption: 'Dr Bhoomika Narola',
+      },
+      'dr-shruti-devani': {
+        alt: 'Dr Shruti Devani, Consultant Pathologist at Healthcare Labs, in a branded laboratory coat.',
+        caption: 'Dr Shruti Devani',
+      },
       'laboratory-team': {
         alt: 'Three members of the Healthcare Labs staff in branded laboratory coats, standing in the laboratory at the Utran centre with a microscope, sample racks and a workstation behind them.',
         caption: 'The laboratory team at the Utran centre',
