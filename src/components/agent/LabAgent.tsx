@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, Loader2, Phone, Send, Sparkles, X } from 'lucide-react';
 import { AGENT_SYSTEM_PROMPT } from '@/data/agentKnowledge';
-import { chat, sarvamConfigured } from '@/lib/sarvam';
-import type { ChatMessage } from '@/lib/sarvam';
+import { assistantConfigured, chat } from '@/lib/assistant';
+import type { ChatMessage } from '@/lib/assistant';
 import { useContent } from '@/store/content';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import { SITE_CONFIG, telHref } from '@/config/site';
@@ -160,7 +161,7 @@ export function LabAgent() {
   const t = COPY[lang];
 
   /* The assistant is hidden rather than broken when no key is configured. */
-  const enabled = sarvamConfigured();
+  const enabled = assistantConfigured();
 
   /* Escape closes, and focus goes to the input when the panel opens. */
   useEffect(() => {
@@ -322,8 +323,20 @@ export function LabAgent() {
         </span>
       </button>
 
-      {/* -------------------------------- Panel -------------------------------- */}
-      <AnimatePresence>
+      {/* -------------------------------- Panel --------------------------------
+        Rendered into <body> rather than beside the launcher.
+
+        The launcher lives in the floating chrome, which carries z-40. A
+        z-index on that container opens a stacking context, so a child can
+        never escape it however high its own z-index is: the panel asked for
+        z-50 and still rendered underneath the site header, which is also
+        z-50 but a sibling of the container rather than a cousin. Portalling
+        to the body makes the panel a sibling of the header, and z-55 then
+        actually means above it — while staying below the mobile menu at
+        z-[60], which should cover the assistant when it is open.
+      */}
+      {createPortal(
+        <AnimatePresence>
         {open && (
           <motion.div
             ref={panelRef}
@@ -334,7 +347,7 @@ export function LabAgent() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduced ? undefined : { opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-24 right-4 z-50 flex max-h-[min(640px,calc(100dvh-7.5rem))] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl bg-white shadow-liftLg ring-1 ring-ink-line sm:bottom-28 sm:right-7"
+            className="fixed bottom-24 right-4 z-[55] flex max-h-[min(640px,calc(100dvh-7.5rem))] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl bg-white shadow-liftLg ring-1 ring-ink-line sm:bottom-28 sm:right-7"
           >
             {/* Header */}
             <div className="flex items-start gap-3 bg-gradient-to-br from-brand-700 to-brand-600 px-5 py-4 text-white">
@@ -513,7 +526,9 @@ export function LabAgent() {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body,
+      )}
     </>
   );
 }

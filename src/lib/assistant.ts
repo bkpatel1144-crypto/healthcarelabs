@@ -1,5 +1,11 @@
 /**
- * Talking to Sarvam AI from the browser.
+ * Talking to the assistant provider from the browser.
+ *
+ * The provider is not named in anything the frontend renders. It cannot be
+ * hidden altogether — the request URL and the model id both travel in the HTTP
+ * call and are visible in DevTools — but nothing here volunteers it beyond
+ * what the wire already carries. A proxy is the only thing that would hide it,
+ * and that is the same decision as the key below.
  *
  * This site has no backend, so the request goes straight from the visitor's
  * browser to api.sarvam.ai. Sarvam allows it — the endpoint answers CORS
@@ -56,22 +62,22 @@ export interface ChatMessage {
   content: string;
 }
 
-export const SARVAM_KEY: string = import.meta.env.VITE_SARVAM_KEY ?? '';
-export const sarvamConfigured = (): boolean => SARVAM_KEY.trim().length > 0;
+const API_KEY: string = import.meta.env.VITE_SARVAM_KEY ?? '';
+export const assistantConfigured = (): boolean => API_KEY.trim().length > 0;
 
-export class SarvamError extends Error {
+export class AssistantError extends Error {
   constructor(
     message: string,
     /** Set when the failure was an HTTP status rather than a network fault. */
     readonly status?: number,
   ) {
     super(message);
-    this.name = 'SarvamError';
+    this.name = 'AssistantError';
   }
 }
 
 /**
- * One completion. Rejects with SarvamError; the caller decides what the
+ * One completion. Rejects with AssistantError; the caller decides what the
  * visitor sees, because a raw provider message is not something to show a
  * patient.
  */
@@ -79,8 +85,8 @@ export async function chat(
   messages: ChatMessage[],
   options: { signal?: AbortSignal; temperature?: number } = {},
 ): Promise<string> {
-  if (!sarvamConfigured()) {
-    throw new SarvamError('No API key configured.');
+  if (!assistantConfigured()) {
+    throw new AssistantError('No API key configured.');
   }
 
   let response: Response;
@@ -89,7 +95,7 @@ export async function chat(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-subscription-key': SARVAM_KEY,
+        'api-subscription-key': API_KEY,
       },
       body: JSON.stringify({
         model: MODEL,
@@ -102,11 +108,11 @@ export async function chat(
   } catch (cause) {
     // Abort is the caller cancelling, not a fault — let it through untouched.
     if (cause instanceof DOMException && cause.name === 'AbortError') throw cause;
-    throw new SarvamError('Could not reach the assistant.');
+    throw new AssistantError('Could not reach the assistant.');
   }
 
   if (!response.ok) {
-    throw new SarvamError(`Assistant returned ${response.status}.`, response.status);
+    throw new AssistantError(`Assistant returned ${response.status}.`, response.status);
   }
 
   const data: unknown = await response.json();
@@ -118,7 +124,7 @@ export async function chat(
       separately keeps that from being misfiled as a network fault the next
       time someone reads a log.
     */
-    throw new SarvamError(
+    throw new AssistantError(
       finishedOnLength(data)
         ? 'Assistant ran out of tokens before answering.'
         : 'Assistant returned an empty reply.',
