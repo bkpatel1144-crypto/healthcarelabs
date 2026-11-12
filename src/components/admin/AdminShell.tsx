@@ -5,33 +5,48 @@ import {
   CalendarClock,
   FileText,
   LayoutDashboard,
-  MessageSquare,
   Package,
   Quote,
   Settings,
   Tag,
   TriangleAlert,
+  Users,
+  FileHeart,
+  Inbox,
+  Stethoscope,
+  Clock,
+  ScrollText,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { SITE_CONFIG } from '@/config/site';
-import { useContent } from '@/store/content';
 
 export const ADMIN_LINKS = [
   { to: '/admin', label: 'Dashboard', Icon: LayoutDashboard, end: true },
+  { to: '/admin/bookings', label: 'Bookings', Icon: CalendarClock },
+  { to: '/admin/patients', label: 'Patients', Icon: Users },
+  { to: '/admin/reports', label: 'Reports', Icon: FileHeart },
+  { to: '/admin/requests', label: 'Requests', Icon: Inbox },
+  { to: '/admin/staff', label: 'Staff', Icon: Stethoscope },
+  { to: '/admin/scheduling', label: 'Scheduling', Icon: Clock },
+  { to: '/admin/audit', label: 'Audit log', Icon: ScrollText },
   { to: '/admin/packages', label: 'Packages', Icon: Package },
   { to: '/admin/offers', label: 'Offers', Icon: Tag },
   { to: '/admin/blog', label: 'Blog', Icon: FileText },
   { to: '/admin/testimonials', label: 'Testimonials', Icon: Quote },
-  { to: '/admin/leads', label: 'Leads', Icon: MessageSquare },
-  { to: '/admin/appointments', label: 'Appointments', Icon: CalendarClock },
   { to: '/admin/settings', label: 'Settings', Icon: Settings },
 ] as const;
 
+/** Pages whose data lives in Firebase; every other admin page is still local. */
+const LIVE_PATHS = ['/admin/bookings', '/admin/patients', '/admin/reports', '/admin/requests', '/admin/staff', '/admin/scheduling', '/admin/audit'];
+
 /**
- * Client-side content manager. This is explicitly NOT a secure admin area —
- * there is no server, no authentication and no authorisation. It edits the copy
- * of the catalogue held in this browser's local storage, which is why the
- * banner below says so plainly and the routes are marked noindex.
+ * Admin area, behind Firebase login and the `admins` collection (see
+ * RequireAdmin in App.tsx and firestore.rules).
+ *
+ * Bookings, patients and reports are live in Firestore. The catalogue pages —
+ * packages, offers, blog, testimonials, leads, settings — still edit the copy
+ * held in this browser's local storage, and the banner says so on those pages
+ * so nobody assumes an edit there reached the public site.
  */
 export function AdminShell({
   title,
@@ -44,23 +59,23 @@ export function AdminShell({
   actions?: ReactNode;
   children: ReactNode;
 }) {
-  const { appointments, contacts } = useContent();
-  const newLeads =
-    appointments.filter((a) => a.status === 'new').length +
-    contacts.filter((c) => c.status === 'new').length;
+  const { pathname } = useLocation();
+  const live = LIVE_PATHS.some((p) => pathname.startsWith(p));
 
   return (
     <div className="min-h-screen bg-mist pt-[74px] lg:pt-[84px]">
-      <div className="border-b border-amber-200 bg-amber-50">
-        <div className="mx-auto flex max-w-shell items-center gap-3 px-5 py-3 text-[13px] text-amber-800 sm:px-8 lg:px-12">
-          <TriangleAlert className="h-4 w-4 shrink-0" strokeWidth={2.2} aria-hidden="true" />
-          <p>
-            <strong className="font-semibold">Local content manager.</strong> There is no server and
-            no authentication — everything you change here is stored in this browser only and is not
-            published to anyone else.
-          </p>
+      {!live && (
+        <div className="border-b border-amber-200 bg-amber-50">
+          <div className="mx-auto flex max-w-shell items-center gap-3 px-5 py-3 text-[13px] text-amber-800 sm:px-8 lg:px-12">
+            <TriangleAlert className="h-4 w-4 shrink-0" strokeWidth={2.2} aria-hidden="true" />
+            <p>
+              <strong className="font-semibold">Stored in this browser only.</strong> Changes on this
+              page are not published to other visitors yet. Bookings, Patients and Reports are live in
+              Firebase.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mx-auto max-w-shell px-5 py-8 sm:px-8 lg:px-12 lg:py-10">
         <div className="lg:grid lg:grid-cols-12 lg:gap-10">
@@ -97,11 +112,6 @@ export function AdminShell({
                     >
                       <Icon className="h-[17px] w-[17px] shrink-0" strokeWidth={2} aria-hidden="true" />
                       {label}
-                      {(label === 'Leads' || label === 'Appointments') && newLeads > 0 && (
-                        <span className="ml-auto hidden rounded-full bg-brand-500 px-1.5 py-0.5 text-[10.5px] font-bold tabular-nums text-white lg:inline">
-                          {newLeads}
-                        </span>
-                      )}
                     </NavLink>
                   </li>
                 ))}

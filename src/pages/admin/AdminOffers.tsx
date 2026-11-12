@@ -13,7 +13,8 @@ import { Button } from '@/components/common/Button';
 import { SelectField, TextAreaField, TextField } from '@/components/common/Form';
 import { Badge } from '@/components/common/Primitives';
 import { useContent } from '@/store/content';
-import { createId, formatDate, formatPrice, savingsPercent, slugify } from '@/lib/format';
+import { createId, formatDate, formatPrice, savingsPercent } from '@/lib/format';
+import { cleanSlug, priceError, slugError } from '@/lib/contentChecks';
 import type { Offer } from '@/types';
 
 const BLANK: Offer = {
@@ -192,15 +193,25 @@ function OfferEditor({
     return Number.isFinite(n) ? n : null;
   };
 
+  const { offers } = useContent();
+
   const submit = () => {
     if (!draft.title.trim()) {
       setError('An offer needs a title.');
       return;
     }
+    const slug = cleanSlug(draft.slug, draft.title);
+    const problem =
+      slugError(slug, draft.id, offers, 'offer', '/my-offers') ??
+      priceError(draft.originalPrice, draft.offerPrice);
+    if (problem) {
+      setError(problem);
+      return;
+    }
     onSave({
       ...draft,
       id: draft.id || createId('offer'),
-      slug: draft.slug.trim() || slugify(draft.title),
+      slug,
       title: draft.title.trim(),
     });
   };

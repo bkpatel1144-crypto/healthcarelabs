@@ -102,7 +102,7 @@ export function HeroMedia() {
                 alt="The reception desk at the Healthcare Labs centre in Surat."
                 width={photo.width}
                 height={photo.height}
-                fetchPriority="high"
+                {...({ fetchpriority: 'high' } as Record<string, string>)} /* React 18 only knows the lowercase attribute */
                 decoding="async"
                 className="aspect-[4/3] w-full object-cover sm:aspect-[16/11] lg:aspect-auto lg:h-full"
               />

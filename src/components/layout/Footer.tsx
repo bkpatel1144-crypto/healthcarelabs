@@ -4,12 +4,13 @@ import { Container } from '@/components/common/Primitives';
 import { AccreditationBadge } from '@/components/common/AccreditationBadge';
 import {
   NAV_LINKS,
+  SERVICE_LINKS,
   SITE_CONFIG,
   mailHref,
   mapHref,
   telHref,
 } from '@/config/site';
-import { PACKAGES } from '@/data/packages';
+import { useContent } from '@/store/content';
 import { HEALTH_CONCERNS } from '@/data/healthConcerns';
 import { BRANCHES } from '@/data/branches';
 
@@ -33,10 +34,12 @@ import { BRANCHES } from '@/data/branches';
  * space to the right of the links at desktop widths.
  */
 
-const FEATURED_PACKAGE_LINKS = PACKAGES.filter((p) => p.featured).slice(0, 6);
+// Read from the live catalogue, so an archived or deleted package is never linked.
 const CONCERN_LINKS = HEALTH_CONCERNS.slice(0, 6);
 
 export function Footer() {
+  const { livePackages } = useContent();
+  const featuredPackageLinks = livePackages.filter((p) => p.featured).slice(0, 6);
   const year = new Date().getFullYear();
 
   return (
@@ -109,7 +112,7 @@ export function Footer() {
             {/* ---- Four equal link columns ---- */}
             <div className="grid gap-10 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-4">
               <FooterColumn title="Explore">
-                {NAV_LINKS.map((l) => (
+                {[...NAV_LINKS, ...SERVICE_LINKS].map((l) => (
                   <FooterLink key={l.href} to={l.href}>
                     {l.label}
                   </FooterLink>
@@ -117,7 +120,7 @@ export function Footer() {
               </FooterColumn>
 
               <FooterColumn title="Health Packages">
-                {FEATURED_PACKAGE_LINKS.map((p) => (
+                {featuredPackageLinks.map((p) => (
                   <FooterLink key={p.slug} to={`/health-package/${p.slug}`}>
                     {p.name}
                   </FooterLink>

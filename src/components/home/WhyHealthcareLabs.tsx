@@ -2,15 +2,15 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { Container, Reveal, SectionHeading } from '@/components/common/Primitives';
 import { CountUp, PulseLine } from '@/components/common/Motion';
-import { PACKAGES } from '@/data/packages';
+import { useContent } from '@/store/content';
+import type { HealthPackage } from '@/types';
 
 /**
  * Editorial two-column section — a claim on the left, evidence on the right —
  * with figures derived from the catalogue rather than invented.
  */
 
-const testMenuSize = new Set(PACKAGES.flatMap((p) => p.tests)).size;
-const homeCollectionCount = PACKAGES.filter((p) => p.homeCollection).length;
+/* Figures come from the live catalogue, so admin edits keep them true. */
 
 const REASONS = [
   {
@@ -35,13 +35,14 @@ const REASONS = [
   },
 ];
 
-const FIGURES = [
-  { value: String(PACKAGES.length), label: 'Health packages published', suffix: '' },
-  { value: String(testMenuSize), label: 'Distinct tests across the catalogue', suffix: '+' },
-  { value: String(homeCollectionCount), label: 'Packages eligible for home collection', suffix: '' },
+const figures = (packages: HealthPackage[]) => [
+  { value: String(packages.length), label: 'Health packages published', suffix: '' },
+  { value: String(new Set(packages.flatMap((p) => p.tests)).size), label: 'Distinct tests across the catalogue', suffix: '+' },
+  { value: String(packages.filter((p) => p.homeCollection).length), label: 'Packages eligible for home collection', suffix: '' },
 ];
 
 export function WhyHealthcareLabs() {
+  const FIGURES = figures(useContent().livePackages);
   return (
     <section aria-labelledby="why-heading" className="relative overflow-hidden bg-white py-20 sm:py-28">
       <div

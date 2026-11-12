@@ -107,7 +107,7 @@ function Article({ post }: { post: Post }) {
                   alt={banner.alt}
                   width={banner.width}
                   height={banner.height}
-                  fetchPriority="high"
+                  {...({ fetchpriority: 'high' } as Record<string, string>)} /* React 18 only knows the lowercase attribute */
                   decoding="async"
                   className="aspect-[16/9] w-full object-cover sm:aspect-[21/9]"
                 />

@@ -13,7 +13,8 @@ import { Button, ButtonArrow } from '@/components/common/Button';
 import { FinalCTA } from '@/components/home/FinalCTA';
 import { AccreditationSection } from '@/components/common/AccreditationSection';
 import { CARE_COMMITMENTS } from '@/data/testimonials';
-import { PACKAGES } from '@/data/packages';
+import { useContent } from '@/store/content';
+import type { HealthPackage } from '@/types';
 import { TEAM_PHOTOS } from '@/data/teamPhotos';
 import { PATHOLOGISTS, PATHOLOGIST_ROLE, TEAM_LEAD } from '@/data/team';
 import type { TeamMember } from '@/data/team';
@@ -45,7 +46,8 @@ const PILLARS = [
   },
 ];
 
-const TIMELINE = [
+/** Counts come from the live catalogue, so admin edits keep this page honest. */
+const timeline = (packages: HealthPackage[]) => [
   {
     marker: 'The practice',
     title: 'A pathology laboratory in Surat',
@@ -53,13 +55,13 @@ const TIMELINE = [
   },
   {
     marker: 'The catalogue',
-    title: `${PACKAGES.length} packages, built around questions`,
+    title: `${packages.length} packages, built around questions`,
     body: 'Panels are grouped the way physicians order them — complete liver and kidney profiles rather than isolated markers, diabetes reviews that include the kidney parameters, cardiac reviews that include function as well as chemistry.',
   },
   {
     marker: 'The reach',
     title: 'Testing that travels',
-    body: `${PACKAGES.filter((p) => p.homeCollection).length} of those packages can be collected at your address. The rest include imaging or cardiac procedures that have to be done at the centre, and the package page says so before you book.`,
+    body: `${packages.filter((p) => p.homeCollection).length} of those packages can be collected at your address. The rest include imaging or cardiac procedures that have to be done at the centre, and the package page says so before you book.`,
   },
   {
     marker: 'The hours',
@@ -69,6 +71,8 @@ const TIMELINE = [
 ];
 
 export default function About() {
+  const { livePackages } = useContent();
+  const TIMELINE = timeline(livePackages);
   useSeo({
     title: 'About Healthcare Labs — Diagnostics in Surat',
     description: `${SITE_CONFIG.legalName} operates Healthcare Labs in Surat, providing pathology, imaging and preventive health packages with a focus on quality and patient care.`,

@@ -12,7 +12,8 @@ import { Button } from '@/components/common/Button';
 import { SelectField, TextAreaField, TextField } from '@/components/common/Form';
 import { Badge } from '@/components/common/Primitives';
 import { useContent } from '@/store/content';
-import { createId, formatPrice, slugify } from '@/lib/format';
+import { createId, formatPrice } from '@/lib/format';
+import { cleanSlug, priceError, slugError } from '@/lib/contentChecks';
 import { HEALTH_CONCERNS } from '@/data/healthConcerns';
 import type { ConcernId, HealthPackage } from '@/types';
 
@@ -116,11 +117,11 @@ export default function AdminPackages() {
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex justify-end gap-1.5">
-                      <IconButton label={`Edit ${p.name}`} onClick={() => setEditing({ ...p })}>
+                      <IconButton label={`Edit ${p.name} (/${p.slug})`} onClick={() => setEditing({ ...p })}>
                         <Pencil className="h-4 w-4" strokeWidth={2} />
                       </IconButton>
                       <IconButton
-                        label={p.archived ? `Restore ${p.name}` : `Archive ${p.name}`}
+                        label={`${p.archived ? "Restore" : "Archive"} ${p.name} (/${p.slug})`}
                         onClick={() => savePackage({ ...p, archived: !p.archived })}
                       >
                         {p.archived ? (
@@ -130,7 +131,7 @@ export default function AdminPackages() {
                         )}
                       </IconButton>
                       <IconButton
-                        label={`Delete ${p.name}`}
+                        label={`Delete ${p.name} (/${p.slug})`}
                         danger
                         onClick={() =>
                           confirm(
@@ -189,12 +190,21 @@ function PackageEditor({
         : [...d.concerns, id],
     }));
 
+  const { packages } = useContent();
+
   const submit = () => {
     if (!draft.name.trim()) {
       setError('A package needs a name.');
       return;
     }
-    const slug = draft.slug.trim() || slugify(draft.name);
+    const slug = cleanSlug(draft.slug, draft.name);
+    const problem =
+      slugError(slug, draft.id, packages, 'package', '/health-package') ??
+      priceError(draft.price, draft.offerPrice);
+    if (problem) {
+      setError(problem);
+      return;
+    }
     onSave({
       ...draft,
       id: draft.id || createId('pkg'),

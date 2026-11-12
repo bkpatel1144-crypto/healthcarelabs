@@ -33,6 +33,15 @@ export function formatDate(iso: string, opts?: Intl.DateTimeFormatOptions): stri
   return d.toLocaleDateString('en-IN', opts ?? { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+/**
+ * Today as YYYY-MM-DD in the visitor's own time zone. `toISOString()` is UTC,
+ * which in India (UTC+5:30) still says yesterday until 5:30 in the morning —
+ * enough to let a date picker offer a collection slot in the past.
+ */
+export function localDateIso(d: Date = new Date()): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export function slugify(input: string): string {
   return input
     .toLowerCase()

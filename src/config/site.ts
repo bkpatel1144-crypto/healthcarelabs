@@ -129,7 +129,18 @@ export const NAV_LINKS = [
   { label: 'Contact Us', href: '/contact-us' },
 ] as const;
 
-export const whatsappHref = (message: string = SITE_CONFIG.whatsappMessage): string =>
+/**
+ * Service pages that do not fit the top bar. Shown in the mobile drawer, the
+ * footer and the search panel, which is where people look for them.
+ */
+export const SERVICE_LINKS = [
+  { label: 'Upload Prescription', href: '/upload-prescription' },
+  { label: 'Lab Locations', href: '/lab-locations' },
+  { label: 'Help & Support', href: '/help' },
+  { label: 'Partner with Us', href: '/partner-with-us' },
+] as const;
+
+export const whatsappHref =(message: string = SITE_CONFIG.whatsappMessage): string =>
   `https://wa.me/${SITE_CONFIG.whatsapp}?text=${encodeURIComponent(message)}`;
 
 export const telHref = (n: string = SITE_CONFIG.phone): string =>

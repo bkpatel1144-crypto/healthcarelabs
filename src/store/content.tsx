@@ -2,13 +2,14 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react';
 import { STORAGE_KEYS, storage } from '@/lib/storage';
 import { createId } from '@/lib/format';
+import { importProblem } from '@/lib/importChecks';
 import { PACKAGES } from '@/data/packages';
 import { OFFERS } from '@/data/offers';
 import { BLOG_POSTS } from '@/data/blogs';
@@ -135,20 +136,27 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ContentState>(initialState);
   const storageAvailable = storage.isAvailable();
 
-  // Persist each slice independently so one oversized slice cannot block another.
-  useEffect(() => void storage.set(STORAGE_KEYS.packages, state.packages), [state.packages]);
-  useEffect(() => void storage.set(STORAGE_KEYS.offers, state.offers), [state.offers]);
-  useEffect(() => void storage.set(STORAGE_KEYS.blogs, state.posts), [state.posts]);
-  useEffect(
+  /*
+    Persist each slice independently so one oversized slice cannot block another.
+
+    Layout effects, not effects: they run inside the same commit as the click
+    that changed the state. A plain effect runs a moment later, and an admin who
+    clicked "Restore" and immediately navigated or closed the tab lost the
+    change — the end-to-end tests caught exactly that.
+  */
+  useLayoutEffect(() => void storage.set(STORAGE_KEYS.packages, state.packages), [state.packages]);
+  useLayoutEffect(() => void storage.set(STORAGE_KEYS.offers, state.offers), [state.offers]);
+  useLayoutEffect(() => void storage.set(STORAGE_KEYS.blogs, state.posts), [state.posts]);
+  useLayoutEffect(
     () => void storage.set(STORAGE_KEYS.testimonials, state.testimonials),
     [state.testimonials],
   );
-  useEffect(
+  useLayoutEffect(
     () => void storage.set(STORAGE_KEYS.appointments, state.appointments),
     [state.appointments],
   );
-  useEffect(() => void storage.set(STORAGE_KEYS.contacts, state.contacts), [state.contacts]);
-  useEffect(
+  useLayoutEffect(() => void storage.set(STORAGE_KEYS.contacts, state.contacts), [state.contacts]);
+  useLayoutEffect(
     () => void storage.set(STORAGE_KEYS.preferences, state.preferences),
     [state.preferences],
   );
@@ -179,7 +187,17 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     return {
       ...state,
       livePackages: state.packages.filter(notArchived),
-      liveOffers: state.offers.filter(notArchived),
+      /*
+        An offer whose package has since been archived or deleted keeps its
+        price, but loses the link — otherwise "View package" opens a not-found
+        page.
+      */
+      liveOffers: (() => {
+        const live = new Set(state.packages.filter(notArchived).map((p) => p.slug));
+        return state.offers
+          .filter(notArchived)
+          .map((o) => (o.packageSlug && !live.has(o.packageSlug) ? { ...o, packageSlug: undefined } : o));
+      })(),
       livePosts: state.posts.filter(notArchived),
       liveTestimonials: state.testimonials.filter(notArchived),
 
@@ -312,9 +330,11 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       importJson: (raw) => {
         try {
           const parsed = JSON.parse(raw) as Partial<Record<string, unknown>>;
-          if (typeof parsed !== 'object' || parsed === null) {
+          if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
             return { ok: false, error: 'The file does not contain a JSON object.' };
           }
+          const problem = importProblem(parsed as Record<string, unknown>);
+          if (problem) return { ok: false, error: problem };
           const arr = <T,>(v: unknown, fallback: T[]): T[] => (Array.isArray(v) ? (v as T[]) : fallback);
           setState((prev) => ({
             packages: arr<HealthPackage>(parsed.packages, prev.packages),
@@ -332,7 +352,13 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           }));
           return { ok: true };
         } catch (err) {
-          return { ok: false, error: err instanceof Error ? err.message : 'Invalid JSON.' };
+          return {
+            ok: false,
+            error:
+              err instanceof SyntaxError
+                ? 'That file is not valid JSON — it may be damaged or not an export from this site. Nothing was imported.'
+                : 'That file could not be imported. Nothing was changed.',
+          };
         }
       },
 

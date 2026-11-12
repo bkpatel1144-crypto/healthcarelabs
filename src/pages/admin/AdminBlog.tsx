@@ -13,7 +13,8 @@ import { Button } from '@/components/common/Button';
 import { SelectField, TextAreaField, TextField } from '@/components/common/Form';
 import { Badge } from '@/components/common/Primitives';
 import { useContent } from '@/store/content';
-import { createId, formatDate, slugify } from '@/lib/format';
+import { createId, formatDate, localDateIso } from '@/lib/format';
+import { cleanSlug, slugError } from '@/lib/contentChecks';
 import { BLOG_CATEGORIES } from '@/data/blogs';
 import type { BlogCategory, BlogPost } from '@/types';
 
@@ -24,7 +25,7 @@ const BLANK: BlogPost = {
   excerpt: '',
   category: 'Preventive Health',
   author: 'Healthcare Labs Editorial Team',
-  publishedAt: new Date().toISOString().slice(0, 10),
+  publishedAt: localDateIso(),
   readingMinutes: 5,
   featured: false,
   sections: [],
@@ -221,15 +222,27 @@ function PostEditor({
   const set = <K extends keyof BlogPost>(key: K, v: BlogPost[K]) =>
     setDraft((d) => ({ ...d, [key]: v }));
 
+  const { posts } = useContent();
+
   const submit = () => {
     if (!draft.title.trim()) {
       setError('An article needs a title.');
       return;
     }
+    const slug = cleanSlug(draft.slug, draft.title);
+    const problem = slugError(slug, draft.id, posts, 'article', '/blog');
+    if (problem) {
+      setError(problem);
+      return;
+    }
+    if (!(draft.readingMinutes >= 1)) {
+      setError('Reading time must be at least 1 minute.');
+      return;
+    }
     onSave({
       ...draft,
       id: draft.id || createId('post'),
-      slug: draft.slug.trim() || slugify(draft.title),
+      slug,
       title: draft.title.trim(),
       sections: textToSections(body),
     });

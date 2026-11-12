@@ -10,43 +10,71 @@ interface Clause {
 
 /**
  * Privacy and terms describe how *this website* behaves, which is something we
- * can state accurately: it is a static site with no backend, and form data
- * never leaves the visitor's own browser. Nothing here invents a policy the
- * business has not agreed to — anything about the laboratory's own handling of
- * samples and records points the reader to the lab directly.
+ * can state accurately. Every factual sentence below matches what the code
+ * does (src/lib/accountApi.ts, firestore.rules). Anything that is the lab's own
+ * policy rather than the website's — retention periods for medical records,
+ * sample handling — points the reader to the lab, because it is the lab's to
+ * set and should be reviewed by its legal adviser before publishing changes.
+ *
+ * When this notice changes materially, bump PRIVACY_VERSION in
+ * src/types/account.ts so signed-in patients are asked to consent again.
  */
 
 const PRIVACY: Clause[] = [
   {
-    heading: 'What this website collects',
+    heading: 'Who is responsible',
     paragraphs: [
-      'This site is a static application with no backend server, no database and no analytics account. There is nowhere for it to send information to.',
-      'When you complete the home collection or contact form, the details you type are written to your own browser’s local storage on your own device. They are not transmitted to Healthcare Labs, to us, or to any third party. If you clear your browser data, they are gone.',
-      'Because of this, submitting a form here does not by itself notify the laboratory. For anything you need acted on, please call the lab.',
+      `${SITE_CONFIG.legalName}, trading as ${SITE_CONFIG.brandName}, decides how the information described here is used and is responsible for it (the “data fiduciary” under India’s Digital Personal Data Protection Act, 2023).`,
     ],
   },
   {
-    heading: 'Cookies',
+    heading: 'What we collect, and why',
     paragraphs: [
-      'This site sets no cookies and runs no advertising or analytics trackers. It uses browser local storage only, and only for the content and form records described above.',
+      'Account: your name, mobile number, email address, gender and date of birth, and the family members and addresses you choose to save — so you can book tests for yourself and your family and the lab can identify each sample correctly.',
+      'Bookings: who the sample is for, the tests chosen, the visit date, time, address and PIN code, any notes you add, and each step of the visit (confirmation, the phlebotomist assigned, the sample ID and collection time, processing, payment received) — so the visit can happen and you can follow it.',
+      'Reports: the PDF reports the lab releases to you, with the name of the pathologist who signed them — so you can download them at any time.',
+      'Messages and prescriptions: what you send through the contact, support, partnership and prescription forms, including any photo or PDF you attach — so the lab can answer you.',
+      'We do not use your health information for advertising. Offers and reminders are sent only if you switch them on, and you can switch them off at any time.',
     ],
   },
   {
-    heading: 'Third-party embeds',
+    heading: 'Your consent',
     paragraphs: [
-      'The contact page embeds a Google Maps frame so you can find the centre. That embed is served by Google and is subject to Google’s own privacy policy. WhatsApp and telephone links hand you off to those applications, which are likewise governed by their own terms.',
+      'We ask for your consent before processing your information: when you book, and once for your account. It covers only the purposes above. You can withdraw it at any time by asking for your data to be deleted (see “Your rights”); this does not affect anything done before you withdrew it, and the lab may then be unable to provide further tests through the website.',
     ],
   },
   {
-    heading: 'Information you give the laboratory directly',
+    heading: 'Who can see it',
     paragraphs: [
-      'Anything you share with Healthcare Labs by phone, by email, on WhatsApp or in person — including personal details, samples and reports — is handled by the laboratory under its own procedures, not by this website. Please contact the lab directly for details of how that information is stored and for how long.',
+      'Only you and authorised laboratory staff. Our security rules allow a patient to see only their own records, a phlebotomist to see only the visits assigned to them, and laboratory administrators to manage bookings and reports. Staff actions on patient records are written to an audit log that cannot be edited.',
+      'Information is stored with Google Firebase (Google Cloud), which processes it on the lab’s behalf. It is not sold or shared with anyone else, except where the law requires it.',
     ],
   },
   {
-    heading: 'Contact',
+    heading: 'How long it is kept',
     paragraphs: [
-      `Questions about this policy can be directed to ${SITE_CONFIG.email} or ${SITE_CONFIG.phoneDisplay}.`,
+      'For as long as your account is open and for as long afterwards as the law requires the laboratory to keep medical records. Please ask the lab for its current retention periods.',
+    ],
+  },
+  {
+    heading: 'Your rights',
+    paragraphs: [
+      'Access: in My profile, “Download my data” gives you a copy of everything your account holds.',
+      'Correction: you can edit your profile, family members and addresses yourself. For anything else, contact the lab.',
+      'Erasure: in My profile, “Request deletion of my data” asks the lab to delete your account and personal data. Records the lab must keep by law are retained only for as long as required.',
+      `Grievances: write to ${SITE_CONFIG.email} or call ${SITE_CONFIG.phoneDisplay}. If you are not satisfied with the response, you may complain to the Data Protection Board of India.`,
+    ],
+  },
+  {
+    heading: 'Cookies and storage on your device',
+    paragraphs: [
+      'This site runs no advertising or analytics trackers. It stores your sign-in session and site preferences (such as your visit plan and accessibility settings) in your browser so the site works between visits.',
+    ],
+  },
+  {
+    heading: 'Third-party services',
+    paragraphs: [
+      'Signing in uses Google Firebase Authentication; if you choose “Continue with Google”, Google shares your name and email with us. Maps on the contact and locations pages are served by OpenStreetMap and Google Maps. WhatsApp and telephone links hand you off to those applications, which are governed by their own terms.',
     ],
   },
 ];
@@ -68,14 +96,22 @@ const TERMS: Clause[] = [
   {
     heading: 'Pricing and availability',
     paragraphs: [
-      'Package contents and prices are published as supplied by the laboratory and may change. Nothing on this site constitutes a binding quotation. Please confirm the current price and the exact contents of a package with the lab before booking.',
+      'Package contents and prices are published as supplied by the laboratory and may change. The total shown when you book is recorded on your booking; the lab confirms the final amount before the visit.',
       'Some packages include procedures that can only be performed at the centre. Where that is the case, the package page says so.',
     ],
   },
   {
-    heading: 'Bookings made through this site',
+    heading: 'Bookings, rescheduling and cancellation',
     paragraphs: [
-      'Forms on this site record a request in your own browser. They do not create a confirmed appointment and take no payment. A booking exists only once the laboratory has confirmed it with you directly.',
+      'A booking reserves a place in a home-collection time slot, subject to confirmation by the lab. Payment is taken at the time of collection.',
+      'You can reschedule or cancel online from My bookings until a phlebotomist has been assigned. After that, please call the lab.',
+      'If a sample cannot be collected or cannot be used, the lab will tell you why and arrange for it to be taken again.',
+    ],
+  },
+  {
+    heading: 'Your account',
+    paragraphs: [
+      'Keep access to your mobile number and email secure; anyone who can sign in to your account can see its bookings and reports. Tell the lab straight away if you think someone else has accessed it.',
     ],
   },
   {
@@ -104,7 +140,7 @@ function LegalPage({
   useSeo({
     title,
     description: isPrivacy
-      ? 'How this website handles information. It is a static site with no backend — form entries stay in your own browser.'
+      ? `What ${SITE_CONFIG.brandName} collects through this website, why, who can see it, and your rights under the DPDP Act.`
       : 'The terms that apply to using the Healthcare Labs website, including that nothing published here is medical advice.',
     path: isPrivacy ? '/privacy-policy' : '/terms',
   });

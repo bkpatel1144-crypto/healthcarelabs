@@ -1,13 +1,42 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Clock, MessageCircle, Menu, Phone, ShieldCheck, X } from 'lucide-react';
+import { Clock, MessageCircle, Menu, Phone, ShieldCheck, UserRound, X } from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
-import { NAV_LINKS, SITE_CONFIG, telHref, whatsappHref } from '@/config/site';
+import { NAV_LINKS, SERVICE_LINKS, SITE_CONFIG, telHref, whatsappHref } from '@/config/site';
 import { cn } from '@/lib/cn';
 import { useSheen } from '@/hooks/useSheen';
 import { VisitButton } from '@/components/packages/VisitPlanner';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
+import { useAuth } from '@/store/auth';
+import { SiteSearchButton } from '@/components/layout/SiteSearch';
+import { Avatar } from '@/components/account/AccountShell';
+
+/**
+ * Log in / My account. While Firebase is still loading it renders the
+ * signed-out label, so the header never jumps between two widths for a
+ * returning visitor beyond a single swap.
+ */
+function AccountButton({ className, withLabel = false }: { className?: string; withLabel?: boolean }) {
+  const { status, profile, isAdmin } = useAuth();
+  const signedIn = status === 'signed-in';
+  const to = signedIn ? (isAdmin ? '/admin' : '/account') : '/login';
+  const label = signedIn ? (isAdmin ? 'Admin' : profile?.name?.split(' ')[0] || 'My account') : 'Log in';
+
+  return (
+    <Link
+      to={to}
+      aria-label={signedIn ? `${label} — your account` : 'Log in or sign up'}
+      className={cn(
+        'flex h-10 items-center gap-2 rounded-full border border-brand-100 bg-white px-3.5 text-[13.5px] font-semibold text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+        className,
+      )}
+    >
+      {signedIn ? <Avatar size="sm" className="-ml-1.5" /> : <UserRound className="h-[18px] w-[18px] shrink-0" strokeWidth={2} aria-hidden="true" />}
+      <span className={cn('max-w-[9rem] truncate', !withLabel && 'hidden 2xl:inline')}>{label}</span>
+    </Link>
+  );
+}
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,7 +53,7 @@ export function Header() {
     The admin area opens on a light background, where light-on-transparent
     would be unreadable — so it stays in the solid capsule state throughout.
   */
-  const onLightPage = location.pathname.startsWith('/admin');
+  const onLightPage = ['/admin', '/account', '/login'].some((p) => location.pathname.startsWith(p));
   const floating = scrolled || onLightPage;
 
   useEffect(() => {
@@ -199,7 +228,7 @@ export function Header() {
                   the box narrows.
                 */
                 className="h-8 w-auto max-w-full object-contain lg:h-9"
-                fetchPriority="high"
+                {...({ fetchpriority: 'high' } as Record<string, string>)} /* React 18 only knows the lowercase attribute */
               />
             </Link>
 
@@ -249,11 +278,18 @@ export function Header() {
                 The visit plan lives in the header rather than as a sixth
                 floating dock. A cart belongs where people look for one.
               */}
+              <SiteSearchButton className="border border-brand-100 bg-white" />
               <VisitButton className="border border-brand-100 bg-white" />
+              <AccountButton />
               <a
                 href={telHref()}
                 aria-label={`Call ${SITE_CONFIG.brandName} on ${SITE_CONFIG.phoneDisplay}`}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-100 bg-white text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+                /*
+                  Wide screens only. Search and account took the room below
+                  1536px, and the number is in the utility strip above while
+                  WhatsApp has its own floating button.
+                */
+                className="hidden h-10 w-10 items-center 2xl:flex justify-center rounded-full border border-brand-100 bg-white text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
               >
                 <Phone className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
               </a>
@@ -262,7 +298,7 @@ export function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Chat with Healthcare Labs on WhatsApp"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-mint-100 bg-white text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-mint-300 hover:text-mint-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+                className="hidden h-10 w-10 items-center 2xl:flex justify-center rounded-full border border-mint-100 bg-white text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-mint-300 hover:text-mint-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
               >
                 <MessageCircle className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
               </a>
@@ -277,6 +313,7 @@ export function Header() {
             </div>
 
             {/* ---- Mobile trigger ---- */}
+            <SiteSearchButton className="ml-auto border border-brand-100 bg-white xl:hidden" />
             <button
               ref={menuButtonRef}
               type="button"
@@ -362,9 +399,31 @@ export function Header() {
                     </li>
                   ))}
                 </ul>
+                <p className="mt-5 px-4 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
+                  Services
+                </p>
+                <ul className="mt-1 space-y-0.5">
+                  {SERVICE_LINKS.map((link) => (
+                    <li key={link.href}>
+                      <NavLink
+                        to={link.href}
+                        className={({ isActive }) =>
+                          cn(
+                            'block rounded-xl px-4 py-2.5 text-[15px] font-medium transition-colors',
+                            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+                            isActive ? 'bg-brand-50 text-brand-700' : 'text-ink-muted hover:bg-slate-50 hover:text-ink',
+                          )
+                        }
+                      >
+                        {link.label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
               </nav>
 
               <div className="shrink-0 space-y-3 border-t border-ink-line bg-mist px-6 py-6">
+                <AccountButton withLabel className="h-11 w-full justify-center text-[14.5px]" />
                 <Button to="/contact-us#home-collection" size="lg" className="w-full">
                   Book a Health Check
                   <ButtonArrow />

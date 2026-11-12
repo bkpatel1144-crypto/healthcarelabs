@@ -1,6 +1,7 @@
-import { useMemo, useState, type FormEvent } from 'react';
-import { motion } from 'framer-motion';
-import { CalendarClock, CheckCircle2, MapPin, ShieldCheck, Sparkles } from 'lucide-react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, useInView } from 'framer-motion';
+import { CalendarClock, CheckCircle2, Loader2, LogIn, MapPin, ShieldCheck, Sparkles } from 'lucide-react';
 import { Container, Eyebrow } from '@/components/common/Primitives';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import {
@@ -13,6 +14,10 @@ import {
   type Errors,
 } from '@/components/common/Form';
 import { useContent } from '@/store/content';
+import { useAuth } from '@/store/auth';
+import { cn } from '@/lib/cn';
+import { PRIVACY_VERSION, type FamilyMember, type SavedAddress } from '@/types/account';
+import { useSlots } from '@/lib/useSlots';
 import { VisitSummary } from '@/components/packages/VisitPlanner';
 import { SITE_CONFIG, telHref } from '@/config/site';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
@@ -22,10 +27,13 @@ interface FormState {
   phone: string;
   email: string;
   preferredDate: string;
+  /** Slot id from config/booking. */
   preferredTime: string;
   address: string;
+  pincode: string;
   packageSlug: string;
   notes: string;
+  consent: boolean;
 }
 
 const EMPTY: FormState = {
@@ -35,20 +43,12 @@ const EMPTY: FormState = {
   preferredDate: '',
   preferredTime: '',
   address: '',
+  pincode: '',
   packageSlug: '',
   notes: '',
+  consent: false,
 };
 
-const TIME_SLOTS = [
-  '07:00 – 08:00 AM',
-  '08:00 – 09:00 AM',
-  '09:00 – 10:00 AM',
-  '10:00 – 11:00 AM',
-  '11:00 AM – 12:00 PM',
-  '04:00 – 05:00 PM',
-  '05:00 – 06:00 PM',
-  '06:00 – 07:00 PM',
-];
 
 const ASSURANCES = [
   { Icon: ShieldCheck, text: 'Sample sealed and labelled in front of you' },
@@ -129,18 +129,82 @@ export function HomeCollectionSection({
 }
 
 export function HomeCollectionForm() {
-  const { livePackages, addAppointment, storageAvailable, preferences, clearVisit } =
-    useContent();
+  const { livePackages, preferences, clearVisit } = useContent();
+  const { user, profile } = useAuth();
   const reduced = usePrefersReducedMotion();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Errors<FormState>>({});
-  const [submitted, setSubmitted] = useState<{ name: string; date: string } | null>(null);
+  const [submitted, setSubmitted] = useState<{ name: string; date: string; tracked: boolean } | null>(null);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState('');
+  const [members, setMembers] = useState<FamilyMember[]>([]);
+  const [addresses, setAddresses] = useState<SavedAddress[]>([]);
+  const [forWhom, setForWhom] = useState('self');
+  const formRef = useRef<HTMLFormElement>(null);
+  // Live slot availability loads once the form is close to the screen, so the
+  // homepage does not fetch Firebase for visitors who never scroll this far.
+  const near = useInView(formRef, { once: true, margin: '600px' });
+  const consented = profile?.consent?.privacyVersion === PRIVACY_VERSION;
 
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  /*
+    Signed-in patients get their family members and saved addresses as
+    one-tap choices. The Firebase SDK is imported on demand: this form sits on
+    the homepage, and visitors who never log in should not download it here.
+  */
+  useEffect(() => {
+    if (!user) {
+      setMembers([]);
+      setAddresses([]);
+      return;
+    }
+    let cancelled = false;
+    const stops: (() => void)[] = [];
+    void import('@/lib/accountApi').then((api) => {
+      if (cancelled) return;
+      stops.push(api.watchMembers(user.uid, setMembers), api.watchAddresses(user.uid, setAddresses));
+    });
+    return () => {
+      cancelled = true;
+      stops.forEach((stop) => stop());
+    };
+  }, [user]);
+
+  /*
+    Prefill from the profile, but only fields the visitor has not touched.
+    Firestore can deliver the profile twice (cache, then server), and a field
+    someone deliberately cleared must not quietly refill itself.
+  */
+  const touched = useRef(new Set<keyof FormState>());
+  useEffect(() => {
+    if (!profile) return;
+    setForm((f) => ({
+      ...f,
+      name: touched.current.has('name') ? f.name : f.name || profile.name,
+      phone: touched.current.has('phone') ? f.phone : f.phone || profile.phone,
+      email: touched.current.has('email') ? f.email : f.email || profile.email,
+    }));
+  }, [profile]);
+
+  const { cfg, options: slotOptions, today, lastDate } = useSlots(form.preferredDate, near);
+
+  // Someone who already accepted the current privacy notice is not asked again.
+  useEffect(() => {
+    if (consented) setForm((f) => ({ ...f, consent: true }));
+  }, [consented]);
+
+  const pincodeServed = (pin: string) =>
+    cfg.servicePincodes.length === 0 || cfg.servicePincodes.includes(pin);
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    touched.current.add(key);
     setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: undefined }));
+  };
+
+  const chooseFor = (value: string) => {
+    setForWhom(value);
+    const member = members.find((m) => m.id === value);
+    set('name', member ? member.name : profile?.name ?? '');
   };
 
   const validate = (): Errors<FormState> => {
@@ -155,15 +219,32 @@ export function HomeCollectionForm() {
       next.email = 'That email address does not look right.';
 
     next.preferredDate = required(form.preferredDate, 'Choose a preferred date.');
+    // `min` on the input only limits the picker; a typed date can still be past.
+    if (!next.preferredDate && form.preferredDate < today)
+      next.preferredDate = 'Choose today or a later date.';
+    else if (!next.preferredDate && form.preferredDate > lastDate)
+      next.preferredDate = `Visits can be booked up to ${cfg.daysAhead} days ahead.`;
+    else if (!next.preferredDate && cfg.closedDates.includes(form.preferredDate))
+      next.preferredDate = 'The lab does not collect at home on that date. Please choose another.';
+
     next.preferredTime = required(form.preferredTime, 'Choose a preferred time slot.');
+    if (!next.preferredTime) {
+      const slot = slotOptions.find((o) => o.value === form.preferredTime);
+      if (!slot) next.preferredTime = 'That slot is not available for the chosen date. Choose another.';
+      else if (slot.left <= 0) next.preferredTime = 'That slot is full. Choose another time.';
+    }
     next.address = required(form.address, 'We need the collection address.');
     if (!next.address && form.address.trim().length < 12)
       next.address = 'Please include enough detail for the phlebotomist to find you.';
+    if (!/^\d{6}$/.test(form.pincode)) next.pincode = 'Enter the 6-digit PIN code.';
+    else if (!pincodeServed(form.pincode))
+      next.pincode = `Home collection does not cover ${form.pincode} yet. Visit a branch or call ${SITE_CONFIG.phoneDisplay}.`;
+    if (!form.consent) next.consent = 'Please accept the privacy notice so the lab can process your sample and report.';
 
     return Object.fromEntries(Object.entries(next).filter(([, v]) => v)) as Errors<FormState>;
   };
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const found = validate();
     if (Object.keys(found).length > 0) {
@@ -185,20 +266,53 @@ export function HomeCollectionForm() {
       there is one, and the plan is cleared once it has been handed over.
     */
     const planned = preferences.visitPackages;
-    addAppointment({
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      preferredDate: form.preferredDate,
-      preferredTime: form.preferredTime,
-      address: form.address.trim(),
-      packageSlug: form.packageSlug || planned[0] || '',
-      ...(planned.length > 0 ? { packageSlugs: planned } : {}),
-      notes: form.notes.trim(),
-    });
+    const slugs = planned.length > 0 ? planned : form.packageSlug ? [form.packageSlug] : [];
+    const chosen = slugs
+      .map((slug) => livePackages.find((p) => p.slug === slug))
+      .filter((p): p is NonNullable<typeof p> => Boolean(p));
+
+    setSending(true);
+    setSendError('');
+    try {
+      const api = await import('@/lib/accountApi');
+      await api.createBooking({
+        uid: user?.uid ?? null,
+        patientName: form.name.trim(),
+        phone: api.localPhone(form.phone),
+        email: form.email.trim(),
+        preferredDate: form.preferredDate,
+        slotId: form.preferredTime,
+        preferredTime: cfg.slots[form.preferredTime]?.label ?? '',
+        address: form.address.trim(),
+        pincode: form.pincode,
+        packageSlugs: chosen.map((p) => p.slug),
+        packageNames: chosen.map((p) => p.name),
+        total: chosen.reduce((sum, p) => sum + (p.offerPrice ?? p.price ?? 0), 0),
+        notes: form.notes.trim(),
+        consentAt: new Date().toISOString(),
+      });
+      // A signed-in patient's acceptance is kept on the account too.
+      if (user && !consented) await api.recordConsent(user.uid, profile?.marketingOptIn ?? false).catch(() => {});
+    } catch (err) {
+      console.error('Booking failed', err);
+      const api = await import('@/lib/accountApi');
+      setSendError(
+        err instanceof api.SlotUnavailableError
+          ? err.message
+          : `The booking could not be sent. Check your connection and try again, or call ${SITE_CONFIG.phoneDisplay}.`,
+      );
+      setSending(false);
+      return;
+    }
     if (planned.length > 0) clearVisit();
-    setSubmitted({ name: form.name.trim().split(' ')[0], date: form.preferredDate });
-    setForm(EMPTY);
+    setSubmitted({
+      name: form.name.trim().split(' ')[0],
+      date: form.preferredDate,
+      tracked: Boolean(user),
+    });
+    setForm({ ...EMPTY, name: profile?.name ?? '', phone: profile?.phone ?? '', email: profile?.email ?? '', consent: consented });
+    setForWhom('self');
+    setSending(false);
     setErrors({});
   };
 
@@ -231,9 +345,23 @@ export function HomeCollectionForm() {
 
         <p className="mt-5 flex items-start gap-2 text-[13px] leading-relaxed text-ink-soft">
           <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" strokeWidth={2} aria-hidden="true" />
-          {storageAvailable
-            ? 'Your request is saved in this browser and appears in the local admin panel. This site has no backend, so it is not transmitted anywhere.'
-            : 'Your browser is blocking local storage, so this request is held only for this session. Please call the lab to confirm.'}
+          {submitted.tracked ? (
+            <span>
+              Follow its progress under{' '}
+              <Link to="/account/bookings" className="font-semibold text-brand-600 hover:underline">
+                My bookings
+              </Link>
+              . Pay at the time of collection.
+            </span>
+          ) : (
+            <span>
+              Pay at the time of collection.{' '}
+              <Link to="/login" className="font-semibold text-brand-600 hover:underline">
+                Log in
+              </Link>{' '}
+              next time to track bookings and download reports online.
+            </span>
+          )}
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">
@@ -250,7 +378,7 @@ export function HomeCollectionForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate>
+    <form ref={formRef} onSubmit={onSubmit} noValidate>
       <VisitSummary />
 
       <h3 className="text-[20px] font-bold tracking-[-0.02em] text-ink">Book a home collection</h3>
@@ -258,9 +386,49 @@ export function HomeCollectionForm() {
         Fields marked <span className="text-rose-500">*</span> are required.
       </p>
 
+      {!user ? (
+        <p className="mt-5 flex items-start gap-2 rounded-2xl bg-brand-50/70 px-4 py-3 text-[13.5px] text-ink-muted ring-1 ring-brand-100">
+          <LogIn className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" strokeWidth={2.2} aria-hidden="true" />
+          <span>
+            <Link
+              to={`/login?next=${encodeURIComponent('/contact-us#home-collection')}`}
+              className="font-semibold text-brand-600 hover:underline"
+            >
+              Log in
+            </Link>{' '}
+            to track this booking and download the report online, or continue as a guest.
+          </span>
+        </p>
+      ) : (
+        members.length > 0 && (
+          <fieldset className="mt-6">
+            <legend className="mb-2 text-[13px] font-semibold text-ink">Booking for</legend>
+            <div className="flex flex-wrap gap-2">
+              {[{ id: 'self', name: 'Myself' }, ...members].map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  aria-pressed={forWhom === m.id}
+                  onClick={() => chooseFor(m.id)}
+                  className={cn(
+                    'rounded-full px-4 py-2 text-[13.5px] font-semibold ring-1 transition-colors',
+                    forWhom === m.id
+                      ? 'bg-brand-500 text-white ring-brand-500'
+                      : 'bg-white text-ink-muted ring-ink-line hover:text-brand-600 hover:ring-brand-300',
+                  )}
+                >
+                  {m.name}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        )
+      )}
+
       <div className="mt-7 grid gap-5 sm:grid-cols-2">
         <TextField
           label="Full name"
+          maxLength={100}
           name="name"
           autoComplete="name"
           required
@@ -283,6 +451,7 @@ export function HomeCollectionForm() {
         />
         <TextField
           label="Email"
+          maxLength={200}
           name="email"
           type="email"
           autoComplete="email"
@@ -314,6 +483,7 @@ export function HomeCollectionForm() {
           type="date"
           required
           min={today}
+          max={lastDate}
           value={form.preferredDate}
           error={errors.preferredDate}
           onChange={(e) => set('preferredDate', e.target.value)}
@@ -325,22 +495,57 @@ export function HomeCollectionForm() {
           value={form.preferredTime}
           error={errors.preferredTime}
           onValueChange={(v) => set('preferredTime', v)}
-          placeholder="Choose a slot"
-          options={TIME_SLOTS.map((slot) => ({ value: slot, label: slot }))}
+          placeholder={form.preferredDate ? 'Choose a slot' : 'Choose a date first'}
+          hint={form.preferredDate ? undefined : 'Availability shows once a date is chosen.'}
+          options={slotOptions.map(({ value, label, meta }) => ({ value, label, meta }))}
         />
+        {addresses.length > 0 && (
+          <div className="-mb-2 flex flex-wrap items-center gap-2 sm:col-span-2">
+            <span className="text-[13px] font-semibold text-ink">Use saved address:</span>
+            {addresses.map((a) => (
+              <button
+                key={a.id}
+                type="button"
+                aria-label={`Use ${a.label} address`}
+                onClick={() => {
+                  set('address', [a.line, a.landmark, a.city].filter((x) => x.trim()).join(', '));
+                  set('pincode', a.pincode);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-full bg-mint-50 px-3 py-1.5 text-[12.5px] font-semibold text-mint-700 ring-1 ring-mint-100 hover:ring-mint-300"
+              >
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                {a.label}
+              </button>
+            ))}
+          </div>
+        )}
         <TextAreaField
           label="Collection address"
+          maxLength={600}
           name="address"
           required
           className="sm:col-span-2"
           value={form.address}
           error={errors.address}
           onChange={(e) => set('address', e.target.value)}
-          placeholder="Flat / house number, building, street, area, landmark, city and pincode"
+          placeholder="Flat / house number, building, street, area, landmark, city"
           rows={3}
+        />
+        <TextField
+          label="PIN code"
+          name="pincode"
+          required
+          inputMode="numeric"
+          autoComplete="postal-code"
+          maxLength={6}
+          value={form.pincode}
+          error={errors.pincode}
+          onChange={(e) => set('pincode', e.target.value.replace(/[^\d]/g, ''))}
+          placeholder="395009"
         />
         <TextAreaField
           label="Anything we should know"
+          maxLength={1000}
           name="notes"
           className="sm:col-span-2"
           value={form.notes}
@@ -351,15 +556,51 @@ export function HomeCollectionForm() {
         />
       </div>
 
+      {/*
+        Consent under the DPDP Act: specific (what it is for), separate from
+        marketing, and recorded with a timestamp on the booking.
+      */}
+      <div className="mt-7">
+        <label className="flex items-start gap-3 text-[13.5px] leading-relaxed text-ink-muted">
+          <input
+            type="checkbox"
+            name="consent"
+            checked={form.consent}
+            onChange={(e) => set('consent', e.target.checked)}
+            aria-invalid={errors.consent ? true : undefined}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-brand-500"
+          />
+          <span>
+            I agree to the{' '}
+            <Link to="/privacy-policy" className="font-semibold text-brand-600 hover:underline">
+              privacy notice
+            </Link>{' '}
+            and consent to {SITE_CONFIG.brandName} using these details and my sample to perform the tests and
+            deliver the report. <span className="text-rose-500">*</span>
+          </span>
+        </label>
+        {errors.consent && (
+          <p role="alert" className="mt-2 text-[12.5px] font-medium text-rose-600">
+            {errors.consent}
+          </p>
+        )}
+      </div>
+
       <div className="mt-8 flex flex-wrap items-center gap-4">
-        <Button type="submit" size="lg">
+        <Button type="submit" size="lg" disabled={sending}>
+          {sending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
           Request home collection
-          <ButtonArrow />
+          {!sending && <ButtonArrow />}
         </Button>
         <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-soft">
-          The lab calls to confirm before any visit. No payment is taken through this form.
+          The lab calls to confirm before any visit. Pay at the time of collection.
         </p>
       </div>
+      {sendError && (
+        <p role="alert" className="mt-4 text-[13.5px] font-medium text-rose-600">
+          {sendError}
+        </p>
+      )}
     </form>
   );
 }

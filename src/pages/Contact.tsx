@@ -15,7 +15,7 @@ import {
 import { LocationMap } from '@/components/common/LocationMap';
 import { BRANCHES } from '@/data/branches';
 import { HomeCollectionSection } from '@/components/home/HomeCollection';
-import { useContent } from '@/store/content';
+import { useAuth } from '@/store/auth';
 import { useSeo } from '@/lib/seo';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 import {
@@ -184,18 +184,20 @@ interface ContactState {
 const EMPTY: ContactState = { name: '', phone: '', email: '', message: '' };
 
 function ContactForm() {
-  const { addContact, storageAvailable } = useContent();
+  const { user } = useAuth();
   const reduced = usePrefersReducedMotion();
   const [form, setForm] = useState<ContactState>(EMPTY);
   const [errors, setErrors] = useState<Errors<ContactState>>({});
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState('');
 
   const set = <K extends keyof ContactState>(key: K, value: ContactState[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: undefined }));
   };
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const next: Errors<ContactState> = {};
     next.name = required(form.name, 'Please tell us your name.');
@@ -222,14 +224,28 @@ function ContactForm() {
       return;
     }
 
-    addContact({
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      message: form.message.trim(),
-    });
-    setSent(true);
-    setForm(EMPTY);
+    // Goes to the staff inbox at /admin/requests. Firebase loads on submit.
+    setSending(true);
+    setSendError('');
+    try {
+      const api = await import('@/lib/accountApi');
+      await api.createRequest({
+        type: 'contact',
+        uid: user?.uid ?? null,
+        name: form.name.trim(),
+        phone: api.localPhone(form.phone),
+        email: form.email.trim(),
+        topic: '',
+        message: form.message.trim(),
+      });
+      setSent(true);
+      setForm(EMPTY);
+    } catch (err) {
+      console.error('Contact message failed', err);
+      setSendError(`The message could not be sent. Please try again or call ${SITE_CONFIG.phoneDisplay}.`);
+    } finally {
+      setSending(false);
+    }
   };
 
   if (sent) {
@@ -245,12 +261,11 @@ function ContactForm() {
           <CheckCircle2 className="h-7 w-7" strokeWidth={2} aria-hidden="true" />
         </span>
         <h3 className="mt-6 text-[24px] font-extrabold tracking-editorial text-ink">
-          Thank you — your message is saved.
+          Thank you — your message has reached the lab.
         </h3>
         <p className="mt-3.5 max-w-md text-[15.5px] leading-relaxed text-ink-muted">
-          {storageAvailable
-            ? 'It has been recorded in this browser and appears in the local admin panel. This site runs without a backend, so nothing is transmitted — for anything time-sensitive, please call the lab.'
-            : 'Local storage is blocked in this browser, so the message is held only for this session. Please call the lab so nothing is missed.'}
+          The team will get back to you on the number you gave. For anything time-sensitive,
+          please call.
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
           <Button href={telHref()} size="md">
@@ -270,6 +285,7 @@ function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2">
         <TextField
           label="Full name"
+          maxLength={100}
           name="name"
           autoComplete="name"
           required
@@ -292,6 +308,7 @@ function ContactForm() {
         />
         <TextField
           label="Email"
+          maxLength={200}
           name="email"
           type="email"
           autoComplete="email"
@@ -304,6 +321,7 @@ function ContactForm() {
         />
         <TextAreaField
           label="Message"
+          maxLength={2000}
           name="message"
           required
           className="sm:col-span-2"
@@ -316,14 +334,19 @@ function ContactForm() {
       </div>
 
       <div className="mt-7 flex flex-wrap items-center gap-4">
-        <Button type="submit" size="lg">
-          Send message
-          <ButtonArrow />
+        <Button type="submit" size="lg" disabled={sending}>
+          {sending ? 'Sending…' : 'Send message'}
+          {!sending && <ButtonArrow />}
         </Button>
         <p className="max-w-xs text-[12.5px] leading-relaxed text-ink-soft">
           Please do not send medical records or report values through this form.
         </p>
       </div>
+      {sendError && (
+        <p role="alert" className="mt-4 text-[13.5px] font-medium text-rose-600">
+          {sendError}
+        </p>
+      )}
     </form>
   );
 }

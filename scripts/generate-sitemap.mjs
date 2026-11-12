@@ -31,6 +31,10 @@ const urls = [
   { loc: '/about-us', priority: '0.7', changefreq: 'monthly' },
   { loc: '/blog', priority: '0.7', changefreq: 'weekly' },
   { loc: '/contact-us', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/lab-locations', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/upload-prescription', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/help', priority: '0.6', changefreq: 'monthly' },
+  { loc: '/partner-with-us', priority: '0.5', changefreq: 'monthly' },
   { loc: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
   { loc: '/terms', priority: '0.3', changefreq: 'yearly' },
   ...packageSlugs.map((s) => ({

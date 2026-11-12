@@ -1,0 +1,450 @@
+rules_version = '2';
+
+// Security rules for the `healthcarelabs` Firestore database.
+//
+// Who is who:
+//   patient      — anyone signed in with Firebase Auth (phone OTP, email, Google)
+//   phlebotomist — a signed-in user with an active /staff/{uid} record, which
+//                  only an admin can create
+//   admin        — a signed-in user whose UID has a document in /admins. That
+//                  collection can only be written from the Firebase console, so
+//                  no one can make themselves an admin from the website.
+//
+// The field lists below must match src/lib/accountApi.ts and
+// src/types/account.ts. A field the code writes but these rules do not list
+// is refused, which is deliberate: unknown data never gets in.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    function isStaff() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid))
+        && get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.active == true;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function str(v, max) {
+      return v is string && v.size() <= max;
+    }
+    function unchanged(field) {
+      return request.resource.data[field] == resource.data[field];
+    }
+    function isoDate(v) {
+      return v is string && v.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    // ------------------------------------------------------------- admins
+    match /admins/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------- staff
+    match /staff/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isAdmin()
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'phone', 'email', 'role', 'active', 'createdAt'])
+        && request.resource.data.uid == uid
+        && str(request.resource.data.name, 100) && request.resource.data.name.size() >= 2
+        && str(request.resource.data.phone, 15) && str(request.resource.data.email, 200)
+        && request.resource.data.role == 'phlebotomist'
+        && request.resource.data.active is bool
+        && str(request.resource.data.createdAt, 40);
+    }
+
+    // -------------------------------------------------------------- audit
+    // Append-only: staff actions on patient data, written in the same
+    // transaction as the action itself. Nobody can edit or delete an entry.
+    match /audit/{id} {
+      allow read: if isAdmin();
+      allow create: if (isAdmin() || isStaff())
+        && request.resource.data.keys().hasOnly(['id', 'at', 'actorUid', 'actorRole', 'action', 'target', 'detail'])
+        && request.resource.data.id == id
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.actorRole == (isAdmin() ? 'admin' : 'phlebotomist')
+        && str(request.resource.data.action, 40) && str(request.resource.data.target, 120)
+        && str(request.resource.data.detail, 300) && str(request.resource.data.at, 40);
+      allow update, delete: if false;
+    }
+
+    // ------------------------------------------------- scheduling config
+    function cfgPath() {
+      return /databases/$(database)/documents/config/booking;
+    }
+    // Until an admin saves config/booking, the shipped defaults apply.
+    function slotOffered(slotId) {
+      return exists(cfgPath())
+        ? slotId in get(cfgPath()).data.slots
+        : slotId in ['s0700', 's0800', 's0900', 's1000', 's1100', 's1600', 's1700', 's1800'];
+    }
+    function capacity(slotId) {
+      return exists(cfgPath()) ? get(cfgPath()).data.slots[slotId].capacity : 6;
+    }
+    function served(pincode) {
+      return !exists(cfgPath())
+        || get(cfgPath()).data.servicePincodes.size() == 0
+        || pincode in get(cfgPath()).data.servicePincodes;
+    }
+    function openOn(date) {
+      return !exists(cfgPath()) || !(date in get(cfgPath()).data.closedDates);
+    }
+    function daysAhead() {
+      return exists(cfgPath()) ? get(cfgPath()).data.daysAhead : 14;
+    }
+    // Not in the past and within the booking window. 36h of slack absorbs
+    // India being ahead of UTC.
+    function bookableDate(date) {
+      let t = timestamp.date(int(date[0:4]), int(date[5:7]), int(date[8:10]));
+      return isoDate(date)
+        && t >= request.time - duration.value(36, 'h')
+        && t <= request.time + duration.value(daysAhead() + 1, 'd');
+    }
+
+    match /config/{name} {
+      allow read: if true;
+      allow write: if isAdmin() && name == 'booking'
+        && request.resource.data.keys().hasOnly(['slots', 'servicePincodes', 'closedDates', 'daysAhead', 'updatedAt'])
+        && request.resource.data.slots is map && request.resource.data.slots.size() >= 1
+        && request.resource.data.slots.size() <= 24
+        && request.resource.data.servicePincodes is list && request.resource.data.servicePincodes.size() <= 1000
+        && request.resource.data.closedDates is list && request.resource.data.closedDates.size() <= 400
+        && request.resource.data.daysAhead is int
+        && request.resource.data.daysAhead >= 1 && request.resource.data.daysAhead <= 60;
+    }
+
+    // -------------------------------------------------------- slot claims
+    // slots/{date}__{slotId}.ids lists the bookings holding a place in that
+    // window. Every change adds or removes exactly one id, and must agree with
+    // the booking written in the same transaction — so capacity cannot be
+    // exceeded, faked or freed without the booking actually changing.
+    function slotPath(date, slotId) {
+      return /databases/$(database)/documents/slots/$(date + '__' + slotId);
+    }
+    function holds(status) {
+      return !(status in ['cancelled', 'rejected']);
+    }
+
+    match /slots/{key} {
+      allow read: if true;
+      allow delete: if false;
+      allow create, update: if
+        request.resource.data.keys().hasOnly(['date', 'slotId', 'ids', 'last'])
+        && key == request.resource.data.date + '__' + request.resource.data.slotId
+        && request.resource.data.ids is list
+        && request.resource.data.last.keys().hasOnly(['op', 'bookingId'])
+        && request.resource.data.last.bookingId is string
+        && (resource == null || (unchanged('date') && unchanged('slotId')))
+        && slotChangeValid(request.resource.data, resource == null ? [] : resource.data.ids);
+    }
+
+    function slotChangeValid(d, before) {
+      let bid = d.last.bookingId;
+      let booking = /databases/$(database)/documents/bookings/$(bid);
+      return d.last.op == 'add'
+        ? (!(bid in before)
+          && d.ids.toSet() == before.toSet().union([bid].toSet())
+          && d.ids.size() == before.size() + 1
+          && slotOffered(d.slotId)
+          && d.ids.size() <= capacity(d.slotId)
+          && existsAfter(booking)
+          && getAfter(booking).data.preferredDate == d.date
+          && getAfter(booking).data.slotId == d.slotId
+          && holds(getAfter(booking).data.status))
+        : (d.last.op == 'remove'
+          && bid in before
+          && d.ids.toSet() == before.toSet().difference([bid].toSet())
+          && d.ids.size() == before.size() - 1
+          && (!existsAfter(booking)
+            || !holds(getAfter(booking).data.status)
+            || getAfter(booking).data.preferredDate != d.date
+            || getAfter(booking).data.slotId != d.slotId));
+    }
+
+    // ------------------------------------------------------------ patients
+    function validProfile(d) {
+      return d.keys().hasOnly(['uid', 'name', 'phone', 'email', 'gender', 'dob', 'photoURL', 'consent', 'marketingOptIn', 'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['uid', 'name', 'phone', 'email', 'gender', 'dob', 'createdAt', 'updatedAt'])
+        && str(d.name, 100) && str(d.phone, 15) && str(d.email, 200)
+        && d.gender in ['male', 'female', 'other', '']
+        && str(d.dob, 10) && str(d.createdAt, 40) && str(d.updatedAt, 40)
+        && (!('consent' in d) || d.consent == null || (d.consent is map
+          && d.consent.keys().hasOnly(['privacyVersion', 'at'])
+          && str(d.consent.privacyVersion, 20) && str(d.consent.at, 40)))
+        && (!('marketingOptIn' in d) || d.marketingOptIn is bool)
+        && (!('photoURL' in d) || str(d.photoURL, 1000));
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid) && validProfile(request.resource.data)
+        && request.resource.data.uid == uid;
+      allow update: if (isOwner(uid) || isAdmin()) && validProfile(request.resource.data)
+        && unchanged('uid') && unchanged('createdAt');
+      allow delete: if isAdmin();
+
+      match /members/{id} {
+        allow read, delete: if isOwner(uid) || isAdmin();
+        allow create, update: if (isOwner(uid) || isAdmin())
+          && request.resource.data.keys().hasOnly(['id', 'name', 'relation', 'gender', 'dob', 'createdAt'])
+          && request.resource.data.id == id
+          && str(request.resource.data.name, 100) && request.resource.data.name.size() >= 2
+          && str(request.resource.data.relation, 40)
+          && request.resource.data.gender in ['male', 'female', 'other', '']
+          && str(request.resource.data.dob, 10) && str(request.resource.data.createdAt, 40);
+      }
+
+      match /addresses/{id} {
+        allow read, delete: if isOwner(uid) || isAdmin();
+        allow create, update: if (isOwner(uid) || isAdmin())
+          && request.resource.data.keys().hasOnly(['id', 'label', 'line', 'landmark', 'city', 'pincode', 'createdAt'])
+          && request.resource.data.id == id
+          && str(request.resource.data.label, 40) && str(request.resource.data.line, 400)
+          && str(request.resource.data.landmark, 120) && str(request.resource.data.city, 80)
+          && str(request.resource.data.pincode, 6) && str(request.resource.data.createdAt, 40);
+      }
+    }
+
+    // ------------------------------------------------------------ bookings
+    function validBooking(d) {
+      return d.keys().hasOnly(['id', 'uid', 'patientName', 'phone', 'email', 'preferredDate', 'slotId',
+          'preferredTime', 'address', 'pincode', 'packageSlugs', 'packageNames', 'total', 'payment',
+          'notes', 'status', 'statusReason', 'labNote', 'phlebotomist', 'phlebotomistUid', 'sampleId',
+          'collectedAt', 'history', 'consentAt', 'createdAt', 'updatedAt'])
+        && (d.uid == null || d.uid is string)
+        && str(d.patientName, 100) && d.patientName.size() >= 2
+        && str(d.phone, 15) && d.phone.matches('^[6-9][0-9]{9}$') && str(d.email, 200)
+        && isoDate(d.preferredDate) && str(d.slotId, 20) && str(d.preferredTime, 40)
+        && str(d.address, 600) && d.address.size() >= 8
+        && d.pincode is string && d.pincode.matches('^[0-9]{6}$')
+        && d.packageSlugs is list && d.packageSlugs.size() <= 20
+        && d.packageNames is list && d.packageNames.size() <= 20
+        && d.total is number && d.total >= 0
+        && d.payment is map
+        && d.payment.keys().hasOnly(['method', 'status', 'mode', 'amountPaid', 'paidAt'])
+        && d.payment.method == 'pay-at-collection'
+        && d.payment.status in ['due', 'paid']
+        && d.payment.mode in ['', 'cash', 'upi', 'card']
+        && d.payment.amountPaid is number && d.payment.amountPaid >= 0
+        && str(d.payment.paidAt, 40)
+        && str(d.notes, 1000)
+        && d.status in ['new', 'confirmed', 'assigned', 'sample-collected', 'received', 'processing', 'completed', 'cancelled', 'rejected']
+        && str(d.statusReason, 300)
+        && (!('labNote' in d) || str(d.labNote, 500))
+        && (d.phlebotomist == null || (d.phlebotomist is map
+          && d.phlebotomist.keys().hasOnly(['uid', 'name', 'phone'])
+          && d.phlebotomist.uid == d.phlebotomistUid))
+        && str(d.phlebotomistUid, 128)
+        && str(d.sampleId, 40) && str(d.collectedAt, 40)
+        && d.history is list && d.history.size() >= 1 && d.history.size() <= 60
+        && str(d.consentAt, 40) && d.consentAt.size() > 0
+        && str(d.createdAt, 40) && str(d.updatedAt, 40);
+    }
+
+    // The new history is the old one plus exactly one event, by `by`, to `status`.
+    function appended(status, by) {
+      let before = resource.data.history;
+      let after = request.resource.data.history;
+      return after.size() == before.size() + 1
+        && after[0:before.size()] == before
+        && after[before.size()].keys().hasOnly(['status', 'at', 'by', 'note'])
+        && after[before.size()].status == status
+        && after[before.size()].by == by
+        && str(after[before.size()].note, 300);
+    }
+
+    function claimed(d, bookingId) {
+      return bookingId in getAfter(slotPath(d.preferredDate, d.slotId)).data.ids;
+    }
+    function released(d, bookingId) {
+      return !existsAfter(slotPath(d.preferredDate, d.slotId))
+        || !(bookingId in getAfter(slotPath(d.preferredDate, d.slotId)).data.ids);
+    }
+
+    match /bookings/{id} {
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.uid == request.auth.uid)
+        || (isStaff() && resource.data.phlebotomistUid == request.auth.uid);
+
+      // Guests may book (uid null); a signed-in patient only as themselves.
+      allow create: if validBooking(request.resource.data)
+        && request.resource.data.id == id
+        && (request.resource.data.uid == null || isOwner(request.resource.data.uid))
+        && request.resource.data.status == 'new'
+        && request.resource.data.statusReason == ''
+        && !('labNote' in request.resource.data)
+        && request.resource.data.phlebotomist == null
+        && request.resource.data.phlebotomistUid == ''
+        && request.resource.data.sampleId == '' && request.resource.data.collectedAt == ''
+        && request.resource.data.payment == { 'method': 'pay-at-collection', 'status': 'due', 'mode': '', 'amountPaid': 0, 'paidAt': '' }
+        && request.resource.data.history.size() == 1
+        && request.resource.data.history[0].status == 'new'
+        && request.resource.data.history[0].by == 'patient'
+        && slotOffered(request.resource.data.slotId)
+        && served(request.resource.data.pincode)
+        && openOn(request.resource.data.preferredDate)
+        && bookableDate(request.resource.data.preferredDate)
+        && claimed(request.resource.data, id);
+
+      allow update: if validBooking(request.resource.data)
+        && unchanged('uid') && unchanged('id') && unchanged('createdAt') && unchanged('consentAt')
+        && (labUpdate() || patientCancel() || patientReschedule() || phleboCollected() || phleboNotCollected());
+
+      allow delete: if isAdmin() && released(resource.data, id);
+    }
+
+    // Lab staff may change anything except ownership, and can only add to the
+    // history, never rewrite it. A status change must keep the slot in step.
+    function labUpdate() {
+      let before = resource.data;
+      let after = request.resource.data;
+      return isAdmin()
+        && after.preferredDate == before.preferredDate && after.slotId == before.slotId
+        && after.history.size() >= before.history.size()
+        && after.history[0:before.history.size()] == before.history
+        && (after.status == before.status
+          || (appended(after.status, 'lab')
+            && (holds(after.status) ? claimed(after, after.id) : released(after, after.id))));
+    }
+
+    function patientChangeable() {
+      return signedIn() && resource.data.uid == request.auth.uid
+        && resource.data.status in ['new', 'confirmed'];
+    }
+
+    function patientCancel() {
+      return patientChangeable()
+        && request.resource.data.status == 'cancelled'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'history', 'updatedAt'])
+        && appended('cancelled', 'patient')
+        && released(resource.data, resource.data.id);
+    }
+
+    function patientReschedule() {
+      let after = request.resource.data;
+      return patientChangeable()
+        && after.status == 'new'
+        && after.diff(resource.data).affectedKeys().hasOnly(['preferredDate', 'slotId', 'preferredTime', 'status', 'history', 'updatedAt'])
+        && appended('new', 'patient')
+        && slotOffered(after.slotId)
+        && openOn(after.preferredDate)
+        && bookableDate(after.preferredDate)
+        && claimed(after, after.id)
+        && released(resource.data, resource.data.id);
+    }
+
+    function assignedToMe() {
+      return isStaff() && resource.data.phlebotomistUid == request.auth.uid
+        && resource.data.status == 'assigned';
+    }
+
+    function phleboCollected() {
+      return assignedToMe()
+        && request.resource.data.status == 'sample-collected'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'sampleId', 'collectedAt', 'history', 'updatedAt'])
+        && request.resource.data.sampleId.size() >= 3
+        && request.resource.data.collectedAt.size() > 0
+        && appended('sample-collected', 'phlebotomist');
+    }
+
+    function phleboNotCollected() {
+      return assignedToMe()
+        && request.resource.data.status == 'rejected'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'statusReason', 'history', 'updatedAt'])
+        && request.resource.data.statusReason.size() >= 3
+        && appended('rejected', 'phlebotomist')
+        && released(resource.data, resource.data.id);
+    }
+
+    // ------------------------------------------------------------- reports
+    match /reports/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['id', 'uid', 'bookingId', 'patientName', 'title', 'fileName',
+          'sizeBytes', 'chunkCount', 'signedBy', 'version', 'supersedes', 'superseded', 'uploadedAt', 'uploadedBy'])
+        && request.resource.data.id == id
+        && str(request.resource.data.signedBy, 100) && request.resource.data.signedBy.size() >= 3
+        && request.resource.data.version is int && request.resource.data.version >= 1
+        && request.resource.data.superseded == false
+        && request.resource.data.uploadedBy == request.auth.uid;
+      // Only the "superseded" flag may change; a released report is otherwise fixed.
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['superseded'])
+        && request.resource.data.superseded == true;
+      allow delete: if isAdmin();
+
+      // PDF bytes, split into chunks. Readable by the report's patient.
+      match /chunks/{n} {
+        allow read: if isAdmin()
+          || (signedIn() && get(/databases/$(database)/documents/reports/$(id)).data.uid == request.auth.uid);
+        allow write: if isAdmin();
+      }
+    }
+
+    // ------------------------------------------------------------ requests
+    // Contact messages, support questions, prescriptions, partnership
+    // enquiries and data requests. Anyone may send text; a file needs a
+    // signed-in sender, so an anonymous visitor cannot fill the database with
+    // uploads.
+    function validRequest(d) {
+      return d.keys().hasOnly(['id', 'type', 'uid', 'name', 'phone', 'email', 'topic', 'message',
+          'attachment', 'status', 'reply', 'createdAt', 'updatedAt'])
+        && d.type in ['contact', 'support', 'prescription', 'partnership', 'data-request']
+        && (d.uid == null || d.uid is string)
+        && str(d.name, 100) && d.name.size() >= 2
+        && str(d.phone, 15) && str(d.email, 200)
+        && str(d.topic, 80) && str(d.message, 2000)
+        && (d.attachment == null || (d.attachment is map
+          && d.attachment.keys().hasOnly(['fileName', 'mime', 'sizeBytes', 'chunkCount'])
+          && str(d.attachment.fileName, 200)
+          && d.attachment.mime in ['image/jpeg', 'image/png', 'image/webp', 'application/pdf']
+          && d.attachment.sizeBytes is int && d.attachment.sizeBytes <= 5242880
+          && d.attachment.chunkCount is int && d.attachment.chunkCount >= 1 && d.attachment.chunkCount <= 6))
+        && d.status in ['open', 'in-progress', 'resolved']
+        && str(d.reply, 2000)
+        && str(d.createdAt, 40) && str(d.updatedAt, 40);
+    }
+
+    match /requests/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if validRequest(request.resource.data)
+        && request.resource.data.id == id
+        && request.resource.data.status == 'open'
+        && request.resource.data.reply == ''
+        && (request.resource.data.uid == null || isOwner(request.resource.data.uid))
+        && (request.resource.data.attachment == null || isOwner(request.resource.data.uid))
+        // A data request concerns an account, so it must come from that account.
+        && (request.resource.data.type != 'data-request' || isOwner(request.resource.data.uid));
+      allow update: if isAdmin() && validRequest(request.resource.data)
+        && unchanged('uid') && unchanged('id') && unchanged('type') && unchanged('createdAt');
+      allow delete: if isAdmin();
+
+      match /chunks/{n} {
+        function parent() {
+          return get(/databases/$(database)/documents/requests/$(id)).data;
+        }
+        allow read: if isAdmin() || (signedIn() && parent().uid == request.auth.uid);
+        // The sender may add each chunk once, up to the count the request declared.
+        allow create: if signedIn() && parent().uid == request.auth.uid
+          && parent().attachment != null
+          && int(n) < parent().attachment.chunkCount
+          && request.resource.data.keys().hasOnly(['index', 'data'])
+          && request.resource.data.index == int(n)
+          && request.resource.data.data is bytes;
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
