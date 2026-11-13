@@ -16,7 +16,7 @@ import {
 import { useAuth } from '@/store/auth';
 import { SITE_CONFIG } from '@/config/site';
 import { cn } from '@/lib/cn';
-import { PRIVACY_VERSION } from '@/types/account';
+import { PRIVACY_VERSION, profileGaps } from '@/types/account';
 
 export const ACCOUNT_LINKS = [
   { to: '/account', label: 'My profile', Icon: UserRound, end: true },
@@ -174,6 +174,7 @@ export function AccountShell({
               {actions && <div className="flex shrink-0 flex-wrap gap-2.5">{actions}</div>}
             </header>
             <ConsentPrompt />
+            <ProfilePrompt />
             {children}
           </main>
         </div>
@@ -187,6 +188,60 @@ export function AccountShell({
  * marketing as a separate unticked choice. Accounts made before consent
  * capture, or after the notice changes, see it until they answer.
  */
+/**
+ * Asks for the details a patient record still needs, in place.
+ *
+ * These used to be demanded at the door: a first sign-in was redirected to
+ * "Complete your profile" before it could reach anything. Nothing needed them
+ * that early — the booking form collects its own name, phone and address, and
+ * only the profile pages read date of birth or gender — so the redirect was a
+ * form standing between someone and the reason they signed in.
+ *
+ * Consent is deliberately not listed here. ConsentPrompt above handles it,
+ * and it is the one item with legal weight, so it keeps its own prompt rather
+ * than being folded into a general nudge.
+ */
+function ProfilePrompt() {
+  const { profile } = useAuth();
+  if (!profile) return null;
+  const missing = profileGaps(profile).filter((gap) => gap !== 'consent');
+  if (missing.length === 0) return null;
+
+  const LABELS: Record<string, string> = {
+    name: 'your name',
+    phone: 'a mobile number',
+    gender: 'your gender',
+    dob: 'your date of birth',
+  };
+  const words = missing.map((gap) => LABELS[gap] ?? gap);
+  const list =
+    words.length === 1
+      ? words[0]
+      : `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}`;
+
+  return (
+    <section
+      aria-labelledby="profile-prompt-title"
+      className="mb-6 rounded-3xl bg-mist p-5 ring-1 ring-ink-line sm:p-6"
+    >
+      <h2 id="profile-prompt-title" className="flex items-center gap-2 text-[16px] font-bold text-ink">
+        <UserRound className="h-5 w-5 text-brand-600" aria-hidden="true" />
+        Finish your profile
+      </h2>
+      <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
+        We still need {list}. Reports are read against age and sex, so having these on file keeps
+        your results on the right reference range. You can book without it.
+      </p>
+      <Link
+        to="/account/welcome"
+        className="mt-4 inline-flex h-10 items-center rounded-lg bg-brand-500 px-4 text-[14px] font-semibold text-white transition-colors hover:bg-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+      >
+        Add my details
+      </Link>
+    </section>
+  );
+}
+
 function ConsentPrompt() {
   const { user, profile } = useAuth();
   const [marketing, setMarketing] = useState(false);

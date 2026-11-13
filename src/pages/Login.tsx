@@ -14,7 +14,6 @@ import {
 import { auth } from '@/lib/firebase';
 import { ensureProfile, updateProfile } from '@/lib/accountApi';
 import { useAuth } from '@/store/auth';
-import { profileGaps } from '@/types/account';
 import { TextField, isValidEmail, isValidPhone } from '@/components/common/Form';
 import { Button } from '@/components/common/Button';
 import { SITE_CONFIG } from '@/config/site';
@@ -70,18 +69,27 @@ export default function Login() {
   const next = params.get('next');
   const [tab, setTab] = useState<Tab>('phone');
 
-  // Once Firebase reports a session, send the person where they were going.
-  // A first sign-in (or an account missing what booking needs) goes through
-  // "Complete your profile" first, then on to where the person was heading.
+  /*
+    Once Firebase reports a session, send the person where they were going —
+    and nowhere else.
+
+    A first sign-in used to be diverted to "Complete your profile" before it
+    was allowed anywhere, which is not how an app behaves and was not
+    protecting anything: the home-collection form collects its own name,
+    phone, address and consent at the point of booking, and nothing outside
+    the profile pages themselves reads date of birth or gender. So the detour
+    cost every new patient a form before they had seen the thing they signed
+    in for, and bought nothing.
+
+    What replaces it sits inside the account: ConsentPrompt already asks for
+    consent in place rather than redirecting, and ProfilePrompt now does the
+    same for the remaining details. The welcome page stays exactly where it
+    was and both prompts link to it — it is offered now instead of imposed.
+  */
   useEffect(() => {
     if (status !== 'signed-in' || !profile) return;
     const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : null;
-    const target = safeNext ?? (isAdmin ? '/admin' : '/account');
-    if (profileGaps(profile).length > 0) {
-      navigate(`/account/welcome?next=${encodeURIComponent(target)}`, { replace: true });
-    } else {
-      navigate(target, { replace: true });
-    }
+    navigate(safeNext ?? (isAdmin ? '/admin' : '/account'), { replace: true });
   }, [status, isAdmin, profile, next, navigate]);
 
   return (
@@ -263,13 +271,11 @@ function PhoneLogin({ onUseEmail }: { onUseEmail: () => void }) {
           </div>
           {/*
             New numbers register themselves — Firebase creates the account on
-            the first verified OTP, and profileGaps() then routes the person
-            through "Complete your profile" for their name, date of birth and
-            consent. That works, but nothing on this tab said so: the email tab
-            carries a visible "Sign up" toggle, so beside it this one read as
-            login-only and a first-time visitor had no reason to think entering
-            their number would do anything. The mechanism was never the gap,
-            the sentence was.
+            the first verified OTP. That works, but nothing on this tab said
+            so: the email tab carries a visible "Sign up" toggle, so beside it
+            this one read as login-only and a first-time visitor had no reason
+            to think entering their number would do anything. The mechanism
+            was never the gap, the sentence was.
           */}
           <p className="mt-3 text-[13px] leading-relaxed text-ink-muted">
             First time here? Just enter your number. We will create your account once the OTP is
