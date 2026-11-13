@@ -18,6 +18,8 @@ export const STORAGE_KEYS = {
   seedVersion: 'healthcare_labs_seed_version',
   /* Whether the visitor has dismissed the floating lab reel. */
   reelDismissed: 'healthcare_labs_reel_dismissed',
+  /* When the visitor last said "not now" to installing the app. */
+  installSnoozed: 'healthcare_labs_install_snoozed',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

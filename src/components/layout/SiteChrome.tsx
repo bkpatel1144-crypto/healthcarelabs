@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { LabAgent } from '@/components/agent/LabAgent';
+import { InstallPrompt, UpdatePrompt } from '@/components/pwa/AppPrompts';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 /**
@@ -263,6 +264,15 @@ export function FloatingActions() {
         wants it.
       */}
       <LabAgent />
+
+      {/*
+        The install and update bars render themselves bottom-LEFT, fixed to the
+        viewport. They live here only so there is one place that owns the
+        floating furniture; they are not inside this right-hand stack, which
+        the assistant and the back-to-top button already share.
+      */}
+      <InstallPrompt />
+      <UpdatePrompt />
     </div>
   );
 }
