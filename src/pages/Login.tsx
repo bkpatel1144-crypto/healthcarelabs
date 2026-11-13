@@ -261,6 +261,20 @@ function PhoneLogin({ onUseEmail }: { onUseEmail: () => void }) {
               className="w-full px-4 text-[15px] tracking-wide text-ink placeholder:text-ink-soft/60 focus:outline-none"
             />
           </div>
+          {/*
+            New numbers register themselves — Firebase creates the account on
+            the first verified OTP, and profileGaps() then routes the person
+            through "Complete your profile" for their name, date of birth and
+            consent. That works, but nothing on this tab said so: the email tab
+            carries a visible "Sign up" toggle, so beside it this one read as
+            login-only and a first-time visitor had no reason to think entering
+            their number would do anything. The mechanism was never the gap,
+            the sentence was.
+          */}
+          <p className="mt-3 text-[13px] leading-relaxed text-ink-muted">
+            First time here? Just enter your number. We will create your account once the OTP is
+            verified, then ask for your name and a few details.
+          </p>
           <Button type="submit" size="lg" className="mt-4 w-full" disabled={busy}>
             {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
             Send OTP
