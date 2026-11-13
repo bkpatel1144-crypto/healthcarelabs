@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ConsentSettingsLink } from '@/components/common/CookieConsent';
 import { Clock, Instagram, Mail, MapPin, Navigation, Phone } from 'lucide-react';
 import { Container } from '@/components/common/Primitives';
 import { AccreditationBadge } from '@/components/common/AccreditationBadge';
@@ -187,6 +188,14 @@ export function Footer() {
               </li>
               <li>
                 <LegalLink to="/terms">Terms of Use</LegalLink>
+              </li>
+              {/*
+                Withdrawing consent has to be as easy as giving it, so the way
+                back to the notice lives here beside the policy rather than
+                being a thing you can only answer once.
+              */}
+              <li>
+                <ConsentSettingsLink className="text-[13.5px] text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300" />
               </li>
               <li>
                 <LegalLink to="/contact-us">Contact</LegalLink>

@@ -1,7 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Clock, MessageCircle, Menu, Phone, ShieldCheck, UserRound, X } from 'lucide-react';
+import {
+  ChevronRight,
+  Clock,
+  CalendarClock,
+  FileText,
+  FlaskConical,
+  HelpCircle,
+  Home,
+  Info,
+  MapPin,
+  MessageCircle,
+  Menu,
+  Newspaper,
+  Phone,
+  Handshake,
+  Receipt,
+  ShieldCheck,
+  Tag,
+  UploadCloud,
+  UserRound,
+  X,
+} from 'lucide-react';
 import { Button, ButtonArrow } from '@/components/common/Button';
 import { NAV_LINKS, SERVICE_LINKS, SITE_CONFIG, telHref, whatsappHref } from '@/config/site';
 import { cn } from '@/lib/cn';
@@ -17,6 +38,92 @@ import { Avatar } from '@/components/account/AccountShell';
  * signed-out label, so the header never jumps between two widths for a
  * returning visitor beyond a single swap.
  */
+/**
+ * The icon a drawer row carries, by destination.
+ *
+ * Keyed by href rather than passed in from site.ts, because NAV_LINKS and
+ * SERVICE_LINKS are plain data shared with the footer and the search panel —
+ * putting React components in them would drag an icon library into places
+ * that only want labels and URLs.
+ */
+const ROW_ICONS: Record<string, typeof Home> = {
+  '/': Home,
+  '/about-us': Info,
+  '/health-package': FlaskConical,
+  '/my-offers': Tag,
+  '/blog': Newspaper,
+  '/contact-us': Phone,
+  '/upload-prescription': UploadCloud,
+  '/lab-locations': MapPin,
+  '/help': HelpCircle,
+  '/partner-with-us': Handshake,
+  '/account/reports': FileText,
+  '/account/bookings': CalendarClock,
+  '/account/requests': Receipt,
+};
+
+/** Account destinations, offered in the drawer only once there is a session. */
+const ACCOUNT_LINKS = [
+  { label: 'My Reports', href: '/account/reports' },
+  { label: 'My Bookings', href: '/account/bookings' },
+  { label: 'My Requests', href: '/account/requests' },
+] as const;
+
+/**
+ * One row of the drawer: icon, label, chevron.
+ *
+ * The chevron replaced a right-aligned index number. The number was decoration
+ * — it counted the items, which the reader can see — where a chevron says the
+ * row goes somewhere, which is the only thing a menu row needs to say.
+ */
+function DrawerRow({ href, label, muted = false }: { href: string; label: string; muted?: boolean }) {
+  const Icon = ROW_ICONS[href] ?? ChevronRight;
+  return (
+    <li>
+      <NavLink
+        to={href}
+        end={href === '/'}
+        className={({ isActive }) =>
+          cn(
+            'flex items-center gap-3.5 rounded-xl px-3 py-3 transition-colors',
+            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+            isActive ? 'bg-brand-50' : 'hover:bg-slate-50',
+          )
+        }
+      >
+        {({ isActive }) => (
+          <>
+            <span
+              className={cn(
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 transition-colors',
+                isActive
+                  ? 'bg-brand-100 text-brand-700 ring-brand-200'
+                  : 'bg-white text-brand-600 ring-ink-line',
+              )}
+            >
+              <Icon className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
+            </span>
+            <span
+              className={cn(
+                'min-w-0 flex-1 truncate font-semibold',
+                muted ? 'text-[15px]' : 'text-[16px]',
+                isActive ? 'text-brand-700' : 'text-ink',
+              )}
+            >
+              {label}
+            </span>
+            <ChevronRight
+              className="h-[18px] w-[18px] shrink-0 text-ink-soft/70"
+              strokeWidth={2.2}
+              aria-hidden="true"
+            />
+          </>
+        )}
+      </NavLink>
+    </li>
+  );
+}
+
 function AccountButton({ className, withLabel = false }: { className?: string; withLabel?: boolean }) {
   const { status, profile, isAdmin } = useAuth();
   const signedIn = status === 'signed-in';
@@ -42,6 +149,9 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const sheen = useSheen<HTMLDivElement>();
   const [menuOpen, setMenuOpen] = useState(false);
+  /* The drawer offers account rows only once there is a session to back them. */
+  const { status: authStatus } = useAuth();
+  const signedIn = authStatus === 'signed-in';
   const location = useLocation();
   const reduced = usePrefersReducedMotion();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -374,50 +484,41 @@ export function Header() {
                 </button>
               </div>
 
-              <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-4 py-5">
+              {/*
+                An icon-led list, the shape a phone menu is expected to take:
+                one tappable row per destination, the icon carrying the
+                recognition and the chevron saying it leads somewhere.
+
+                The account group only appears once there is a session. Before
+                that it would be three rows that bounce straight to the login
+                page, which is a menu lying about what it can do.
+              */}
+              <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-4 py-4">
                 <ul className="space-y-0.5">
-                  {NAV_LINKS.map((link, i) => (
-                    <li key={link.href}>
-                      <NavLink
-                        to={link.href}
-                        end={link.href === '/'}
-                        className={({ isActive }) =>
-                          cn(
-                            'flex items-center justify-between rounded-xl px-4 py-3.5 text-[17px] font-semibold transition-colors',
-                            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-                            isActive
-                              ? 'bg-brand-50 text-brand-700'
-                              : 'text-ink hover:bg-slate-50',
-                          )
-                        }
-                      >
-                        {link.label}
-                        <span className="font-mono text-[11px] tabular-nums text-ink-soft/60">
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
-                      </NavLink>
-                    </li>
+                  {NAV_LINKS.map((link) => (
+                    <DrawerRow key={link.href} href={link.href} label={link.label} />
                   ))}
                 </ul>
-                <p className="mt-5 px-4 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
+
+                {signedIn && (
+                  <>
+                    <p className="mt-5 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
+                      My account
+                    </p>
+                    <ul className="mt-1 space-y-0.5">
+                      {ACCOUNT_LINKS.map((link) => (
+                        <DrawerRow key={link.href} href={link.href} label={link.label} muted />
+                      ))}
+                    </ul>
+                  </>
+                )}
+
+                <p className="mt-5 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">
                   Services
                 </p>
                 <ul className="mt-1 space-y-0.5">
                   {SERVICE_LINKS.map((link) => (
-                    <li key={link.href}>
-                      <NavLink
-                        to={link.href}
-                        className={({ isActive }) =>
-                          cn(
-                            'block rounded-xl px-4 py-2.5 text-[15px] font-medium transition-colors',
-                            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-                            isActive ? 'bg-brand-50 text-brand-700' : 'text-ink-muted hover:bg-slate-50 hover:text-ink',
-                          )
-                        }
-                      >
-                        {link.label}
-                      </NavLink>
-                    </li>
+                    <DrawerRow key={link.href} href={link.href} label={link.label} muted />
                   ))}
                 </ul>
               </nav>

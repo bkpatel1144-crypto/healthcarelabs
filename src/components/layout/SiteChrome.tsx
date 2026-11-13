@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { LabAgent } from '@/components/agent/LabAgent';
 import { InstallPrompt, UpdatePrompt } from '@/components/pwa/AppPrompts';
+import { CookieConsent } from '@/components/common/CookieConsent';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 /**
@@ -273,6 +274,13 @@ export function FloatingActions() {
       */}
       <InstallPrompt />
       <UpdatePrompt />
+
+      {/*
+        The consent notice spans the foot of the viewport rather than joining
+        this corner stack, and renders above the mobile drawer: a notice the
+        visitor cannot reach from behind an open menu is one they cannot act on.
+      */}
+      <CookieConsent />
     </div>
   );
 }

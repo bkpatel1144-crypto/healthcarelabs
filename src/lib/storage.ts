@@ -20,6 +20,8 @@ export const STORAGE_KEYS = {
   reelDismissed: 'healthcare_labs_reel_dismissed',
   /* When the visitor last said "not now" to installing the app. */
   installSnoozed: 'healthcare_labs_install_snoozed',
+  /* Cookie and storage consent: which categories, and when it was decided. */
+  cookieConsent: 'healthcare_labs_cookie_consent',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
