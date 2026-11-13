@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useState,
@@ -10,6 +11,12 @@ import {
 import { STORAGE_KEYS, storage } from '@/lib/storage';
 import { createId } from '@/lib/format';
 import { importProblem } from '@/lib/importChecks';
+import {
+  deleteCatalogueItem,
+  saveCatalogueItem,
+  watchCatalogue,
+  type CatalogueKind,
+} from '@/lib/catalogueApi';
 import { PACKAGES } from '@/data/packages';
 import { OFFERS } from '@/data/offers';
 import { BLOG_POSTS } from '@/data/blogs';
@@ -161,6 +168,37 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     [state.preferences],
   );
 
+  /*
+    Firestore is the published catalogue; localStorage is a local cache and a
+    fallback.
+
+    These three slices used to live only in the editor's browser, which made
+    the admin panel look like a publishing tool while changing nothing for
+    visitors. Now a snapshot replaces them as soon as one arrives.
+
+    An EMPTY collection is deliberately ignored rather than treated as "the
+    catalogue is empty". Before the one-time publish, and any time rules are
+    redeployed or the network is down, an empty snapshot would otherwise wipe
+    a working site down to nothing. Nobody intends to publish zero packages;
+    they intend to publish some, and until they do the shipped data stands.
+  */
+  useEffect(() => {
+    const slices = ['packages', 'posts', 'testimonials'] as const;
+    const stop = slices.map((slice) =>
+      watchCatalogue<{ id: string }>(
+        slice,
+        (rows) => {
+          if (rows.length === 0) return;
+          setState((prev) => ({ ...prev, [slice]: rows }) as ContentState);
+        },
+        () => {
+          /* Offline, or rules not deployed yet. Keep what is already shown. */
+        },
+      ),
+    );
+    return () => stop.forEach((unsub) => unsub());
+  }, []);
+
   const upsert = useCallback(
     <K extends 'packages' | 'offers' | 'posts' | 'testimonials'>(slice: K, item: ContentState[K][number]) => {
       setState((prev) => {
@@ -179,6 +217,25 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       ...prev,
       [slice]: (prev[slice] as { id: string }[]).filter((x) => x.id !== id),
     }) as ContentState);
+  }, []);
+
+  const publish = useCallback(
+    async (kind: CatalogueKind, item: Parameters<typeof saveCatalogueItem>[1]) => {
+      try {
+        await saveCatalogueItem(kind, item);
+      } catch {
+        /* Not an admin, or offline. The local copy still updated. */
+      }
+    },
+    [],
+  );
+
+  const unpublish = useCallback(async (kind: CatalogueKind, id: string) => {
+    try {
+      await deleteCatalogueItem(kind, id);
+    } catch {
+      /* As above. */
+    }
   }, []);
 
   const api = useMemo<ContentApi>(() => {
@@ -201,14 +258,22 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       livePosts: state.posts.filter(notArchived),
       liveTestimonials: state.testimonials.filter(notArchived),
 
-      savePackage: (pkg) => upsert('packages', pkg),
-      deletePackage: (id) => removeFrom('packages', id),
+      /*
+        Each edit updates local state immediately and publishes in the
+        background. The optimistic update is what keeps the admin panel
+        responsive; the Firestore write is what makes the change real for
+        everyone else. A failed write is swallowed here on purpose — a
+        non-admin has no rights to this collection and should not be shown a
+        permissions error for editing their own local copy.
+      */
+      savePackage: (pkg) => { upsert('packages', pkg); void publish('packages', pkg); },
+      deletePackage: (id) => { removeFrom('packages', id); void unpublish('packages', id); },
       saveOffer: (offer) => upsert('offers', offer),
       deleteOffer: (id) => removeFrom('offers', id),
-      savePost: (post) => upsert('posts', post),
-      deletePost: (id) => removeFrom('posts', id),
-      saveTestimonial: (t) => upsert('testimonials', t),
-      deleteTestimonial: (id) => removeFrom('testimonials', id),
+      savePost: (post) => { upsert('posts', post); void publish('posts', post); },
+      deletePost: (id) => { removeFrom('posts', id); void unpublish('posts', id); },
+      saveTestimonial: (t) => { upsert('testimonials', t); void publish('testimonials', t); },
+      deleteTestimonial: (id) => { removeFrom('testimonials', id); void unpublish('testimonials', id); },
 
       addAppointment: (input) => {
         const record: AppointmentLead = {
@@ -378,7 +443,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
       storageAvailable,
     };
-  }, [state, upsert, removeFrom, storageAvailable]);
+  }, [state, upsert, removeFrom, publish, unpublish, storageAvailable]);
 
   return <ContentContext.Provider value={api}>{children}</ContentContext.Provider>;
 }

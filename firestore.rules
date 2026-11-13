@@ -442,6 +442,95 @@ service cloud.firestore {
       }
     }
 
+    // ----------------------------------------------------------- catalogue
+    // The health packages the site renders. Public to read, because this is
+    // the shop window; only an admin may change one.
+    //
+    // Until now the admin panel edited a copy in the editor's own
+    // localStorage, so changing a price changed it for that browser and
+    // nobody else — the lab could believe a price was live when every visitor
+    // still saw the old one. This collection is what makes the admin panel
+    // actually publish.
+    //
+    // The field list is closed rather than open: a document the UI does not
+    // understand is worse than no document, and an unvalidated write here
+    // would render straight onto the public site.
+    function validPackage(d) {
+      return d.keys().hasOnly(['id', 'slug', 'name', 'summary', 'overview', 'tests',
+          'price', 'offerPrice', 'priceNote', 'concerns', 'suitableFor', 'preparation',
+          'homeCollection', 'reportTime', 'featured', 'archived', 'updatedAt'])
+        && str(d.id, 80) && str(d.slug, 80) && d.slug.size() >= 1
+        && str(d.name, 160) && d.name.size() >= 2
+        && str(d.summary, 400)
+        && str(d.overview, 4000)
+        && d.tests is list && d.tests.size() <= 120
+        // A price is either absent (quoted on request) or a non-negative whole number.
+        && (d.price == null || (d.price is int && d.price >= 0 && d.price <= 10000000))
+        && (d.offerPrice == null || (d.offerPrice is int && d.offerPrice >= 0 && d.offerPrice <= 10000000))
+        && (!('priceNote' in d) || str(d.priceNote, 200))
+        && d.concerns is list && d.concerns.size() <= 20
+        && d.suitableFor is list && d.suitableFor.size() <= 20
+        && d.preparation is list && d.preparation.size() <= 20
+        && d.homeCollection is bool
+        && str(d.reportTime, 160)
+        && d.featured is bool
+        && (!('archived' in d) || d.archived is bool);
+    }
+
+    match /packages/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() && validPackage(request.resource.data)
+        && request.resource.data.id == id;
+      allow delete: if isAdmin();
+    }
+
+    // Blog posts. `sections` is a list of blocks the renderer understands;
+    // it is bounded but not walked field by field, because the shape varies by
+    // block type and a rule that enumerated them would break every time a new
+    // block is added. Only admins can write here, so the trade is acceptable.
+    function validPost(d) {
+      return d.keys().hasOnly(['id', 'slug', 'title', 'excerpt', 'category', 'author',
+          'publishedAt', 'readingMinutes', 'featured', 'sections', 'archived', 'updatedAt'])
+        && str(d.id, 80) && str(d.slug, 120) && d.slug.size() >= 1
+        && str(d.title, 200) && d.title.size() >= 2
+        && str(d.excerpt, 600)
+        && str(d.category, 60)
+        && str(d.author, 120)
+        && str(d.publishedAt, 40)
+        && d.readingMinutes is int && d.readingMinutes >= 0 && d.readingMinutes <= 240
+        && d.featured is bool
+        && d.sections is list && d.sections.size() <= 80
+        && (!('archived' in d) || d.archived is bool);
+    }
+
+    match /posts/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() && validPost(request.resource.data)
+        && request.resource.data.id == id;
+      allow delete: if isAdmin();
+    }
+
+    // Patient quotes. Ratings are clamped so a stray value cannot render as
+    // six stars, and nothing here is writable by the person being quoted.
+    function validTestimonial(d) {
+      return d.keys().hasOnly(['id', 'name', 'location', 'rating', 'quote',
+          'packageName', 'archived', 'updatedAt'])
+        && str(d.id, 80)
+        && str(d.name, 120) && d.name.size() >= 1
+        && str(d.location, 120)
+        && d.rating is int && d.rating >= 1 && d.rating <= 5
+        && str(d.quote, 1200) && d.quote.size() >= 1
+        && (!('packageName' in d) || str(d.packageName, 160))
+        && (!('archived' in d) || d.archived is bool);
+    }
+
+    match /testimonials/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() && validTestimonial(request.resource.data)
+        && request.resource.data.id == id;
+      allow delete: if isAdmin();
+    }
+
     // Everything else is closed.
     match /{document=**} {
       allow read, write: if false;

@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
-import { Download, RotateCcw, Upload } from 'lucide-react';
+import { CloudUpload, Download, RotateCcw, Upload } from 'lucide-react';
 import { AdminShell, useAdminSeo, useConfirm } from '@/components/admin/AdminShell';
 import { Button } from '@/components/common/Button';
 import { useContent } from '@/store/content';
 import { SITE_CONFIG } from '@/config/site';
 import { STORAGE_KEYS, storage } from '@/lib/storage';
+import { publishCatalogue } from '@/lib/catalogueApi';
 
 export default function AdminSettings() {
   useAdminSeo('Settings');
@@ -58,6 +59,9 @@ export default function AdminSettings() {
           {message.text}
         </p>
       )}
+
+      {/* ---- Publishing ---- */}
+      <PublishPanel />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* ---- Data management ---- */}
@@ -201,5 +205,77 @@ function ConfigRow({ label, value }: { label: string; value: string }) {
       <dt className="text-ink-soft">{label}</dt>
       <dd className="text-right font-medium text-ink">{value}</dd>
     </div>
+  );
+}
+
+/**
+ * Pushes the catalogue in this browser up to Firestore, where visitors read it.
+ *
+ * This exists because for a long time it did not, and the gap was invisible:
+ * the admin panel edited a copy in the editor's own localStorage, so changing
+ * a price changed it on that screen and nowhere else. The lab could believe a
+ * price was live while every visitor still saw the old one.
+ *
+ * Edits now publish as they are made. This is for the one-time move of
+ * whatever is already in this browser, and for forcing everything back up if
+ * the two ever drift.
+ */
+function PublishPanel() {
+  const { packages, posts, testimonials } = useContent();
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
+
+  const run = async () => {
+    setBusy(true);
+    setResult(null);
+    setFailed(null);
+    try {
+      const counts = await Promise.all([
+        publishCatalogue('packages', packages),
+        publishCatalogue('posts', posts),
+        publishCatalogue('testimonials', testimonials),
+      ]);
+      setResult(`${counts[0]} packages, ${counts[1]} posts, ${counts[2]} testimonials are now live.`);
+    } catch (error) {
+      /*
+        Worth showing rather than swallowing: the usual causes are rules not
+        deployed yet, or the signed-in account not being in the admins
+        collection, and both are things the person reading this can fix.
+      */
+      setFailed(error instanceof Error ? error.message : 'Could not publish.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="mb-6 rounded-3xl bg-white p-6 shadow-soft ring-1 ring-brand-50 sm:p-7">
+      <h2 className="flex items-center gap-2 text-[17px] font-bold tracking-[-0.02em] text-ink">
+        <CloudUpload className="h-5 w-5 text-brand-600" aria-hidden="true" />
+        Publish to the live site
+      </h2>
+      <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-muted">
+        Packages, blog posts and testimonials publish automatically as you edit them. Use this to
+        push everything in this browser up at once — do it now if the catalogue has never been
+        published, or later if the site and this panel ever disagree.
+      </p>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Button onClick={() => void run()} disabled={busy}>
+          {busy ? 'Publishing…' : 'Publish everything'}
+        </Button>
+        <span className="text-[13px] text-ink-soft">
+          {packages.length} packages · {posts.length} posts · {testimonials.length} testimonials
+        </span>
+      </div>
+      {result && (
+        <p role="status" className="mt-3 text-[13.5px] font-semibold text-mint-600">{result}</p>
+      )}
+      {failed && (
+        <p role="alert" className="mt-3 text-[13.5px] font-semibold text-coral-600">
+          {failed} — check that firestore.rules is deployed and that you are signed in as an admin.
+        </p>
+      )}
+    </section>
   );
 }

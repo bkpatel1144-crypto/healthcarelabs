@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { OfferBanner } from '@/components/account/OfferBanner';
 import { localDateIso } from '@/lib/format';
 import { BadgeCheck, CalendarClock, Download, FileText, Pencil, ShieldCheck, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -43,6 +44,14 @@ export default function AccountProfile() {
         )
       }
     >
+      {/*
+        The offer sits on the account's landing page only, and not while the
+        form is open. A promotional banner over someone halfway through
+        entering their date of birth is an interruption, not an offer — and a
+        first sign-in lands straight in that form.
+      */}
+      {profile && !editing && !welcome && <OfferBanner className="mb-6" />}
+
       {!profile ? (
         <Panel>
           <p className="text-ink-muted">Loading your profile…</p>
